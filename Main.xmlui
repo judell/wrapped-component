@@ -1,0 +1,446 @@
+<App layout="vertical">
+  <NavPanel>
+    <NavLink label="Home" to="/" />
+    <NavGroup label="Slider" initiallyExpanded="{true}">
+      <NavLink label="Slider and SliderW" to="/slider-and-sliderw" />
+      <NavLink label="Slider vs SliderW" to="/slider-vs-sliderw" />
+    </NavGroup>
+  </NavPanel>
+
+  <Pages>
+
+    <Page url="/">
+      <VStack padding="2rem" gap="1.5rem">
+        <H1>Wrapping React components for XMLUI</H1>
+
+        <Markdown><![CDATA[
+## The problem
+
+Every XMLUI component that wraps a React component needs a **renderer** — a function that bridges XMLUI markup to React props. Today, these renderers are written by hand.
+
+For a component like **Slider**, that means ~40 lines of mechanical mapping code:
+
+- Calling `extractValue` for each prop
+- Calling `extractValue.asOptionalBoolean` for each boolean prop
+- Calling `lookupEventHandler` for each event
+- Calling `lookupSyncCallback` for each callback
+- Manually forwarding plumbing like `className`, `registerComponentApi`, `updateState`, and `state.value`
+
+This approach has two problems:
+
+1. **Boilerplate.** The mapping code is tedious to write and review.
+
+2. **Incomplete coverage.** Because every prop must be explicitly listed, props that the native React component already supports get silently dropped. The wrapper becomes a bottleneck that filters out capabilities.
+
+## A first-pass solution
+
+`wrapComponent` is a utility that generates the renderer automatically. You declare only the exceptions — which props are booleans, which are events, which need renaming — and everything else passes through by default.
+
+## This demo
+
+- **Slider** is the hand-written original (40-line renderer).
+- **SliderW** uses `wrapComponent` (13 lines), wrapping the exact same `SliderNative.tsx`.
+
+The **Slider and SliderW** page confirms they behave identically for all currently-wrapped features.
+
+The **Slider vs SliderW** page shows what **SliderW** can do that **Slider** can't — native props like `inverted`, `title`, and `tabIndex` that the hand-written renderer never forwarded.
+]]></Markdown>
+
+        <ExpandableItem summary="wrapComponent source code">
+          <Markdown><![CDATA[
+```typescript
+import React from "react";
+import type { ComponentMetadata } from "../abstractions/ComponentDefs";
+import type { ComponentRendererDef } from "../abstractions/RendererDefs";
+import { createComponentRenderer } from "./renderers";
+
+export type WrapComponentConfig = {
+  booleans?: string[];
+  numbers?: string[];
+  strings?: string[];
+  events?: string[] | Record<string, string>;
+  callbacks?: string[] | Record<string, string>;
+  rename?: Record<string, string>;
+  exclude?: string[];
+  stateful?: boolean;
+};
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function normalizeEvents(
+  events: string[] | Record<string, string> | undefined,
+): Record<string, string> {
+  if (!events) return {};
+  if (Array.isArray(events)) {
+    const result: Record<string, string> = {};
+    for (const name of events) {
+      result[name] = `on${capitalize(name)}`;
+    }
+    return result;
+  }
+  return events;
+}
+
+function normalizeCallbacks(
+  callbacks: string[] | Record<string, string> | undefined,
+): Record<string, string> {
+  if (!callbacks) return {};
+  if (Array.isArray(callbacks)) {
+    const result: Record<string, string> = {};
+    for (const name of callbacks) {
+      result[name] = name;
+    }
+    return result;
+  }
+  return callbacks;
+}
+
+export function wrapComponent<TMd extends ComponentMetadata>(
+  type: string,
+  Component: React.ComponentType<any>,
+  metadata: TMd,
+  config: WrapComponentConfig = {},
+): ComponentRendererDef {
+  const eventMap = normalizeEvents(config.events);
+  const callbackMap = normalizeCallbacks(config.callbacks);
+  const renameMap = config.rename ?? {};
+  const booleanSet = new Set(config.booleans ?? []);
+  const numberSet = new Set(config.numbers ?? []);
+  const stringSet = new Set(config.strings ?? []);
+  const excludeSet = new Set(config.exclude ?? []);
+
+  const specialProps = new Set([
+    ...Object.keys(eventMap),
+    ...Object.keys(callbackMap),
+    "id",
+  ]);
+
+  const isStateful =
+    config.stateful ??
+    !!(metadata.props?.["initialValue"] || metadata.events?.["didChange"]);
+
+  if (isStateful) {
+    specialProps.add("initialValue");
+  }
+
+  return createComponentRenderer(type, metadata, (context) => {
+    const {
+      node, extractValue, lookupEventHandler, lookupSyncCallback,
+      className, updateState, state, registerComponentApi,
+    } = context;
+
+    const props: Record<string, any> = {};
+
+    // Always pass through XMLUI plumbing
+    props.className = className;
+    props.registerComponentApi = registerComponentApi;
+
+    if (isStateful) {
+      props.updateState = updateState;
+      props.value = state.value;
+      props.initialValue = extractValue(node.props?.initialValue);
+    }
+
+    // Events
+    for (const [xmluiName, reactPropName] of Object.entries(eventMap)) {
+      props[reactPropName] = lookupEventHandler(xmluiName);
+    }
+
+    // Sync callbacks
+    for (const [xmluiName, reactPropName] of Object.entries(callbackMap)) {
+      props[reactPropName] = lookupSyncCallback(node.props?.[xmluiName]);
+    }
+
+    // Forward all remaining node.props
+    if (node.props) {
+      for (const [key, rawValue] of Object.entries(node.props)) {
+        if (specialProps.has(key)) continue;
+        if (excludeSet.has(key)) continue;
+
+        const reactKey = renameMap[key] ?? key;
+
+        if (booleanSet.has(key)) {
+          props[reactKey] = extractValue.asOptionalBoolean(rawValue);
+        } else if (numberSet.has(key)) {
+          props[reactKey] = extractValue.asOptionalNumber(rawValue);
+        } else if (stringSet.has(key)) {
+          props[reactKey] = extractValue.asOptionalString(rawValue);
+        } else {
+          props[reactKey] = extractValue(rawValue);
+        }
+      }
+    }
+
+    return <Component {...props} />;
+  });
+}
+```
+]]></Markdown>
+        </ExpandableItem>
+
+      </VStack>
+    </Page>
+
+    <Page url="/slider-and-sliderw">
+      <VStack padding="2rem" gap="2rem">
+
+        <H1>Slider and SliderW</H1>
+
+        <Markdown>
+Both components wrap the same `SliderNative.tsx` React component.
+**Slider** uses a hand-written 40-line renderer.
+**SliderW** uses `wrapComponent` (13 lines).
+These tests confirm they behave identically for all currently-wrapped features.
+        </Markdown>
+
+        <!-- === Basic usage === -->
+        <Card var.sliderVal="" var.sliderWVal="">
+          <H2>Basic: default props</H2>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider</Text>
+              <Slider id="s1" onDidChange="{(v) => sliderVal = v}" />
+              <Text>Value: {sliderVal}</Text>
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW</Text>
+              <SliderW id="sw1" onDidChange="{(v) => sliderWVal = v}" />
+              <Text>Value: {sliderWVal}</Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === Custom range === -->
+        <Card var.s2Val="" var.sw2Val="">
+          <H2>Custom range: 0–100, step 10</H2>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider</Text>
+              <Slider id="s2" minValue="0" maxValue="100" step="10"
+                initialValue="50"
+                onDidChange="{(v) => s2Val = v}" />
+              <Text>Value: {s2Val}</Text>
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW</Text>
+              <SliderW id="sw2" minValue="0" maxValue="100" step="10"
+                initialValue="50"
+                onDidChange="{(v) => sw2Val = v}" />
+              <Text>Value: {sw2Val}</Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === Boolean props === -->
+        <Card>
+          <H2>Boolean props: disabled</H2>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider (disabled)</Text>
+              <Slider enabled="{false}" initialValue="5" />
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW (disabled)</Text>
+              <SliderW enabled="{false}" initialValue="5" />
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === ReadOnly === -->
+        <Card>
+          <H2>ReadOnly</H2>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider (readOnly)</Text>
+              <Slider readOnly="{true}" initialValue="7" />
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW (readOnly)</Text>
+              <SliderW readOnly="{true}" initialValue="7" />
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === API: setValue === -->
+        <Card var.s4Val="" var.sw4Val="">
+          <H2>API: setValue / value</H2>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider</Text>
+              <Slider id="s4" minValue="0" maxValue="100"
+                initialValue="25"
+                onDidChange="{(v) => s4Val = v}" />
+              <Text>Value: {s4Val}</Text>
+              <HStack>
+                <Button onClick="{s4.setValue(0)}">Set 0</Button>
+                <Button onClick="{s4.setValue(50)}">Set 50</Button>
+                <Button onClick="{s4.setValue(100)}">Set 100</Button>
+              </HStack>
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW</Text>
+              <SliderW id="sw4" minValue="0" maxValue="100"
+                initialValue="25"
+                onDidChange="{(v) => sw4Val = v}" />
+              <Text>Value: {sw4Val}</Text>
+              <HStack>
+                <Button onClick="{sw4.setValue(0)}">Set 0</Button>
+                <Button onClick="{sw4.setValue(50)}">Set 50</Button>
+                <Button onClick="{sw4.setValue(100)}">Set 100</Button>
+              </HStack>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === Range slider (multiple thumbs) === -->
+        <Card var.s5Val="" var.sw5Val="">
+          <H2>Range slider (two thumbs)</H2>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider</Text>
+              <Slider id="s5" minValue="0" maxValue="100" step="5"
+                initialValue="[20,80]"
+                onDidChange="{(v) => s5Val = JSON.stringify(v)}" />
+              <Text>Value: {s5Val}</Text>
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW</Text>
+              <SliderW id="sw5" minValue="0" maxValue="100" step="5"
+                initialValue="[20,80]"
+                onDidChange="{(v) => sw5Val = JSON.stringify(v)}" />
+              <Text>Value: {sw5Val}</Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === Validation status === -->
+        <Card>
+          <H2>Validation status</H2>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider (error)</Text>
+              <Slider validationStatus="error" initialValue="3" />
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW (error)</Text>
+              <SliderW validationStatus="error" initialValue="3" />
+            </VStack>
+          </HStack>
+        </Card>
+
+      </VStack>
+    </Page>
+
+    <Page url="/slider-vs-sliderw">
+      <VStack padding="2rem" gap="2rem">
+
+        <H1>Slider vs SliderW</H1>
+
+        <Markdown>
+These tests show what **SliderW** can do that **Slider** can't.
+`SliderNative.tsx` accepts props that the hand-written renderer never forwards.
+`wrapComponent` forwards everything automatically, so these "just work."
+        </Markdown>
+
+        <!-- === inverted: SliderW only === -->
+        <Card var.s6Val="" var.sw6Val="">
+          <H2>inverted — only works with SliderW</H2>
+          <Markdown>
+`SliderNative` accepts an `inverted` prop (from Radix) that reverses direction.
+The hand-written **Slider** renderer never forwards it — so it's silently ignored.
+**SliderW** forwards all native props automatically.
+          </Markdown>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider (inverted — ignored)</Text>
+              <Slider inverted="{true}" minValue="0" maxValue="100" step="10"
+                initialValue="70"
+                onDidChange="{(v) => s6Val = v}" />
+              <Text>Value: {s6Val}</Text>
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW (inverted — works)</Text>
+              <SliderW inverted="{true}" minValue="0" maxValue="100" step="10"
+                initialValue="70"
+                onDidChange="{(v) => sw6Val = v}" />
+              <Text>Value: {sw6Val}</Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === title: native tooltip on hover === -->
+        <Card var.s7Val="" var.sw7Val="">
+          <H2>title — native HTML tooltip (hover to see)</H2>
+          <Markdown>
+`SliderNative` spreads `...rest` onto its outer div, so standard HTML
+attributes like `title` pass through. The hand-written renderer
+never forwards it. Hover each slider to compare.
+          </Markdown>
+          <HStack gap="2rem">
+            <VStack>
+              <Text fontWeight="bold">Slider (title — ignored)</Text>
+              <Slider title="Pick a temperature" minValue="0" maxValue="100"
+                initialValue="50"
+                onDidChange="{(v) => s7Val = v}" />
+              <Text>Value: {s7Val}</Text>
+            </VStack>
+            <VStack>
+              <Text fontWeight="bold">SliderW (title — hover me!)</Text>
+              <SliderW title="Pick a temperature" minValue="0" maxValue="100"
+                initialValue="50"
+                onDidChange="{(v) => sw7Val = v}" />
+              <Text>Value: {sw7Val}</Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === tabIndex: keyboard focus order === -->
+        <Card>
+          <H2>tabIndex — keyboard focus order (press Tab)</H2>
+          <Markdown>
+Three sliders with tabIndex 3, 2, 1 — so Tab should visit them
+in reverse visual order (C, B, A). The hand-written renderer
+drops tabIndex, so **Slider** follows default DOM order.
+Click below the sliders, then press Tab repeatedly.
+          </Markdown>
+          <HStack gap="2rem">
+            <VStack gap="1rem">
+              <Text fontWeight="bold">Slider (tabIndex — ignored)</Text>
+              <HStack gap="0.5rem">
+                <Text>A (tabIndex=3):</Text>
+                <Slider tabIndex="3" initialValue="3" />
+              </HStack>
+              <HStack gap="0.5rem">
+                <Text>B (tabIndex=2):</Text>
+                <Slider tabIndex="2" initialValue="5" />
+              </HStack>
+              <HStack gap="0.5rem">
+                <Text>C (tabIndex=1):</Text>
+                <Slider tabIndex="1" initialValue="7" />
+              </HStack>
+            </VStack>
+            <VStack gap="1rem">
+              <Text fontWeight="bold">SliderW (tabIndex — works: C, B, A)</Text>
+              <HStack gap="0.5rem">
+                <Text>A (tabIndex=3):</Text>
+                <SliderW tabIndex="3" initialValue="3" />
+              </HStack>
+              <HStack gap="0.5rem">
+                <Text>B (tabIndex=2):</Text>
+                <SliderW tabIndex="2" initialValue="5" />
+              </HStack>
+              <HStack gap="0.5rem">
+                <Text>C (tabIndex=1):</Text>
+                <SliderW tabIndex="1" initialValue="7" />
+              </HStack>
+            </VStack>
+          </HStack>
+        </Card>
+
+      </VStack>
+    </Page>
+
+  </Pages>
+</App>
