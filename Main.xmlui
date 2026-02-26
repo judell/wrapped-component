@@ -46,18 +46,15 @@ This approach has three problems:
 
 3. **Duplicated plumbing.** The state lifecycle code (parse initial value, sync external changes, call updateState, register APIs) is nearly identical across every stateful component, but each one reimplements it from scratch.
 
-## A first-pass solution
+## A first-pass solution: wrapComponent
 
 `wrapComponent` is a utility that generates the renderer automatically. You declare only the exceptions — which props are booleans, which are events, which need renaming — and everything else passes through by default.
 
-## This demo
-
-- **Slider** is the hand-written original (40-line renderer).
-- **SliderW** uses `wrapComponent` (13 lines), wrapping the exact same `SliderNative.tsx`.
+The Slider section shows **Slider**, the hand-written original, and **SliderW** which uses `wrapComponent`, both wrapping the same `SliderNative.tsx`.
 
 The <a href="/slider-and-sliderw" target="_blank">Slider and SliderW</a> page confirms they behave identically for all currently-wrapped features.
 
-The <a href="/slider-vs-sliderw" target="_blank">Slider vs SliderW</a> page shows what **SliderW** can do that **Slider** can't. Here is every prop in the `SliderNative` Props type that the hand-written renderer silently drops:
+The <a href="/slider-vs-sliderw" target="_blank">Slider vs SliderW</a> page shows what **SliderW** can do that **Slider** can't. Here are props in the `SliderNative` Props type that the hand-written renderer silently drops:
 
 | Dropped prop | What it does |
 |---|---|
@@ -75,34 +72,25 @@ The <a href="/slider-vs-sliderw" target="_blank">Slider vs SliderW</a> page show
 
 With `wrapComponent`, all of these forward automatically because unrecognized props flow through `extractValue` by default.
 
-## A second-pass solution: `wrapCompound`
+## A second-pass solution: wrapCompound
 
-`wrapComponent` eliminates the hand-written renderer, but you still write **SliderNative.tsx** (347 lines) — the React component that manages local value state, parses `initialValue`, syncs external value changes, calls `updateState`, registers component APIs, and assembles the Radix compound structure.
+`wrapComponent` eliminates the hand-written renderer, but you still write **SliderNative.tsx**, the React component that manages local value state, parses `initialValue`, syncs external value changes, calls `updateState`, registers component APIs, and assembles the Radix compound structure.
 
-Look at what's in those 347 lines:
+None of that is slider-specific. Every Radix compound component (RadioGroup, Toggle, Accordion, Tabs) needs the same state lifecycle. The only part that's genuinely unique to Slider is the Radix composition: `Root > Track > Range > Thumb[]` with tooltip wiring.
 
-- `useState` + `useEffect` to parse and set `initialValue` on mount
-- `useEffect` to sync when external `state.value` changes
-- `updateState({ value })` calls to push changes back to XMLUI
-- `registerComponentApi` wiring for `focus()` and `setValue()`
-- Clamping and formatting logic for min/max bounds
-
-None of that is slider-specific. Every Radix compound component (RadioGroup, Toggle, Accordion, Tabs) needs the same state lifecycle. The only part that's genuinely unique to Slider is the Radix assembly: `Root > Track > Range > Thumb[]` with tooltip wiring.
-
-`wrapCompound` is a new function that creates a **StateWrapper** — a React component that handles all of the above generically. It receives two optional hooks in its config:
+`wrapCompound` is a function that creates a **StateWrapper** — a React component that handles all of the above generically. It receives two optional hooks in its config:
 
 - **`parseInitialValue(raw, props)`** — component-specific parsing (e.g., Slider needs to parse JSON arrays and clamp to min/max)
+
 - **`formatExternalValue(value, props)`** — normalize incoming values (e.g., ensure they're arrays, clamped to bounds)
 
 The StateWrapper manages local state, fires `updateState` on changes, and passes three clean props to your render component: `value`, `onChange`, and `registerApi`. Your component never imports anything from XMLUI — it's pure React.
 
 ## What you write at each stage
 
-Today, wrapping Radix's slider for XMLUI requires two files: **SliderNative.tsx** (the React component — 347 lines of state management, value parsing, updateState plumbing, and Radix assembly) plus **Slider.tsx** (the hand-written renderer — 40 lines of prop mapping). Total: **387 lines**.
+`wrapComponent` replace the 40-line renderer with a 13-line config.
 
-`wrapComponent` eliminates the renderer. You still write SliderNative.tsx unchanged, but replace the 40-line renderer with a 13-line config. Total: **360 lines**.
-
-`wrapCompound` eliminates the XMLUI plumbing from the native component. You write only **SliderRender.tsx** — 109 lines of pure React that receives `value`, `onChange`, and `registerApi` and just assembles the Radix compound structure. No `updateState`, no `initialValue` useEffect, no value sync, no XMLUI imports. Total: **109 lines**.
+`wrapCompound` removes the XMLUI plumbing from the native component. You write only **SliderRender.tsx** — pure React that receives `value`, `onChange`, and `registerApi` and assembles the Radix compound structure. No `updateState`, no `initialValue` useEffect, no value sync, no XMLUI imports.
 
 The test we built in phase 1 validated the final refactor. Same baselines, same generated Playwright assertions, same semantic trace comparison. `slider-pass` still PASSES, `slider-fail` still FAILS with the correct value mismatch. The behavioral contract is preserved across the rewrite.
 ]]>
@@ -184,10 +172,77 @@ But you still write the full **SliderNative.tsx** (347 lines) unchanged — all 
         </ExpandableItem>
 
         <ExpandableItem
-          summary="What you write with wrapCompound: SliderRender.tsx (109 lines)">
+          summary="What you write with wrapCompound: SliderWrapped.tsx + SliderRender.tsx">
           <Markdown>
             <![CDATA[
-Pure React. No XMLUI imports. Receives `value`, `onChange`, and `registerApi` from the engine.
+**SliderWrapped.tsx** — the wrapCompound config (~30 lines):
+```typescript
+import { SliderRender } from "./SliderRender";
+import { wrapCompound } from "../../components-core/wrapComponent";
+import {
+  createMetadata,
+  d,
+  dDidChange,
+  dInitialValue,
+} from "../metadata-helpers";
+
+const COMP = "SliderC";
+
+export const SliderCMd = createMetadata({
+  description: "A slider component wrapped via wrapCompound.",
+  props: {
+    initialValue: dInitialValue(),
+    minValue: d("Minimum value.", undefined, "number", 0),
+    maxValue: d("Maximum value.", undefined, "number", 10),
+    step: d("Step increment.", undefined, "number", 1),
+    enabled: d("Whether the slider is enabled.", undefined, "boolean", true),
+    readOnly: d("Whether the slider is read-only.", undefined, "boolean", false),
+    required: d("Whether a value is required.", undefined, "boolean", false),
+    autoFocus: d("Whether to auto-focus.", undefined, "boolean", false),
+    showValues: d("Show value tooltips on thumbs.", undefined, "boolean", true),
+    rangeStyle: d("Custom style for the range track.", undefined, "object"),
+    thumbStyle: d("Custom style for the thumb.", undefined, "object"),
+    minStepsBetweenThumbs: d("Minimum steps between thumbs.", undefined, "number", 1),
+  },
+  events: {
+    didChange: dDidChange(COMP),
+  },
+});
+
+export const sliderCComponentRenderer = wrapCompound(
+  COMP,
+  SliderRender,
+  SliderCMd,
+  {
+    booleans: ["enabled", "autoFocus", "readOnly", "required", "showValues"],
+    events: {
+      didChange: "onDidChange",
+      gotFocus: "onFocus",
+      lostFocus: "onBlur",
+    },
+    callbacks: {
+      valueFormat: "valueFormat",
+    },
+    rename: {
+      minValue: "min",
+      maxValue: "max",
+    },
+    parseInitialValue: (raw, props) => {
+      try {
+        const parsed = JSON.parse(raw);
+        const arr = Array.isArray(parsed) ? parsed : [parsed];
+        const min = props.min ?? 0;
+        const max = props.max ?? 10;
+        return arr.map((v: number) => Math.min(max, Math.max(min, v)));
+      } catch {
+        return [props.min ?? 0];
+      }
+    },
+  },
+);
+```
+
+**SliderRender.tsx** — pure React (~109 lines). No XMLUI imports. Receives `value`, `onChange`, and `registerApi` from the engine.
 ```typescript
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { forwardRef } from "react";
@@ -282,13 +337,10 @@ export const SliderRender = forwardRef(({
           <![CDATA[
 ## Beyond Radix
 
-Everything above wraps Radix UI components. But `wrapCompound` is library-agnostic — it handles the XMLUI state lifecycle for *any* React component. To prove the point:
+Everything above wraps Radix UI components. But `wrapCompound` is library-agnostic — it handles the XMLUI state lifecycle for any React component.
 
-- <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input. ~80 lines of pure React.
-- <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine. ~60 lines of pure React.
-- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — the ProseMirror-based rich-text framework. ~280 lines of pure React for a full markdown editor with toolbar, tables, task lists, and undo/redo. The existing [Build a TableEditor](https://docs.xmlui.org/build-editor-component) how-to took 14 steps and ~250 lines for table editing alone.
-
-Same pattern, four completely different libraries (Radix, react-knob-headless, Monaco, Tiptap). Each render component receives `value`, `onChange`, `registerApi` — no XMLUI imports needed.
+- <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input. Code editor engine. ~60 lines of pure React.
+- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — the ProseMirror-based rich-text framework. ~280 lines of pure React for a full markdown editor with toolbar, tables, task lists, and undo/redo.
 ]]>
         </Markdown>
 
@@ -534,7 +586,7 @@ These tests confirm they behave identically for all currently-wrapped features.
         <Markdown>
           <![CDATA[
 These tests show what **SliderW** can do that **Slider** can't.
-`SliderNative.tsx` accepts props that the hand-written renderer never forwards.
+fi`SliderNative.tsx` accepts props that the hand-written renderer never forwards.
 `wrapComponent` forwards everything automatically, so these "just work."
 
 ## Tracing
