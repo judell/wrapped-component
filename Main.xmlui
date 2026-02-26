@@ -20,7 +20,7 @@
     </NavGroup>
     <NavLink label="Knob" to="/knob" />
     <NavLink label="CodeEditor" to="/code-editor" />
-    <NavLink label="Support Ticket" to="/tiptap-editor" />
+    <NavLink label="Tiptap Support Ticket" to="/tiptap-editor" />
     <NavLink label="Source" to="/source" />
   </NavPanel>
 
@@ -339,8 +339,9 @@ export const SliderRender = forwardRef(({
 
 Everything above wraps Radix UI components. But `wrapCompound` is library-agnostic — it handles the XMLUI state lifecycle for any React component.
 
-- <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input. Code editor engine. ~60 lines of pure React.
-- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — the ProseMirror-based rich-text framework. ~280 lines of pure React for a full markdown editor with toolbar, tables, task lists, and undo/redo.
+- <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input. ~60 lines of pure React.
+- <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine. ~30 lines of pure React.
+- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based rich-text editor with configurable toolbar. ~400 lines of pure React.
 ]]>
         </Markdown>
 
@@ -968,7 +969,7 @@ Edit the markdown below and watch the rendered preview update in real time.
     <Page url="/tiptap-editor">
       <VStack padding="2rem" gap="2rem">
 
-        <H1>Support Ticket</H1>
+        <H1>Tiptap Support Ticket</H1>
 
         <Markdown><![CDATA[
 `TiptapEditor` wraps [Tiptap](https://tiptap.dev) via `wrapCompound`. The system looks up the customer's account data and populates the reply template. The rep reviews, adds a personal note, and sends.
