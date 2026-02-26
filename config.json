@@ -2,5 +2,6 @@
   "appGlobals": {
     "xsVerbose": true,
     "xsVerboseLogMax": 500
-  }
+  },
+  "themes": ["themes/earthtone.json"]
 }

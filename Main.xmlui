@@ -21,12 +21,13 @@
     <NavLink label="Knob" to="/knob" />
     <NavLink label="CodeEditor" to="/code-editor" />
     <NavLink label="Tiptap Support Ticket" to="/tiptap-editor" />
+    <NavLink label="Gauge + Theming" to="/gauge" />
   </NavPanel>
 
   <Pages>
 
     <Page url="/">
-      <VStack padding="2rem" gap="1.5rem">
+      <VStack padding="2rem" gap="0">
         <Markdown>
           <![CDATA[
 
@@ -341,6 +342,7 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
 - <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input.
 - <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine.
 - <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based editor toolkit.
+- <a href="/gauge" target="_blank">**Gauge**</a> wraps `smart-webcomponents-react` — and adds **XMLUI theming integration**.
 ]]>
         </Markdown>
 
@@ -348,7 +350,7 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
     </Page>
 
     <Page url="/slider-and-sliderw">
-      <VStack padding="2rem" gap="2rem">
+      <VStack padding="2rem" gap="0">
 
         <H1>
           Slider and SliderW
@@ -577,7 +579,7 @@ These tests confirm they behave identically for all currently-wrapped features.
     </Page>
 
     <Page url="/slider-vs-sliderw">
-      <VStack padding="2rem" gap="2rem">
+      <VStack padding="2rem" gap="0">
 
         <H1>
           Slider vs SliderW
@@ -828,7 +830,7 @@ If both wrappers forwarded the attribute, it would find **2 matches**.
     </Page>
 
     <Page url="/knob">
-      <VStack padding="2rem" gap="2rem">
+      <VStack padding="2rem" gap="0">
 
         <H1>
           Knob
@@ -848,7 +850,7 @@ Drag up/down on the knob to change the value, or use the buttons below.
           <H2>
             Basic: 0–100
           </H2>
-          <HStack alignItems="center" gap="2rem">
+          <HStack alignItems="center" gap="0">
             <Knob
               id="k1"
               minValue="0"
@@ -877,7 +879,7 @@ Drag up/down on the knob to change the value, or use the buttons below.
           <H2>
             Custom range: 0–1000, step 50
           </H2>
-          <HStack alignItems="center" gap="2rem">
+          <HStack alignItems="center" gap="0">
             <Knob
               id="k2"
               minValue="0"
@@ -902,7 +904,7 @@ Drag up/down on the knob to change the value, or use the buttons below.
     </Page>
 
     <Page url="/code-editor">
-      <VStack padding="2rem" gap="2rem">
+      <VStack padding="2rem" gap="0">
 
         <H1>
           CodeEditor
@@ -964,7 +966,7 @@ Edit the markdown below and watch the rendered preview update in real time.
     </Page>
 
     <Page url="/tiptap-editor">
-      <VStack padding="2rem" gap="2rem">
+      <VStack padding="2rem" gap="0">
 
         <H1>Tiptap Support Ticket</H1>
 
@@ -1080,6 +1082,303 @@ export const tiptapEditorComponentRenderer = wrapCompound(
 
       </VStack>
     </Page>
+
+  <Page url="/gauge">
+    <VStack padding="2rem" gap="0">
+
+      <H1>Gauge + Theming</H1>
+
+      <Markdown><![CDATA[
+So far we've ignored a key aspect of XMLUI: [themes](https://docs.xmlui.org/themes-intro). The SliderW example responds to XMLUI theme settings because it inherits CSS from Slider.
+
+```
+import styles from "./Slider.module.scss";
+```
+]]></Markdown>
+
+<ExpandableItem
+  summary="Slider.module.scss">
+       <Markdown>
+            <![CDATA[
+```scss
+@use "../../components-core/theming/themes" as t;
+
+// --- This code snippet is required to collect the theme variables used in this module
+$themeVars: ();
+@function createThemeVar($componentVariable) {
+  $themeVars: t.appendThemeVar($themeVars, $componentVariable) !global;
+  @return t.getThemeVar($themeVars, $componentVariable);
+}
+
+$componentName: "Slider";
+
+// Variables for default variant
+$borderRadius-Slider--default: createThemeVar("Input:borderRadius-#{$componentName}--default");
+$borderColor-Slider--default: createThemeVar("Input:borderColor-#{$componentName}--default");
+$borderWidth-Slider--default: createThemeVar("Input:borderWidth-#{$componentName}--default");
+$borderStyle-Slider--default: createThemeVar("Input:borderStyle-#{$componentName}--default");
+$boxShadow-Slider--default: createThemeVar("Input:boxShadow-#{$componentName}--default");
+// ... more variants (error, warning, success) ...
+
+// Variables for @layer section
+$backgroundColor-track-Slider: createThemeVar("Input:backgroundColor-track-#{$componentName}");
+$backgroundColor-range-Slider: createThemeVar("Input:backgroundColor-range-#{$componentName}");
+$borderWidth-thumb-Slider: createThemeVar("Input:borderWidth-thumb-#{$componentName}");
+$backgroundColor-thumb-Slider: createThemeVar("Input:backgroundColor-thumb-#{$componentName}");
+// ... more variables ...
+
+@layer components {
+  .sliderTrack {
+    background-color: $backgroundColor-track-Slider;
+    // ...
+  }
+  .sliderThumb {
+    background-color: $backgroundColor-thumb-Slider;
+    // ...
+  }
+}
+
+:export {
+  themeVars: t.json-stringify($themeVars);
+}
+```
+]]></Markdown>
+</ExpandableItem>
+
+      <Markdown><![CDATA[
+We've provided no `.scss` for `Knob`, `Monaco`, and `TipTap`. This isn't something we can just wrap in a function. The SCSS boilerplate is component-specific and largely irreducible. Monaco and TipTap already have rich styling systems. Rather than duplicating them it would make sense to bridge them, for example by passing `--xmlui-color-primary` into Tiptap's toolbar button styles via CSS custom properties, or mapping XMLUI's light/dark mode to Monaco's theme prop.
+
+Let's explore that idea with another library, [Smart UI](https://www.htmlelements.com/). The Smart UI [Gauge](https://www.htmlelements.com/docs/gauge/) can be wrapped using the methods we've already seen -- and we can add an SCSS theming bridge that connects Smart UI's SVG styling to XMLUI's design tokens.
+
+### The problem
+
+Smart UI Gauge renders using its own CSS custom properties (`--smart-background`, `--smart-primary`, etc.) and hardcodes some SVG `fill` attributes inline. Meanwhile, XMLUI's theme system uses CSS custom properties backed by design tokens like `$color-primary` and `$color-surface-50`.
+
+### The bridge
+
+An SCSS module declares three XMLUI theme variables and maps them to Smart UI's own CSS custom properties:
+
+```scss
+$backgroundColor-Gauge: createThemeVar("Input:backgroundColor-#{$componentName}");
+$textColor-Gauge:       createThemeVar("Input:textColor-#{$componentName}");
+$primaryColor-Gauge:    createThemeVar("Input:primaryColor-#{$componentName}");
+
+:global(smart-gauge) {
+  --smart-background: #{$backgroundColor-Gauge};
+  --smart-primary:    #{$primaryColor-Gauge};
+  --smart-surface:    #{$backgroundColor-Gauge};
+}
+```
+
+The `defaultThemeVars` in the metadata maps these to XMLUI design tokens:
+
+```typescript
+defaultThemeVars: {
+  "backgroundColor-Gauge": "$color-surface-50",
+  "textColor-Gauge":       "$textColor-primary",
+  "primaryColor-Gauge":    "$color-primary",
+},
+```
+
+Result: the Gauge automatically respects the current XMLUI theme and light/dark mode with no theme code in the render component.
+
+Use the theme selector below to switch between the default theme and `earthtone` (defined by just three color values: `color-primary`, `color-secondary`, `color-surface`). Use the tone switch to toggle light/dark mode. Both cascade through the bridge into the Gauge.
+]]></Markdown>
+
+      <Card var.gaugeVal="42">
+        <HStack alignItems="center">
+          <Gauge
+            id="g1"
+            minValue="0"
+            maxValue="100"
+            initialValue="42"
+            analogDisplayType="needle"
+            digitalDisplay="{true}"
+            onDidChange="{(v) => gaugeVal = v}" />
+          <VStack>
+            <Text>Value: {gaugeVal}</Text>
+            <Select
+              label="Theme"
+              initialValue="xmlui"
+              onDidChange="{ (newTheme) => setTheme(newTheme) }"
+            >
+              <Option value="xmlui" label="default"/>
+              <Option value="earthtone" label="earthtone"/>
+            </Select>
+            <ToneSwitch />
+            <HStack gap="0.5rem">
+              <Button size="sm" onClick="{g1.setValue(0)}">Set 0</Button>
+              <Button size="sm" onClick="{g1.setValue(50)}">Set 50</Button>
+              <Button size="sm" onClick="{g1.setValue(100)}">Set 100</Button>
+            </HStack>
+          </VStack>
+        </HStack>
+      </Card>
+
+      <Markdown><![CDATA[
+### How the theming bridge works
+
+Three pieces connect Smart UI's styling to XMLUI's design tokens:
+
+1. The SCSS module declares XMLUI theme variables and maps them to Smart UI's own CSS custom properties (`--smart-background`, `--smart-primary`, etc.).
+2. The `defaultThemeVars` in `GaugeWrapped.tsx` maps each SCSS variable to an XMLUI design token (e.g. `$color-primary`, `$textColor-primary`) that automatically adapts to light/dark mode.
+3. The render component (`GaugeRender.tsx`) is pure React -- it imports only Smart UI's Gauge and the SCSS module. It uses `classnames(styles.gaugeContainer, className)` on the outer div, which is what connects the theming bridge to the DOM. No XMLUI imports, no theme logic.
+
+### The pattern
+
+For any third-party component with CSS-accessible styling:
+
+1. Write an SCSS module that maps XMLUI `createThemeVar` calls to the library's CSS selectors
+2. Add `defaultThemeVars` to your `wrapCompound` config, mapping each variable to XMLUI design tokens
+3. Apply the SCSS module class in your render component via `classnames`
+
+The `wrapCompound` plumbing handles everything else: state, events, APIs, and trace events -- exactly as shown in the earlier sections.
+
+### The strategy
+
+Consider a line like this from the SCSS module:
+
+```scss
+$backgroundColor-Gauge: createThemeVar("Input:backgroundColor-#{$componentName}");
+```
+
+The `Input:` prefix places this variable in the Input category of XMLUI's theme variable taxonomy. How did we know to use `Input:` rather than, say, `Display:` or just the bare variable name? And how did we know that `$color-surface-50` and `$textColor-primary` were the right tokens to map to in `defaultThemeVars`?
+
+XMLUI has thousands of theme variables organized into categories. To navigate this vocabulary we used [xmlui-mcp](https://www.npmjs.com/package/@anthropic/xmlui-mcp), a Model Context Protocol server that gives Claude access to XMLUI's documentation, component source, and theme variable definitions. When asked "what tokens control background color for input-style components?", the MCP server searched the theme variable defaults and found the `Input:backgroundColor-*` pattern used by Slider, TextBox, and other input components. Similarly, searching for "text color" surfaced `$textColor-primary` (which resolves to `$color-surface-950` and automatically inverts in dark mode).
+
+The MCP server also helped us discover Smart UI's own CSS custom properties (`--smart-background`, `--smart-primary`, etc.) by searching the library's source. This led to the key insight: instead of targeting individual SVG class selectors, we could map XMLUI tokens to Smart UI's own theming API, reducing the bridge from ~15 variables to just three.
+
+We recommend xmlui-mcp as a tool for discovering the right tokens when building theme bridges for new components.
+]]></Markdown>
+
+      <VStack gap="0">
+      <ExpandableItem summary="GaugeRender.tsx -- pure React, no XMLUI imports">
+        <Markdown><![CDATA[
+```typescript
+import React, { useCallback, useEffect, useRef } from "react";
+import { forwardRef } from "react";
+import { Gauge } from "smart-webcomponents-react/gauge";
+import "smart-webcomponents-react/source/styles/smart.default.css";
+import styles from "./Gauge.module.scss";
+import classnames from "classnames";
+
+export const GaugeRender = forwardRef(({
+  value, onChange, registerApi, className,
+  min = 0, max = 100,
+  analogDisplayType = "needle",
+  digitalDisplay = false,
+  startAngle = -30, endAngle = 210,
+  scalePosition = "inside",
+  animation = "none",
+  unit = "", showUnit = false,
+  enabled = true,
+  ...rest
+}: any, ref: any) => {
+  const gaugeRef = useRef<any>(null);
+  const numValue = typeof value === "number" ? value : min;
+
+  useEffect(() => {
+    registerApi?.({
+      focus: () => gaugeRef.current?.focus(),
+      setValue: (v: any) => onChange?.(Number(v)),
+    });
+  }, [registerApi, onChange]);
+
+  const handleChange = useCallback((event: any) => {
+    const newVal = event?.detail?.value ?? event?.detail;
+    if (newVal != null) onChange(Math.round(Number(newVal) * 100) / 100);
+  }, [onChange]);
+
+  return (
+    <div ref={ref} className={classnames(styles.gaugeContainer, className)} {...rest}>
+      <Gauge
+        ref={gaugeRef}
+        value={numValue}
+        min={min} max={max}
+        analogDisplayType={analogDisplayType}
+        digitalDisplay={digitalDisplay}
+        startAngle={startAngle} endAngle={endAngle}
+        scalePosition={scalePosition}
+        animation={animation}
+        unit={unit} showUnit={showUnit}
+        disabled={!enabled}
+        onChange={handleChange}
+      />
+    </div>
+  );
+});
+
+GaugeRender.displayName = "GaugeRender";
+```
+]]></Markdown>
+      </ExpandableItem>
+
+      <ExpandableItem summary="GaugeWrapped.tsx -- wrapCompound config with theming">
+        <Markdown><![CDATA[
+```typescript
+import { GaugeRender } from "./GaugeRender";
+import styles from "./Gauge.module.scss";
+import { parseScssVar } from "../../components-core/theming/themeVars";
+import { wrapCompound } from "../../components-core/wrapComponent";
+import {
+  createMetadata, d, dDidChange, dEnabled, dInitialValue,
+} from "../metadata-helpers";
+
+const COMP = "Gauge";
+
+export const GaugeMd = createMetadata({
+  status: "experimental",
+  description: "`Gauge` wraps the Smart UI Gauge web component...",
+  props: {
+    initialValue: dInitialValue(),
+    minValue: { description: "Minimum value.", valueType: "number", defaultValue: 0 },
+    maxValue: { description: "Maximum value.", valueType: "number", defaultValue: 100 },
+    analogDisplayType: d("Display type: 'needle', 'fill', or 'line'.", undefined, "string", "needle"),
+    digitalDisplay: d("Show digital value display.", undefined, "boolean", false),
+    // ... more props ...
+    enabled: dEnabled(),
+  },
+  events: { didChange: dDidChange(COMP) },
+  apis: {
+    setValue: { description: "Sets the gauge value.", signature: "setValue(value: number): void" },
+    focus: { description: "Sets focus on the gauge.", signature: "focus(): void" },
+  },
+  themeVars: parseScssVar(styles.themeVars),
+  defaultThemeVars: {
+    [`backgroundColor-${COMP}`]: "$color-surface-50",
+    [`textColor-${COMP}`]: "$textColor-primary",
+    [`primaryColor-${COMP}`]: "$color-primary",
+  },
+});
+
+export const gaugeComponentRenderer = wrapCompound(COMP, GaugeRender, GaugeMd, {
+  booleans: ["enabled", "digitalDisplay", "showUnit"],
+  numbers: ["minValue", "maxValue", "startAngle", "endAngle"],
+  strings: ["analogDisplayType", "scalePosition", "animation", "unit"],
+  events: { didChange: "onDidChange" },
+  rename: { minValue: "min", maxValue: "max" },
+  parseInitialValue: (raw, props) => {
+    const min = Number(props.min) || 0;
+    const max = Number(props.max) || 100;
+    let val = typeof raw === "string" ? parseFloat(raw) : raw;
+    if (val == null || isNaN(val)) val = min;
+    return Math.min(max, Math.max(min, Number(val)));
+  },
+  formatExternalValue: (value, props) => {
+    const min = Number(props.min) || 0;
+    const max = Number(props.max) || 100;
+    const val = Number(value);
+    if (isNaN(val)) return min;
+    return Math.min(max, Math.max(min, val));
+  },
+});
+```
+]]></Markdown>
+      </ExpandableItem>
+      </VStack>
+
+    </VStack>
+  </Page>
 
 
   </Pages>
