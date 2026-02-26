@@ -338,9 +338,9 @@ export const SliderRender = forwardRef(({
 
 Everything above wraps Radix UI components. But `wrapCompound` is library-agnostic — it handles the XMLUI state lifecycle for any React component.
 
-- <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input. ~60 lines of pure React.
-- <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine. ~30 lines of pure React.
-- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based rich-text editor with configurable toolbar. ~400 lines of pure React.
+- <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input.
+- <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine.
+- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based rich-text editor with configurable toolbar.
 ]]>
         </Markdown>
 
