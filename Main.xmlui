@@ -586,12 +586,12 @@ These tests confirm they behave identically for all currently-wrapped features.
         <Markdown>
           <![CDATA[
 These tests show what **SliderW** can do that **Slider** can't.
-fi`SliderNative.tsx` accepts props that the hand-written renderer never forwards.
+`SliderNative.tsx` accepts props that the hand-written renderer never forwards.
 `wrapComponent` forwards everything automatically, so these "just work."
 
 ## Tracing
 
-Open the inspector (gear icon) and compare what happens when you move each slider. **Slider** produces only handler execution events (`handler:start`, `state:changes`, `handler:complete`) — it tells you *code ran*. **SliderW** also produces semantic behavioral events like `value:change SliderW "60"` and `focus:change` — it tells you *what the user did*. These are the events that [trace-tools](https://github.com/xmlui-org/trace-tools) needs to generate Playwright test steps and compare traces across runs. The hand-written renderer is invisible to the trace system; `wrapComponent` makes every wrapped component traceable for free.
+Open the inspector (gear icon) and compare what happens when you move each slider. **Slider** produces only handler execution events (`handler:start`, `state:changes`, `handler:complete`) — it tells you *code ran*. **SliderW** also produces semantic behavioral events like `value:change SliderW "60"` and `focus:change` — it tells you *what the user did*. These are the events that [trace-tools](https://github.com/xmlui-org/trace-tools) needs to generate Playwright test steps and compare traces across runs. The hand-written renderer is invisible to the trace system; `wrapComponent` makes every wrapped component traceable.
 ]]>
         </Markdown>
 
@@ -620,8 +620,6 @@ When `wrapComponent` forwards props like `aria-label` to the native element, it 
 **Accessibility**: Screen readers announce the slider by name — "Slider W" rather than just "slider."
 
 **Automation**: Playwright can locate the element with `getByRole('slider', { name: 'Slider W' })` instead of fragile CSS selectors. And because `wrapComponent` also emits `value:change` trace events, the trace-tools pipeline can auto-generate assertions like `toHaveAttribute('aria-valuenow', '55')`.
-
-The hand-written **Slider** renderer drops `aria-label` on the floor and emits no `value:change` events. It's invisible to both screen readers and the trace-based test generator.
 
 Here's the pipeline in action. Two journeys exercise **SliderW**: one replays a session where the slider reached 55 (the baseline value), and the other simulates a regression where the slider stops at 60. The `test.sh run` command captures a trace, distills it, generates a Playwright test with value assertions, and compares the semantic trace against the baseline.
 
