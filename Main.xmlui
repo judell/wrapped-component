@@ -1,36 +1,50 @@
-<App layout="vertical">
+<App layout="vertical-sticky" name="Wrapping React components for XMLUI">
+  <AppHeader>
+    <Text fontWeight="bold">
+      Wrapping React components for XMLUI
+    </Text>
+    <SpaceFiller />
+    <Icon
+      name="cog"
+      tooltip="Inspector"
+      width="20px"
+      height="20px"
+      onClick="inspectorDialog.open()" />
+  </AppHeader>
+
   <NavPanel>
     <NavLink label="Home" to="/" />
     <NavGroup label="Slider" initiallyExpanded="{true}">
       <NavLink label="Slider and SliderW" to="/slider-and-sliderw" />
       <NavLink label="Slider vs SliderW" to="/slider-vs-sliderw" />
     </NavGroup>
+    <NavLink label="Knob" to="/knob" />
+    <NavLink label="CodeEditor" to="/code-editor" />
+    <NavLink label="Support Ticket" to="/tiptap-editor" />
+    <NavLink label="Source" to="/source" />
   </NavPanel>
 
   <Pages>
 
     <Page url="/">
       <VStack padding="2rem" gap="1.5rem">
-        <H1>Wrapping React components for XMLUI</H1>
+        <Markdown>
+          <![CDATA[
 
-        <Markdown><![CDATA[
-## The problem
+Every XMLUI component that wraps a React component needs plumbing — a **renderer** that bridges XMLUI markup to React props, plus **state management** that handles value lifecycle (`initialValue` parsing, `updateState` calls, external value syncing, component API registration). Today, all of this is written by hand.
 
-Every XMLUI component that wraps a React component needs a **renderer** — a function that bridges XMLUI markup to React props. Today, these renderers are written by hand.
+For a component like **Slider**, wrapping Radix's slider for XMLUI requires:
 
-For a component like **Slider**, that means ~40 lines of mechanical mapping code:
+- A **renderer** (~40 lines): calling `extractValue` for each prop, `lookupEventHandler` for each event, `lookupSyncCallback` for each callback, and manually forwarding plumbing like `className`, `registerComponentApi`, `updateState`, and `state.value`
+- A **native component** (~347 lines): `useState`/`useEffect` for `initialValue` parsing, value syncing, `updateState` calls, `registerComponentApi` wiring, and the actual Radix assembly
 
-- Calling `extractValue` for each prop
-- Calling `extractValue.asOptionalBoolean` for each boolean prop
-- Calling `lookupEventHandler` for each event
-- Calling `lookupSyncCallback` for each callback
-- Manually forwarding plumbing like `className`, `registerComponentApi`, `updateState`, and `state.value`
-
-This approach has two problems:
+This approach has three problems:
 
 1. **Boilerplate.** The mapping code is tedious to write and review.
 
-2. **Incomplete coverage.** Because every prop must be explicitly listed, props that the native React component already supports get silently dropped. The wrapper becomes a bottleneck that filters out capabilities.
+2. **Incomplete coverage.** Because every prop must be explicitly listed in the renderer, props that the native React component already supports get silently dropped.
+
+3. **Duplicated plumbing.** The state lifecycle code (parse initial value, sync external changes, call updateState, register APIs) is nearly identical across every stateful component, but each one reimplements it from scratch.
 
 ## A first-pass solution
 
@@ -41,19 +55,1002 @@ This approach has two problems:
 - **Slider** is the hand-written original (40-line renderer).
 - **SliderW** uses `wrapComponent` (13 lines), wrapping the exact same `SliderNative.tsx`.
 
-The **Slider and SliderW** page confirms they behave identically for all currently-wrapped features.
+The <a href="/slider-and-sliderw" target="_blank">Slider and SliderW</a> page confirms they behave identically for all currently-wrapped features.
 
-The **Slider vs SliderW** page shows what **SliderW** can do that **Slider** can't — native props like `inverted`, `title`, and `tabIndex` that the hand-written renderer never forwarded.
+The <a href="/slider-vs-sliderw" target="_blank">Slider vs SliderW</a> page shows what **SliderW** can do that **Slider** can't. Here is every prop in the `SliderNative` Props type that the hand-written renderer silently drops:
+
+| Dropped prop | What it does |
+|---|---|
+| **inverted** | Reverses the slider direction (Radix UI) |
+| **style** | Direct CSS styles on the slider container |
+| **tabIndex** | Controls keyboard focus order |
+
+`SliderNative` also spreads `...rest` onto its outer `<div>`, so standard HTML attributes are accepted but never reach it:
+
+| Dropped HTML attr | What it does |
+|---|---|
+| **title** | Native browser tooltip on hover |
+| **aria-label** | Accessible name for screen readers and test automation |
+| **aria-describedby** | Links to a description element |
+
+With `wrapComponent`, all of these forward automatically because unrecognized props flow through `extractValue` by default.
+
+## A second-pass solution: `wrapCompound`
+
+`wrapComponent` eliminates the hand-written renderer, but you still write **SliderNative.tsx** (347 lines) — the React component that manages local value state, parses `initialValue`, syncs external value changes, calls `updateState`, registers component APIs, and assembles the Radix compound structure.
+
+Look at what's in those 347 lines:
+
+- `useState` + `useEffect` to parse and set `initialValue` on mount
+- `useEffect` to sync when external `state.value` changes
+- `updateState({ value })` calls to push changes back to XMLUI
+- `registerComponentApi` wiring for `focus()` and `setValue()`
+- Clamping and formatting logic for min/max bounds
+
+None of that is slider-specific. Every Radix compound component (RadioGroup, Toggle, Accordion, Tabs) needs the same state lifecycle. The only part that's genuinely unique to Slider is the Radix assembly: `Root > Track > Range > Thumb[]` with tooltip wiring.
+
+`wrapCompound` is a new function that creates a **StateWrapper** — a React component that handles all of the above generically. It receives two optional hooks in its config:
+
+- **`parseInitialValue(raw, props)`** — component-specific parsing (e.g., Slider needs to parse JSON arrays and clamp to min/max)
+- **`formatExternalValue(value, props)`** — normalize incoming values (e.g., ensure they're arrays, clamped to bounds)
+
+The StateWrapper manages local state, fires `updateState` on changes, and passes three clean props to your render component: `value`, `onChange`, and `registerApi`. Your component never imports anything from XMLUI — it's pure React.
+
+## What you write at each stage
+
+Today, wrapping Radix's slider for XMLUI requires two files: **SliderNative.tsx** (the React component — 347 lines of state management, value parsing, updateState plumbing, and Radix assembly) plus **Slider.tsx** (the hand-written renderer — 40 lines of prop mapping). Total: **387 lines**.
+
+`wrapComponent` eliminates the renderer. You still write SliderNative.tsx unchanged, but replace the 40-line renderer with a 13-line config. Total: **360 lines**.
+
+`wrapCompound` eliminates the XMLUI plumbing from the native component. You write only **SliderRender.tsx** — 109 lines of pure React that receives `value`, `onChange`, and `registerApi` and just assembles the Radix compound structure. No `updateState`, no `initialValue` useEffect, no value sync, no XMLUI imports. Total: **109 lines**.
+
+The test we built in phase 1 validated the final refactor. Same baselines, same generated Playwright assertions, same semantic trace comparison. `slider-pass` still PASSES, `slider-fail` still FAILS with the correct value mismatch. The behavioral contract is preserved across the rewrite.
+]]>
+        </Markdown>
+
+        <ExpandableItem
+          summary="What you write today: Slider.tsx + SliderNative.tsx (387 lines)">
+          <Markdown>
+            <![CDATA[
+**Slider.tsx** — the hand-written renderer (40 lines):
+```typescript
+export const sliderComponentRenderer = createComponentRenderer(
+  COMP,
+  SliderMd,
+  ({
+    node, extractValue, lookupEventHandler, lookupSyncCallback,
+    className, updateState, state, registerComponentApi,
+  }) => {
+    return (
+      <Slider
+        validationStatus={extractValue(node.props.validationStatus)}
+        minStepsBetweenThumbs={extractValue(node.props?.minStepsBetweenThumbs)}
+        value={state.value}
+        initialValue={extractValue(node.props.initialValue)}
+        updateState={updateState}
+        onDidChange={lookupEventHandler("didChange")}
+        onFocus={lookupEventHandler("gotFocus")}
+        onBlur={lookupEventHandler("lostFocus")}
+        registerComponentApi={registerComponentApi}
+        className={className}
+        step={extractValue(node.props?.step)}
+        min={extractValue(node.props?.minValue)}
+        max={extractValue(node.props?.maxValue)}
+        enabled={extractValue.asOptionalBoolean(node.props?.enabled)}
+        autoFocus={extractValue.asOptionalBoolean(node.props.autoFocus)}
+        readOnly={extractValue.asOptionalBoolean(node.props.readOnly)}
+        required={extractValue.asOptionalBoolean(node.props.required)}
+        rangeStyle={extractValue(node.props?.rangeStyle)}
+        thumbStyle={extractValue(node.props?.thumbStyle)}
+        showValues={extractValue.asOptionalBoolean(node.props?.showValues)}
+        valueFormat={lookupSyncCallback(node.props?.valueFormat)}
+      />
+    );
+  },
+);
+```
+
+Plus **SliderNative.tsx** — 347 lines including state management, initialValue parsing, value syncing, updateState calls, registerComponentApi, tooltip state, and Radix assembly. Every prop must be explicitly listed in both files.
+]]>
+          </Markdown>
+        </ExpandableItem>
+
+        <ExpandableItem
+          summary="What you write with wrapComponent: SliderNative.tsx + config (360 lines)">
+          <Markdown>
+            <![CDATA[
+The 40-line renderer is replaced by a 13-line config:
+```typescript
+export const sliderWrappedComponentRenderer = wrapComponent("SliderW", Slider, SliderMd, {
+  booleans: ["enabled", "autoFocus", "readOnly", "required", "showValues"],
+  events: {
+    didChange: "onDidChange",
+    gotFocus: "onFocus",
+    lostFocus: "onBlur",
+  },
+  callbacks: {
+    valueFormat: "valueFormat",
+  },
+  rename: {
+    minValue: "min",
+    maxValue: "max",
+  },
+});
+```
+
+But you still write the full **SliderNative.tsx** (347 lines) unchanged — all the XMLUI plumbing stays.
+]]>
+          </Markdown>
+        </ExpandableItem>
+
+        <ExpandableItem
+          summary="What you write with wrapCompound: SliderRender.tsx (109 lines)">
+          <Markdown>
+            <![CDATA[
+Pure React. No XMLUI imports. Receives `value`, `onChange`, and `registerApi` from the engine.
+```typescript
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef } from "react";
+import { Root, Range, Track, Thumb } from "@radix-ui/react-slider";
+import classnames from "classnames";
+import styles from "./Slider.module.scss";
+import { Tooltip } from "../Tooltip/TooltipNative";
+
+export const SliderRender = forwardRef(({
+  value, onChange, registerApi, className,
+  min = 0, max = 10, step = 1, inverted, enabled = true, readOnly,
+  required, autoFocus, tabIndex = -1, validationStatus = "none",
+  minStepsBetweenThumbs = 1, rangeStyle, thumbStyle,
+  showValues = true, valueFormat = (v: number) => v.toString(),
+  id, ...rest
+}: any, ref: any) => {
+  const inputRef = useRef<any>(null);
+  const thumbsRef = useRef<(HTMLSpanElement | null)[]>([]);
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const displayValue: number[] = Array.isArray(value)
+    ? value : value != null ? [value] : [min];
+
+  useEffect(() => {
+    registerApi?.({
+      focus: () => {
+        const thumb = thumbsRef.current.find(t => t !== null);
+        if (thumb) thumb.focus();
+        else inputRef.current?.focus();
+      },
+      setValue: (v: any) => onChange?.(v),
+    });
+  }, [registerApi, onChange]);
+
+  const handleValueChange = useCallback((vals: number[]) => {
+    if (readOnly) return;
+    if (inputRef.current) inputRef.current.value = vals;
+    onChange(vals.length === 1 ? vals[0] : vals);
+  }, [onChange, readOnly]);
+
+  return (
+    <div {...rest} ref={ref}
+      className={classnames(styles.sliderContainer, className)}>
+      <Root ref={inputRef} value={displayValue}
+        onValueChange={handleValueChange}
+        min={min} max={max} step={step} inverted={inverted}
+        disabled={!enabled} tabIndex={tabIndex}
+        aria-readonly={readOnly}
+        minStepsBetweenThumbs={minStepsBetweenThumbs}
+        className={classnames(styles.sliderRoot, {
+          [styles.disabled]: !enabled, [styles.readOnly]: readOnly,
+        })}
+        onFocus={(e) => { setShowTooltip(true); rest.onFocus?.(e); }}
+        onBlur={(e) => { rest.onBlur?.(e); }}
+        onMouseOver={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        onPointerDown={() => setShowTooltip(true)}>
+        <Track data-track
+          className={classnames(styles.sliderTrack, {
+            [styles.disabled]: !enabled, [styles.readOnly]: readOnly,
+            [styles.error]: validationStatus === "error",
+            [styles.warning]: validationStatus === "warning",
+            [styles.valid]: validationStatus === "valid",
+          })} style={rangeStyle ? { ...rangeStyle } : undefined}>
+          <Range data-range className={classnames(styles.sliderRange, {
+            [styles.disabled]: !enabled,
+          })} />
+        </Track>
+        {displayValue.map((_, index) => (
+          <Tooltip key={index} text={valueFormat(displayValue[index])}
+            delayDuration={100} open={showValues && showTooltip}>
+            <Thumb id={id} aria-required={required}
+              ref={(el) => { thumbsRef.current[index] = el; }}
+              className={classnames(styles.sliderThumb, {
+                [styles.disabled]: !enabled,
+              })}
+              style={thumbStyle ? { ...thumbStyle } : undefined}
+              data-thumb-index={index}
+              autoFocus={autoFocus && index === 0} />
+          </Tooltip>
+        ))}
+      </Root>
+    </div>
+  );
+});
+```
+]]>
+          </Markdown>
+        </ExpandableItem>
+
+        <Markdown>
+          <![CDATA[
+## Beyond Radix
+
+Everything above wraps Radix UI components. But `wrapCompound` is library-agnostic — it handles the XMLUI state lifecycle for *any* React component. To prove the point:
+
+- <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input. ~80 lines of pure React.
+- <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine. ~60 lines of pure React.
+- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — the ProseMirror-based rich-text framework. ~280 lines of pure React for a full markdown editor with toolbar, tables, task lists, and undo/redo. The existing [Build a TableEditor](https://docs.xmlui.org/build-editor-component) how-to took 14 steps and ~250 lines for table editing alone.
+
+Same pattern, four completely different libraries (Radix, react-knob-headless, Monaco, Tiptap). Each render component receives `value`, `onChange`, `registerApi` — no XMLUI imports needed.
+]]>
+        </Markdown>
+
+      </VStack>
+    </Page>
+
+    <Page url="/slider-and-sliderw">
+      <VStack padding="2rem" gap="2rem">
+
+        <H1>
+          Slider and SliderW
+        </H1>
+
+        <Markdown>
+          Both components wrap the same `SliderNative.tsx` React component.
+**Slider** uses a hand-written 40-line renderer.
+**SliderW** uses `wrapComponent` (13 lines).
+These tests confirm they behave identically for all currently-wrapped features.
+        </Markdown>
+
+        <!-- === Basic usage === -->
+        <Card var.sliderVal="" var.sliderWVal="">
+          <H2>
+            Basic: default props
+          </H2>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider
+              </Text>
+              <Slider id="s1" onDidChange="{(v) => sliderVal = v}" />
+              <Text>
+                Value: {sliderVal}
+              </Text>
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW
+              </Text>
+              <SliderW id="sw1" onDidChange="{(v) => sliderWVal = v}" />
+              <Text>
+                Value: {sliderWVal}
+              </Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === Custom range === -->
+        <Card var.s2Val="" var.sw2Val="">
+          <H2>
+            Custom range: 0–100, step 10
+          </H2>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider
+              </Text>
+              <Slider
+                id="s2"
+                minValue="0"
+                maxValue="100"
+                step="10"
+                initialValue="50"
+                onDidChange="{(v) => s2Val = v}" />
+              <Text>
+                Value: {s2Val}
+              </Text>
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW
+              </Text>
+              <SliderW
+                id="sw2"
+                minValue="0"
+                maxValue="100"
+                step="10"
+                initialValue="50"
+                onDidChange="{(v) => sw2Val = v}" />
+              <Text>
+                Value: {sw2Val}
+              </Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === Boolean props === -->
+        <Card>
+          <H2>
+            Boolean props: disabled
+          </H2>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider (disabled)
+              </Text>
+              <Slider enabled="{false}" initialValue="5" />
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW (disabled)
+              </Text>
+              <SliderW enabled="{false}" initialValue="5" />
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === ReadOnly === -->
+        <Card>
+          <H2>
+            ReadOnly
+          </H2>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider (readOnly)
+              </Text>
+              <Slider readOnly="{true}" initialValue="7" />
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW (readOnly)
+              </Text>
+              <SliderW readOnly="{true}" initialValue="7" />
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === API: setValue === -->
+        <Card var.s4Val="" var.sw4Val="">
+          <H2>
+            API: setValue / value
+          </H2>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider
+              </Text>
+              <Slider
+                id="s4"
+                minValue="0"
+                maxValue="100"
+                initialValue="25"
+                onDidChange="{(v) => s4Val = v}" />
+              <Text>
+                Value: {s4Val}
+              </Text>
+              <HStack>
+                <Button onClick="{s4.setValue(0)}">
+                  Set 0
+                </Button>
+                <Button onClick="{s4.setValue(50)}">
+                  Set 50
+                </Button>
+                <Button onClick="{s4.setValue(100)}">
+                  Set 100
+                </Button>
+              </HStack>
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW
+              </Text>
+              <SliderW
+                id="sw4"
+                minValue="0"
+                maxValue="100"
+                initialValue="25"
+                onDidChange="{(v) => sw4Val = v}" />
+              <Text>
+                Value: {sw4Val}
+              </Text>
+              <HStack>
+                <Button onClick="{sw4.setValue(0)}">
+                  Set 0
+                </Button>
+                <Button onClick="{sw4.setValue(50)}">
+                  Set 50
+                </Button>
+                <Button onClick="{sw4.setValue(100)}">
+                  Set 100
+                </Button>
+              </HStack>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === Range slider (multiple thumbs) === -->
+        <Card var.s5Val="" var.sw5Val="">
+          <H2>
+            Range slider (two thumbs)
+          </H2>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider
+              </Text>
+              <Slider
+                id="s5"
+                minValue="0"
+                maxValue="100"
+                step="5"
+                initialValue="[20,80]"
+                onDidChange="{(v) => s5Val = JSON.stringify(v)}" />
+              <Text>
+                Value: {s5Val}
+              </Text>
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW
+              </Text>
+              <SliderW
+                id="sw5"
+                minValue="0"
+                maxValue="100"
+                step="5"
+                initialValue="[20,80]"
+                onDidChange="{(v) => sw5Val = JSON.stringify(v)}" />
+              <Text>
+                Value: {sw5Val}
+              </Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+      </VStack>
+    </Page>
+
+    <Page url="/slider-vs-sliderw">
+      <VStack padding="2rem" gap="2rem">
+
+        <H1>
+          Slider vs SliderW
+        </H1>
+
+        <Markdown>
+          <![CDATA[
+These tests show what **SliderW** can do that **Slider** can't.
+`SliderNative.tsx` accepts props that the hand-written renderer never forwards.
+`wrapComponent` forwards everything automatically, so these "just work."
+
+## Tracing
+
+Open the inspector (gear icon) and compare what happens when you move each slider. **Slider** produces only handler execution events (`handler:start`, `state:changes`, `handler:complete`) — it tells you *code ran*. **SliderW** also produces semantic behavioral events like `value:change SliderW "60"` and `focus:change` — it tells you *what the user did*. These are the events that [trace-tools](https://github.com/xmlui-org/trace-tools) needs to generate Playwright test steps and compare traces across runs. The hand-written renderer is invisible to the trace system; `wrapComponent` makes every wrapped component traceable for free.
+]]>
+        </Markdown>
+
+        <HStack>
+          <VStack width="50%">
+            <Text fontWeight="bold">
+              Slider trace
+            </Text>
+            <Image src="slider-trace.png" />
+          </VStack>
+          <SpaceFiller />
+          <VStack width="50%">
+            <Text fontWeight="bold">
+              SliderW trace
+            </Text>
+            <Image src="sliderw-trace.png" />
+          </VStack>
+        </HStack>
+
+        <Markdown>
+          <![CDATA[
+  ## Accessibility and automation
+
+When `wrapComponent` forwards props like `aria-label` to the native element, it lights up two things at once:
+
+**Accessibility**: Screen readers announce the slider by name — "Slider W" rather than just "slider."
+
+**Automation**: Playwright can locate the element with `getByRole('slider', { name: 'Slider W' })` instead of fragile CSS selectors. And because `wrapComponent` also emits `value:change` trace events, the trace-tools pipeline can auto-generate assertions like `toHaveAttribute('aria-valuenow', '55')`.
+
+The hand-written **Slider** renderer drops `aria-label` on the floor and emits no `value:change` events. It's invisible to both screen readers and the trace-based test generator.
+
+Here's the pipeline in action. Two journeys exercise **SliderW**: one replays a session where the slider reached 55 (the baseline value), and the other simulates a regression where the slider stops at 60. The `test.sh run` command captures a trace, distills it, generates a Playwright test with value assertions, and compares the semantic trace against the baseline.
+
+
+
+  <video src="slider-pass-fail.mp4" controls width="100%"></video>
+
+  ]]>
+        </Markdown>
+
+        <!-- === inverted: SliderW only === -->
+        <Card var.s6Val="" var.sw6Val="">
+          <H2>
+            inverted — only works with SliderW
+          </H2>
+          <Markdown>
+            `SliderNative` accepts an `inverted` prop (from Radix) that reverses direction.
+The hand-written **Slider** renderer never forwards it — so it's silently ignored.
+**SliderW** forwards all native props automatically.
+          </Markdown>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider (inverted — ignored)
+              </Text>
+              <Slider
+                inverted="{true}"
+                minValue="0"
+                maxValue="100"
+                step="10"
+                initialValue="70"
+                onDidChange="{(v) => s6Val = v}" />
+              <Text>
+                Value: {s6Val}
+              </Text>
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW (inverted — works)
+              </Text>
+              <SliderW
+                inverted="{true}"
+                minValue="0"
+                maxValue="100"
+                step="10"
+                initialValue="70"
+                onDidChange="{(v) => sw6Val = v}" />
+              <Text>
+                Value: {sw6Val}
+              </Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === title: native tooltip on hover === -->
+        <Card var.s7Val="" var.sw7Val="">
+          <H2>
+            title — native HTML tooltip (hover to see)
+          </H2>
+          <Markdown>
+            `SliderNative` spreads `...rest` onto its outer div, so standard HTML
+attributes like `title` pass through. The hand-written renderer
+never forwards it. Hover each slider to compare.
+          </Markdown>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider (title — ignored)
+              </Text>
+              <Slider
+                title="Pick a temperature"
+                minValue="0"
+                maxValue="100"
+                initialValue="50"
+                onDidChange="{(v) => s7Val = v}" />
+              <Text>
+                Value: {s7Val}
+              </Text>
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW (title — hover me!)
+              </Text>
+              <SliderW
+                title="Pick a temperature"
+                minValue="0"
+                maxValue="100"
+                initialValue="50"
+                onDidChange="{(v) => sw7Val = v}" />
+              <Text>
+                Value: {sw7Val}
+              </Text>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === tabIndex: keyboard focus order === -->
+        <Card>
+          <H2>
+            tabIndex — keyboard focus order (press Tab)
+          </H2>
+          <Markdown>
+            Three sliders with tabIndex 3, 2, 1 — so Tab should visit them
+in reverse visual order (C, B, A). The hand-written renderer
+drops tabIndex, so **Slider** follows default DOM order.
+Click below the sliders, then press Tab repeatedly.
+          </Markdown>
+          <HStack>
+            <VStack gap="1rem" width="50%">
+              <Text fontWeight="bold">
+                Slider (tabIndex — ignored)
+              </Text>
+              <VStack gap="0.25rem">
+                <Text>
+                  A (tabIndex=3):
+                </Text>
+                <Slider tabIndex="3" initialValue="3" />
+              </VStack>
+              <VStack gap="0.25rem">
+                <Text>
+                  B (tabIndex=2):
+                </Text>
+                <Slider tabIndex="2" initialValue="5" />
+              </VStack>
+              <VStack gap="0.25rem">
+                <Text>
+                  C (tabIndex=1):
+                </Text>
+                <Slider tabIndex="1" initialValue="7" />
+              </VStack>
+            </VStack>
+            <SpaceFiller />
+            <VStack gap="1rem" width="50%">
+              <Text fontWeight="bold">
+                SliderW (tabIndex — works: C, B, A)
+              </Text>
+              <VStack gap="0.25rem">
+                <Text>
+                  A (tabIndex=3):
+                </Text>
+                <SliderW tabIndex="3" initialValue="3" />
+              </VStack>
+              <VStack gap="0.25rem">
+                <Text>
+                  B (tabIndex=2):
+                </Text>
+                <SliderW tabIndex="2" initialValue="5" />
+              </VStack>
+              <VStack gap="0.25rem">
+                <Text>
+                  C (tabIndex=1):
+                </Text>
+                <SliderW tabIndex="1" initialValue="7" />
+              </VStack>
+            </VStack>
+          </HStack>
+        </Card>
+
+        <!-- === aria-label: accessible name and test automation === -->
+        <Card>
+          <H2>
+            aria-label — accessible names for automation
+          </H2>
+          <Markdown>
+            <![CDATA[
+The trace-tools pipeline locates elements by aria role and name. Both sliders below
+set `aria-label="Volume"`. Click **Query DOM** to run
+`querySelector('[aria-label="Volume"]')` against each — Playwright's
+`getByRole('slider', { name: 'Volume' })` does the same thing under the hood.
+]]>
+          </Markdown>
+          <HStack>
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                Slider (aria-label — ignored)
+              </Text>
+              <Slider
+                aria-label="Volume"
+                minValue="0"
+                maxValue="100"
+                initialValue="50" />
+            </VStack>
+            <SpaceFiller />
+            <VStack width="50%">
+              <Text fontWeight="bold">
+                SliderW (aria-label — works)
+              </Text>
+              <SliderW
+                aria-label="Volume"
+                minValue="0"
+                maxValue="100"
+                initialValue="50" />
+            </VStack>
+          </HStack>
+          <Markdown>
+            <![CDATA[
+**Expected result:** `querySelectorAll('[aria-label="Volume"]')` finds **1 match** (SliderW only).
+If both wrappers forwarded the attribute, it would find **2 matches**.
+]]>
+          </Markdown>
+        </Card>
+
+      </VStack>
+    </Page>
+
+    <Page url="/knob">
+      <VStack padding="2rem" gap="2rem">
+
+        <H1>
+          Knob
+        </H1>
+
+        <Markdown>
+          <![CDATA[
+**Knob** wraps [react-knob-headless](https://github.com/satelllte/react-knob-headless) — an unstyled, accessible knob primitive. It's not Radix. It's not even the same API shape. But `wrapCompound` doesn't care: it handles the XMLUI state lifecycle (`initialValue`, `updateState`, `didChange`, component APIs) for any React component that takes `value` and `onChange`.
+
+The render component (**KnobRender.tsx**) is ~80 lines of pure React. The wrapCompound config (**KnobWrapped.tsx**) is ~30 lines. No hand-written renderer, no XMLUI imports in the render component.
+
+Drag up/down on the knob to change the value, or use the buttons below.
+]]>
+        </Markdown>
+
+        <Card var.knobVal="">
+          <H2>
+            Basic: 0–100
+          </H2>
+          <HStack alignItems="center" gap="2rem">
+            <Knob
+              id="k1"
+              minValue="0"
+              maxValue="100"
+              step="1"
+              initialValue="50"
+              onDidChange="{(v) => knobVal = v}" />
+            <Text>
+              Value: {knobVal}
+            </Text>
+          </HStack>
+          <HStack>
+            <Button onClick="{k1.setValue(0)}">
+              Set 0
+            </Button>
+            <Button onClick="{k1.setValue(50)}">
+              Set 50
+            </Button>
+            <Button onClick="{k1.setValue(100)}">
+              Set 100
+            </Button>
+          </HStack>
+        </Card>
+
+        <Card var.knobVal2="">
+          <H2>
+            Custom range: 0–1000, step 50
+          </H2>
+          <HStack alignItems="center" gap="2rem">
+            <Knob
+              id="k2"
+              minValue="0"
+              maxValue="1000"
+              step="50"
+              initialValue="500"
+              onDidChange="{(v) => knobVal2 = v}" />
+            <Text>
+              Value: {knobVal2}
+            </Text>
+          </HStack>
+        </Card>
+
+        <Card>
+          <H2>
+            Disabled
+          </H2>
+          <Knob enabled="{false}" initialValue="75" />
+        </Card>
+
+      </VStack>
+    </Page>
+
+    <Page url="/code-editor">
+      <VStack padding="2rem" gap="2rem">
+
+        <H1>
+          CodeEditor
+        </H1>
+
+        <Markdown>
+          <![CDATA[
+**CodeEditor** wraps [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react) — the Monaco Editor that powers VS Code. `wrapCompound` handles it the same way as Slider and Knob: the render component is ~60 lines of pure React, the config is ~15 lines.
+
+Edit the markdown below and watch the rendered preview update in real time.
+]]>
+        </Markdown>
+
+        <Card
+          var.mdVal="{'# wrapCompound\n\nIt works with **any** React component library.'}"
+          var.showLineNums="{true}">
+          <H2>
+            Markdown editor with live preview
+          </H2>
+          <HStack>
+            <Switch
+              label="Line numbers"
+              initialValue="{true}"
+              onDidChange="{(v) => showLineNums = v}" />
+          </HStack>
+          <HStack>
+            <Card width="50%">
+              <CodeEditor
+                id="ce1"
+                language="markdown"
+                theme="vs"
+                height="300px"
+                wordWrap="{true}"
+                minimap="{false}"
+                lineNumbers="{showLineNums}"
+                initialValue="{'# wrapCompound\n\nIt works with **any** React component library.'}"
+                onDidChange="{(v) => mdVal = v}" />
+            </Card>
+            <Card width="50%">
+              <Markdown>
+                {mdVal}
+              </Markdown>
+            </Card>
+          </HStack>
+        </Card>
+
+        <Text>
+          Here's the XMLUI markup
+        </Text>
+
+        <Image src="xmlui-markup.png" />
+
+        <Text>
+          And of course it can be traced.
+        </Text>
+        <Image src="markdown-trace.png" />
+
+      </VStack>
+    </Page>
+
+    <Page url="/tiptap-editor">
+      <VStack padding="2rem" gap="2rem">
+
+        <H1>Support Ticket</H1>
+
+        <Markdown><![CDATA[
+`TiptapEditor` wraps [Tiptap](https://tiptap.dev) via `wrapCompound`. The system looks up the customer's account data and populates the reply template. The rep reviews, adds a personal note, and sends.
 ]]></Markdown>
 
-        <ExpandableItem summary="wrapComponent source code">
+        <DataSource id="ticket" url="ticket.json" />
+
+        <Card when="{ticket.value}" var.sent="{false}" var.replyBody="{'Hi ' + ticket.value.contact + ',\n\nHere is your current billing summary:\n\n| | |\n| --- | --- |\n| **Plan** | ' + ticket.value.account.plan + ' |\n| **Rate** | $' + ticket.value.account.monthlyRate + '/' + ticket.value.account.billingCycle + ' |\n| **Status** | ' + ticket.value.account.status + ' |\n| **Balance** | $' + ticket.value.account.balance + ' |\n| **Last payment** | $' + ticket.value.account.lastPayment.amount + ' on ' + ticket.value.account.lastPayment.date + ' |\n| **Next invoice** | ' + ticket.value.account.nextInvoice + ' |\n\n*[Add your note here]*\n\nBest regards,\nSupport Team'}">
+
+          <Text>From: {ticket.value.contact} ({ticket.value.company})</Text>
+          <Text>Subject: {ticket.value.subject}</Text>
+          <Text>Ticket: {ticket.value.id}</Text>
+
+          <Card padding="1rem" backgroundColor="#f9f9f9">
+            <Text>{ticket.value.message}</Text>
+          </Card>
+
+          <Text when="{!sent}" fontWeight="bold">Your reply</Text>
+          <Tabs when="{!sent}">
+            <TabItem label="Edit">
+              <TiptapEditor id="te1" height="400px"
+                toolbarItems="bold,italic,bulletList,link,undo,redo"
+                placeholder="Write your reply..."
+                initialValue="{replyBody}"
+                onDidChange="(v) => replyBody = v" />
+            </TabItem>
+            <TabItem label="Preview">
+              <Markdown>{replyBody}</Markdown>
+            </TabItem>
+          </Tabs>
+
+          <Button
+            when="{!sent}"
+            onClick="sent = true">
+            Send Reply
+          </Button>
+
+          <Card when="{sent}">
+            <Text fontWeight="bold">Sent by Alex Chen on Feb 26, 2025</Text>
+            <Markdown>{replyBody}</Markdown>
+          </Card>
+        </Card>
+
+        <ExpandableItem summary="TiptapEditorWrapped.tsx — wrapCompound config (61 lines)">
           <Markdown><![CDATA[
 ```typescript
-import React from "react";
-import type { ComponentMetadata } from "../abstractions/ComponentDefs";
-import type { ComponentRendererDef } from "../abstractions/RendererDefs";
-import { createComponentRenderer } from "./renderers";
+import { TiptapEditorRender } from "./TiptapEditorRender";
+import { wrapCompound } from "../../components-core/wrapComponent";
+import {
+  createMetadata,
+  d,
+  dDidChange,
+  dInitialValue,
+} from "../metadata-helpers";
 
+const COMP = "TiptapEditor";
+
+export const TiptapEditorMd = createMetadata({
+  status: "experimental",
+  description:
+    "`TiptapEditor` wraps the Tiptap rich-text editor as an XMLUI component. " +
+    "It provides a full-featured markdown editing experience with toolbar, " +
+    "table editing, task lists, and live markdown output — all via `wrapCompound`.",
+  props: {
+    initialValue: dInitialValue(),
+    placeholder: d("Placeholder text shown when the editor is empty.", undefined, "string", "Start writing..."),
+    editable: d("Whether the editor is editable.", undefined, "boolean", true),
+    toolbar: d("Whether to show the formatting toolbar.", undefined, "boolean", true),
+    toolbarItems: d("Comma-separated list of toolbar items to show (e.g. 'bold,italic,bulletList,link,undo,redo'). If omitted, all items are shown.", undefined, "string"),
+    height: d("The height of the editor content area.", undefined, "string", "300px"),
+  },
+  events: {
+    didChange: dDidChange(COMP),
+  },
+  apis: {
+    focus: {
+      description: "Sets focus on the editor.",
+      signature: "focus(): void",
+    },
+    setValue: {
+      description: "Sets the editor content (markdown string).",
+      signature: "setValue(value: string): void",
+      parameters: { value: "The new markdown content." },
+    },
+    getMarkdown: {
+      description: "Gets the current editor content as markdown.",
+      signature: "getMarkdown(): string",
+    },
+    getHTML: {
+      description: "Gets the current editor content as HTML.",
+      signature: "getHTML(): string",
+    },
+  },
+});
+
+export const tiptapEditorComponentRenderer = wrapCompound(
+  COMP,
+  TiptapEditorRender,
+  TiptapEditorMd,
+  {
+    booleans: ["editable", "toolbar"],
+    strings: ["placeholder", "height", "toolbarItems"],
+    events: {
+      didChange: "onDidChange",
+    },
+  },
+);
+```
+]]></Markdown>
+        </ExpandableItem>
+
+      </VStack>
+    </Page>
+
+    <Page url="/source">
+      <VStack padding="2rem" gap="1.5rem">
+
+        <H1>
+          To Be Continued...
+        </H1>
+
+        <Markdown>
+          <![CDATA[
+This is a **tech preview**. `wrapComponent` and `wrapCompound` are not yet baked into the XMLUI core — they live in a single file alongside the existing renderer infrastructure. The API will evolve, but the idea is stable: declare the exceptions, and let the engine handle the plumbing.
+
+To give you a sense of what's involved, here's the full source for both functions.
+]]>
+        </Markdown>
+
+        <ExpandableItem
+          summary="wrapComponent — auto-generates the renderer (~100 lines)">
+          <Markdown>
+            <![CDATA[
+```typescript
 export type WrapComponentConfig = {
   booleans?: string[];
   numbers?: string[];
@@ -64,38 +1061,6 @@ export type WrapComponentConfig = {
   exclude?: string[];
   stateful?: boolean;
 };
-
-function capitalize(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function normalizeEvents(
-  events: string[] | Record<string, string> | undefined,
-): Record<string, string> {
-  if (!events) return {};
-  if (Array.isArray(events)) {
-    const result: Record<string, string> = {};
-    for (const name of events) {
-      result[name] = `on${capitalize(name)}`;
-    }
-    return result;
-  }
-  return events;
-}
-
-function normalizeCallbacks(
-  callbacks: string[] | Record<string, string> | undefined,
-): Record<string, string> {
-  if (!callbacks) return {};
-  if (Array.isArray(callbacks)) {
-    const result: Record<string, string> = {};
-    for (const name of callbacks) {
-      result[name] = name;
-    }
-    return result;
-  }
-  return callbacks;
-}
 
 export function wrapComponent<TMd extends ComponentMetadata>(
   type: string,
@@ -132,8 +1097,6 @@ export function wrapComponent<TMd extends ComponentMetadata>(
     } = context;
 
     const props: Record<string, any> = {};
-
-    // Always pass through XMLUI plumbing
     props.className = className;
     props.registerComponentApi = registerComponentApi;
 
@@ -143,9 +1106,21 @@ export function wrapComponent<TMd extends ComponentMetadata>(
       props.initialValue = extractValue(node.props?.initialValue);
     }
 
-    // Events
+    // Events (with auto-tracing)
     for (const [xmluiName, reactPropName] of Object.entries(eventMap)) {
-      props[reactPropName] = lookupEventHandler(xmluiName);
+      const handler = lookupEventHandler(xmluiName);
+      const traceKind = eventNameToTraceKind(xmluiName);
+      props[reactPropName] = (...args: any[]) => {
+        if (traceKind) {
+          pushXsLog(createLogEntry(traceKind, {
+            component: type,
+            displayLabel: traceDisplayLabel(traceKind, xmluiName, args),
+            eventName: xmluiName,
+            ariaName: extractValue(node.props?.["aria-label"]) || undefined,
+          }));
+        }
+        if (handler) return handler(...args);
+      };
     }
 
     // Sync callbacks
@@ -158,9 +1133,7 @@ export function wrapComponent<TMd extends ComponentMetadata>(
       for (const [key, rawValue] of Object.entries(node.props)) {
         if (specialProps.has(key)) continue;
         if (excludeSet.has(key)) continue;
-
         const reactKey = renameMap[key] ?? key;
-
         if (booleanSet.has(key)) {
           props[reactKey] = extractValue.asOptionalBoolean(rawValue);
         } else if (numberSet.has(key)) {
@@ -177,270 +1150,202 @@ export function wrapComponent<TMd extends ComponentMetadata>(
   });
 }
 ```
-]]></Markdown>
+]]>
+          </Markdown>
+        </ExpandableItem>
+
+        <ExpandableItem
+          summary="wrapCompound — adds StateWrapper for full lifecycle (~180 lines)">
+          <Markdown>
+            <![CDATA[
+```typescript
+export type WrapCompoundConfig = WrapComponentConfig & {
+  parseInitialValue?: (raw: any, props: Record<string, any>) => any;
+  formatExternalValue?: (value: any, props: Record<string, any>) => any;
+};
+
+export function wrapCompound<TMd extends ComponentMetadata>(
+  type: string,
+  RenderComponent: React.ComponentType<any>,
+  metadata: TMd,
+  config: WrapCompoundConfig = {},
+): ComponentRendererDef {
+  const eventMap = normalizeEvents(config.events);
+  const callbackMap = normalizeCallbacks(config.callbacks);
+  const renameMap = config.rename ?? {};
+  const booleanSet = new Set(config.booleans ?? []);
+  const numberSet = new Set(config.numbers ?? []);
+  const stringSet = new Set(config.strings ?? []);
+  const excludeSet = new Set(config.exclude ?? []);
+
+  const specialProps = new Set([
+    ...Object.keys(eventMap),
+    ...Object.keys(callbackMap),
+    "id",
+  ]);
+
+  const isStateful =
+    config.stateful ??
+    !!(metadata.props?.["initialValue"] || metadata.events?.["didChange"]);
+
+  if (isStateful) {
+    specialProps.add("initialValue");
+  }
+
+  // StateWrapper: manages value state lifecycle,
+  // then renders the user's RenderComponent with processed props.
+  const StateWrapper = React.memo(React.forwardRef((
+    { __updateState, __initialValue, __registerComponentApi,
+      __value, __onDidChange, ...nativeProps }: any,
+    ref: any,
+  ) => {
+    const [localValue, setLocalValue] = React.useState(() =>
+      config.parseInitialValue
+        ? config.parseInitialValue(__initialValue, nativeProps)
+        : __initialValue
+    );
+
+    // Initial state setup (once on mount)
+    const initialized = React.useRef(false);
+    React.useEffect(() => {
+      if (!initialized.current && __updateState && localValue !== undefined) {
+        const stateValue = Array.isArray(localValue) && localValue.length === 1
+          ? localValue[0] : localValue;
+        __updateState({ value: stateValue }, { initial: true });
+        initialized.current = true;
+      }
+    }, []);
+
+    // Sync external value changes
+    React.useEffect(() => {
+      if (__value !== undefined) {
+        const formatted = config.formatExternalValue
+          ? config.formatExternalValue(__value, nativeProps)
+          : __value;
+        setLocalValue(formatted);
+      }
+    }, [__value]);
+
+    // onChange: update local state, fire traced callback
+    const onChange = React.useCallback((newValue: any) => {
+      setLocalValue(
+        config.formatExternalValue
+          ? config.formatExternalValue(newValue, nativeProps)
+          : newValue
+      );
+      __onDidChange?.(newValue);
+    }, [__onDidChange]);
+
+    // API registration helper
+    const registerApi = React.useCallback((apis: Record<string, any>) => {
+      __registerComponentApi?.(apis);
+    }, [__registerComponentApi]);
+
+    return (
+      <RenderComponent
+        ref={ref}
+        {...nativeProps}
+        value={localValue}
+        onChange={onChange}
+        registerApi={registerApi}
+      />
+    );
+  }));
+
+  StateWrapper.displayName = `${type}StateWrapper`;
+
+  return createComponentRenderer(type, metadata, (context) => {
+    const {
+      node, extractValue, lookupEventHandler, lookupSyncCallback,
+      className, updateState, state, registerComponentApi,
+    } = context;
+
+    const props: Record<string, any> = {};
+    props.className = className;
+
+    if (isStateful) {
+      props.__updateState = updateState;
+      props.__value = state.value;
+      props.__initialValue = extractValue(node.props?.initialValue);
+    }
+    props.__registerComponentApi = registerComponentApi;
+
+    // Events (with auto-tracing + auto-updateState)
+    for (const [xmluiName, reactPropName] of Object.entries(eventMap)) {
+      const handler = lookupEventHandler(xmluiName);
+      const traceKind = eventNameToTraceKind(xmluiName);
+
+      if (xmluiName === "didChange" && isStateful) {
+        // didChange is special: StateWrapper's onChange calls this.
+        // It traces, calls updateState, and calls the XMLUI handler.
+        props.__onDidChange = (...args: any[]) => {
+          if (traceKind) {
+            pushXsLog(createLogEntry(traceKind, {
+              component: type,
+              displayLabel: traceDisplayLabel(traceKind, xmluiName, args),
+              eventName: xmluiName,
+              ariaName: extractValue(node.props?.["aria-label"]) || undefined,
+            }));
+          }
+          updateState({ value: args[0] });
+          if (handler) return handler(...args);
+        };
+      } else {
+        props[reactPropName] = (...args: any[]) => {
+          if (traceKind) {
+            pushXsLog(createLogEntry(traceKind, {
+              component: type,
+              displayLabel: traceDisplayLabel(traceKind, xmluiName, args),
+              eventName: xmluiName,
+              ariaName: extractValue(node.props?.["aria-label"]) || undefined,
+            }));
+          }
+          if (handler) return handler(...args);
+        };
+      }
+    }
+
+    // Sync callbacks
+    for (const [xmluiName, reactPropName] of Object.entries(callbackMap)) {
+      props[reactPropName] = lookupSyncCallback(node.props?.[xmluiName]);
+    }
+
+    // Forward all remaining node.props
+    if (node.props) {
+      for (const [key, rawValue] of Object.entries(node.props)) {
+        if (specialProps.has(key)) continue;
+        if (excludeSet.has(key)) continue;
+        const reactKey = renameMap[key] ?? key;
+        if (booleanSet.has(key)) {
+          props[reactKey] = extractValue.asOptionalBoolean(rawValue);
+        } else if (numberSet.has(key)) {
+          props[reactKey] = extractValue.asOptionalNumber(rawValue);
+        } else if (stringSet.has(key)) {
+          props[reactKey] = extractValue.asOptionalString(rawValue);
+        } else {
+          props[reactKey] = extractValue(rawValue);
+        }
+      }
+    }
+
+    return <StateWrapper {...props} />;
+  });
+}
+```
+]]>
+          </Markdown>
         </ExpandableItem>
 
       </VStack>
     </Page>
 
-    <Page url="/slider-and-sliderw">
-      <VStack padding="2rem" gap="2rem">
-
-        <H1>Slider and SliderW</H1>
-
-        <Markdown>
-Both components wrap the same `SliderNative.tsx` React component.
-**Slider** uses a hand-written 40-line renderer.
-**SliderW** uses `wrapComponent` (13 lines).
-These tests confirm they behave identically for all currently-wrapped features.
-        </Markdown>
-
-        <!-- === Basic usage === -->
-        <Card var.sliderVal="" var.sliderWVal="">
-          <H2>Basic: default props</H2>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider</Text>
-              <Slider id="s1" onDidChange="{(v) => sliderVal = v}" />
-              <Text>Value: {sliderVal}</Text>
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW</Text>
-              <SliderW id="sw1" onDidChange="{(v) => sliderWVal = v}" />
-              <Text>Value: {sliderWVal}</Text>
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === Custom range === -->
-        <Card var.s2Val="" var.sw2Val="">
-          <H2>Custom range: 0–100, step 10</H2>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider</Text>
-              <Slider id="s2" minValue="0" maxValue="100" step="10"
-                initialValue="50"
-                onDidChange="{(v) => s2Val = v}" />
-              <Text>Value: {s2Val}</Text>
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW</Text>
-              <SliderW id="sw2" minValue="0" maxValue="100" step="10"
-                initialValue="50"
-                onDidChange="{(v) => sw2Val = v}" />
-              <Text>Value: {sw2Val}</Text>
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === Boolean props === -->
-        <Card>
-          <H2>Boolean props: disabled</H2>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider (disabled)</Text>
-              <Slider enabled="{false}" initialValue="5" />
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW (disabled)</Text>
-              <SliderW enabled="{false}" initialValue="5" />
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === ReadOnly === -->
-        <Card>
-          <H2>ReadOnly</H2>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider (readOnly)</Text>
-              <Slider readOnly="{true}" initialValue="7" />
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW (readOnly)</Text>
-              <SliderW readOnly="{true}" initialValue="7" />
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === API: setValue === -->
-        <Card var.s4Val="" var.sw4Val="">
-          <H2>API: setValue / value</H2>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider</Text>
-              <Slider id="s4" minValue="0" maxValue="100"
-                initialValue="25"
-                onDidChange="{(v) => s4Val = v}" />
-              <Text>Value: {s4Val}</Text>
-              <HStack>
-                <Button onClick="{s4.setValue(0)}">Set 0</Button>
-                <Button onClick="{s4.setValue(50)}">Set 50</Button>
-                <Button onClick="{s4.setValue(100)}">Set 100</Button>
-              </HStack>
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW</Text>
-              <SliderW id="sw4" minValue="0" maxValue="100"
-                initialValue="25"
-                onDidChange="{(v) => sw4Val = v}" />
-              <Text>Value: {sw4Val}</Text>
-              <HStack>
-                <Button onClick="{sw4.setValue(0)}">Set 0</Button>
-                <Button onClick="{sw4.setValue(50)}">Set 50</Button>
-                <Button onClick="{sw4.setValue(100)}">Set 100</Button>
-              </HStack>
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === Range slider (multiple thumbs) === -->
-        <Card var.s5Val="" var.sw5Val="">
-          <H2>Range slider (two thumbs)</H2>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider</Text>
-              <Slider id="s5" minValue="0" maxValue="100" step="5"
-                initialValue="[20,80]"
-                onDidChange="{(v) => s5Val = JSON.stringify(v)}" />
-              <Text>Value: {s5Val}</Text>
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW</Text>
-              <SliderW id="sw5" minValue="0" maxValue="100" step="5"
-                initialValue="[20,80]"
-                onDidChange="{(v) => sw5Val = JSON.stringify(v)}" />
-              <Text>Value: {sw5Val}</Text>
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === Validation status === -->
-        <Card>
-          <H2>Validation status</H2>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider (error)</Text>
-              <Slider validationStatus="error" initialValue="3" />
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW (error)</Text>
-              <SliderW validationStatus="error" initialValue="3" />
-            </VStack>
-          </HStack>
-        </Card>
-
-      </VStack>
-    </Page>
-
-    <Page url="/slider-vs-sliderw">
-      <VStack padding="2rem" gap="2rem">
-
-        <H1>Slider vs SliderW</H1>
-
-        <Markdown>
-These tests show what **SliderW** can do that **Slider** can't.
-`SliderNative.tsx` accepts props that the hand-written renderer never forwards.
-`wrapComponent` forwards everything automatically, so these "just work."
-        </Markdown>
-
-        <!-- === inverted: SliderW only === -->
-        <Card var.s6Val="" var.sw6Val="">
-          <H2>inverted — only works with SliderW</H2>
-          <Markdown>
-`SliderNative` accepts an `inverted` prop (from Radix) that reverses direction.
-The hand-written **Slider** renderer never forwards it — so it's silently ignored.
-**SliderW** forwards all native props automatically.
-          </Markdown>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider (inverted — ignored)</Text>
-              <Slider inverted="{true}" minValue="0" maxValue="100" step="10"
-                initialValue="70"
-                onDidChange="{(v) => s6Val = v}" />
-              <Text>Value: {s6Val}</Text>
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW (inverted — works)</Text>
-              <SliderW inverted="{true}" minValue="0" maxValue="100" step="10"
-                initialValue="70"
-                onDidChange="{(v) => sw6Val = v}" />
-              <Text>Value: {sw6Val}</Text>
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === title: native tooltip on hover === -->
-        <Card var.s7Val="" var.sw7Val="">
-          <H2>title — native HTML tooltip (hover to see)</H2>
-          <Markdown>
-`SliderNative` spreads `...rest` onto its outer div, so standard HTML
-attributes like `title` pass through. The hand-written renderer
-never forwards it. Hover each slider to compare.
-          </Markdown>
-          <HStack gap="2rem">
-            <VStack>
-              <Text fontWeight="bold">Slider (title — ignored)</Text>
-              <Slider title="Pick a temperature" minValue="0" maxValue="100"
-                initialValue="50"
-                onDidChange="{(v) => s7Val = v}" />
-              <Text>Value: {s7Val}</Text>
-            </VStack>
-            <VStack>
-              <Text fontWeight="bold">SliderW (title — hover me!)</Text>
-              <SliderW title="Pick a temperature" minValue="0" maxValue="100"
-                initialValue="50"
-                onDidChange="{(v) => sw7Val = v}" />
-              <Text>Value: {sw7Val}</Text>
-            </VStack>
-          </HStack>
-        </Card>
-
-        <!-- === tabIndex: keyboard focus order === -->
-        <Card>
-          <H2>tabIndex — keyboard focus order (press Tab)</H2>
-          <Markdown>
-Three sliders with tabIndex 3, 2, 1 — so Tab should visit them
-in reverse visual order (C, B, A). The hand-written renderer
-drops tabIndex, so **Slider** follows default DOM order.
-Click below the sliders, then press Tab repeatedly.
-          </Markdown>
-          <HStack gap="2rem">
-            <VStack gap="1rem">
-              <Text fontWeight="bold">Slider (tabIndex — ignored)</Text>
-              <HStack gap="0.5rem">
-                <Text>A (tabIndex=3):</Text>
-                <Slider tabIndex="3" initialValue="3" />
-              </HStack>
-              <HStack gap="0.5rem">
-                <Text>B (tabIndex=2):</Text>
-                <Slider tabIndex="2" initialValue="5" />
-              </HStack>
-              <HStack gap="0.5rem">
-                <Text>C (tabIndex=1):</Text>
-                <Slider tabIndex="1" initialValue="7" />
-              </HStack>
-            </VStack>
-            <VStack gap="1rem">
-              <Text fontWeight="bold">SliderW (tabIndex — works: C, B, A)</Text>
-              <HStack gap="0.5rem">
-                <Text>A (tabIndex=3):</Text>
-                <SliderW tabIndex="3" initialValue="3" />
-              </HStack>
-              <HStack gap="0.5rem">
-                <Text>B (tabIndex=2):</Text>
-                <SliderW tabIndex="2" initialValue="5" />
-              </HStack>
-              <HStack gap="0.5rem">
-                <Text>C (tabIndex=1):</Text>
-                <SliderW tabIndex="1" initialValue="7" />
-              </HStack>
-            </VStack>
-          </HStack>
-        </Card>
-
-      </VStack>
-    </Page>
-
   </Pages>
+
+  <ModalDialog
+    id="inspectorDialog"
+    title="XMLUI Inspector"
+    minWidth="85vw"
+    minHeight="85vh">
+    <IFrame src="xs-diff.html" width="100%" height="80vh" />
+  </ModalDialog>
 </App>

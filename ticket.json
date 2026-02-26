@@ -1,0 +1,20 @@
+{
+  "id": "TK-4921",
+  "contact": "Jordan Lee",
+  "company": "Acme Corp",
+  "subject": "Billing question",
+  "priority": "normal",
+  "message": "Hi, can you confirm our current billing status? We're reconciling accounts before end of quarter.",
+  "account": {
+    "plan": "Business Pro",
+    "monthlyRate": 249,
+    "billingCycle": "monthly",
+    "nextInvoice": "2025-03-01",
+    "balance": 0,
+    "status": "current",
+    "lastPayment": {
+      "date": "2025-02-01",
+      "amount": 249
+    }
+  }
+}

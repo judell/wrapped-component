@@ -1,0 +1,223 @@
+[
+  {
+    "ts": 1772058808893,
+    "perfTs": 620.3000000044703,
+    "eventTs": 616.1000000014901,
+    "kind": "interaction",
+    "eventName": "click",
+    "traceId": "i-mm2m27ul-nyxn4g",
+    "componentLabel": "Slider vs SliderW",
+    "interaction": "click",
+    "ariaRole": "link",
+    "ariaName": "Slider vs SliderW",
+    "detail": {
+      "targetTag": "DIV",
+      "text": "Slider vs SliderW",
+      "ariaRole": "link",
+      "ariaName": "Slider vs SliderW",
+      "button": 0
+    },
+    "text": "{\n  \"targetTag\": \"DIV\",\n  \"text\": \"Slider vs SliderW\",\n  \"ariaRole\": \"link\",\n  \"ariaName\": \"Slider vs SliderW\",\n  \"button\": 0\n}"
+  },
+  {
+    "ts": 1772058809160,
+    "perfTs": 887.1000000014901,
+    "traceId": "i-mm2m27ul-nyxn4g",
+    "kind": "focus:change",
+    "component": "SliderW",
+    "eventName": "gotFocus",
+    "ariaName": "Volume"
+  },
+  {
+    "ts": 1772058809160,
+    "perfTs": 887.1000000014901,
+    "traceId": "i-mm2m27ul-nyxn4g",
+    "kind": "focus:change",
+    "component": "SliderW",
+    "eventName": "gotFocus",
+    "ariaName": "Volume"
+  },
+  {
+    "ts": 1772058809171,
+    "perfTs": 897.7000000029802,
+    "eventTs": 872.5,
+    "kind": "interaction",
+    "eventName": "click",
+    "traceId": "i-mm2m282b-fr2910",
+    "componentLabel": "span",
+    "interaction": "click",
+    "ariaRole": "slider",
+    "detail": {
+      "targetTag": "SPAN",
+      "text": "",
+      "ariaRole": "slider",
+      "button": 0
+    },
+    "text": "{\n  \"targetTag\": \"SPAN\",\n  \"text\": \"\",\n  \"ariaRole\": \"slider\",\n  \"button\": 0\n}"
+  },
+  {
+    "ts": 1772058809210,
+    "perfTs": 937.4000000059605,
+    "eventTs": 929.7000000029802,
+    "kind": "interaction",
+    "eventName": "keydown",
+    "traceId": "i-mm2m283e-powbnt",
+    "componentLabel": "span",
+    "interaction": "keydown",
+    "ariaRole": "slider",
+    "detail": {
+      "targetTag": "SPAN",
+      "text": "",
+      "ariaRole": "slider",
+      "key": "ArrowRight",
+      "code": "ArrowRight",
+      "ctrlKey": false,
+      "metaKey": false,
+      "shiftKey": false,
+      "altKey": false
+    },
+    "text": "{\n  \"targetTag\": \"SPAN\",\n  \"text\": \"\",\n  \"ariaRole\": \"slider\",\n  \"key\": \"ArrowRight\",\n  \"code\": \"ArrowRight\",\n  \"ctrlKey\": false,\n  \"metaKey\": false,\n  \"shiftKey\": false,\n  \"altKey\": false\n}"
+  },
+  {
+    "ts": 1772058809211,
+    "perfTs": 937.7000000029802,
+    "traceId": "i-mm2m283e-powbnt",
+    "kind": "value:change",
+    "component": "SliderW",
+    "displayLabel": "51",
+    "eventName": "didChange",
+    "ariaName": "Volume"
+  },
+  {
+    "ts": 1772058809236,
+    "perfTs": 963.5,
+    "eventTs": 952.6000000014901,
+    "kind": "interaction",
+    "eventName": "keydown",
+    "traceId": "i-mm2m2844-1w8xx0",
+    "componentLabel": "span",
+    "interaction": "keydown",
+    "ariaRole": "slider",
+    "detail": {
+      "targetTag": "SPAN",
+      "text": "",
+      "ariaRole": "slider",
+      "key": "ArrowRight",
+      "code": "ArrowRight",
+      "ctrlKey": false,
+      "metaKey": false,
+      "shiftKey": false,
+      "altKey": false
+    },
+    "text": "{\n  \"targetTag\": \"SPAN\",\n  \"text\": \"\",\n  \"ariaRole\": \"slider\",\n  \"key\": \"ArrowRight\",\n  \"code\": \"ArrowRight\",\n  \"ctrlKey\": false,\n  \"metaKey\": false,\n  \"shiftKey\": false,\n  \"altKey\": false\n}"
+  },
+  {
+    "ts": 1772058809237,
+    "perfTs": 963.6000000014901,
+    "traceId": "i-mm2m2844-1w8xx0",
+    "kind": "value:change",
+    "component": "SliderW",
+    "displayLabel": "52",
+    "eventName": "didChange",
+    "ariaName": "Volume"
+  },
+  {
+    "ts": 1772058809252,
+    "perfTs": 979,
+    "eventTs": 978.6000000014901,
+    "kind": "interaction",
+    "eventName": "keydown",
+    "traceId": "i-mm2m284k-ptu2ox",
+    "componentLabel": "span",
+    "interaction": "keydown",
+    "ariaRole": "slider",
+    "detail": {
+      "targetTag": "SPAN",
+      "text": "",
+      "ariaRole": "slider",
+      "key": "ArrowRight",
+      "code": "ArrowRight",
+      "ctrlKey": false,
+      "metaKey": false,
+      "shiftKey": false,
+      "altKey": false
+    },
+    "text": "{\n  \"targetTag\": \"SPAN\",\n  \"text\": \"\",\n  \"ariaRole\": \"slider\",\n  \"key\": \"ArrowRight\",\n  \"code\": \"ArrowRight\",\n  \"ctrlKey\": false,\n  \"metaKey\": false,\n  \"shiftKey\": false,\n  \"altKey\": false\n}"
+  },
+  {
+    "ts": 1772058809252,
+    "perfTs": 979.2000000029802,
+    "traceId": "i-mm2m284k-ptu2ox",
+    "kind": "value:change",
+    "component": "SliderW",
+    "displayLabel": "53",
+    "eventName": "didChange",
+    "ariaName": "Volume"
+  },
+  {
+    "ts": 1772058809266,
+    "perfTs": 992.9000000059605,
+    "eventTs": 992.7000000029802,
+    "kind": "interaction",
+    "eventName": "keydown",
+    "traceId": "i-mm2m284y-js4aaq",
+    "componentLabel": "span",
+    "interaction": "keydown",
+    "ariaRole": "slider",
+    "detail": {
+      "targetTag": "SPAN",
+      "text": "",
+      "ariaRole": "slider",
+      "key": "ArrowRight",
+      "code": "ArrowRight",
+      "ctrlKey": false,
+      "metaKey": false,
+      "shiftKey": false,
+      "altKey": false
+    },
+    "text": "{\n  \"targetTag\": \"SPAN\",\n  \"text\": \"\",\n  \"ariaRole\": \"slider\",\n  \"key\": \"ArrowRight\",\n  \"code\": \"ArrowRight\",\n  \"ctrlKey\": false,\n  \"metaKey\": false,\n  \"shiftKey\": false,\n  \"altKey\": false\n}"
+  },
+  {
+    "ts": 1772058809266,
+    "perfTs": 992.9000000059605,
+    "traceId": "i-mm2m284y-js4aaq",
+    "kind": "value:change",
+    "component": "SliderW",
+    "displayLabel": "54",
+    "eventName": "didChange",
+    "ariaName": "Volume"
+  },
+  {
+    "ts": 1772058809281,
+    "perfTs": 1008.5,
+    "eventTs": 1008.3000000044703,
+    "kind": "interaction",
+    "eventName": "keydown",
+    "traceId": "i-mm2m285d-knwd0t",
+    "componentLabel": "span",
+    "interaction": "keydown",
+    "ariaRole": "slider",
+    "detail": {
+      "targetTag": "SPAN",
+      "text": "",
+      "ariaRole": "slider",
+      "key": "ArrowRight",
+      "code": "ArrowRight",
+      "ctrlKey": false,
+      "metaKey": false,
+      "shiftKey": false,
+      "altKey": false
+    },
+    "text": "{\n  \"targetTag\": \"SPAN\",\n  \"text\": \"\",\n  \"ariaRole\": \"slider\",\n  \"key\": \"ArrowRight\",\n  \"code\": \"ArrowRight\",\n  \"ctrlKey\": false,\n  \"metaKey\": false,\n  \"shiftKey\": false,\n  \"altKey\": false\n}"
+  },
+  {
+    "ts": 1772058809282,
+    "perfTs": 1008.6000000014901,
+    "traceId": "i-mm2m285d-knwd0t",
+    "kind": "value:change",
+    "component": "SliderW",
+    "displayLabel": "55",
+    "eventName": "didChange",
+    "ariaName": "Volume"
+  }
+]
