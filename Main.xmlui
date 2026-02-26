@@ -952,13 +952,13 @@ Edit the markdown below and watch the rendered preview update in real time.
         </Card>
 
         <Text>
-          Here's the XMLUI markup
+          Here's the XMLUI markup.
         </Text>
 
         <Image src="xmlui-markup.png" />
 
         <Text>
-          And of course it can be traced.
+          It can be traced.
         </Text>
         <Image src="markdown-trace.png" />
 
