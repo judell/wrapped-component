@@ -340,7 +340,7 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
 
 - <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input.
 - <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine.
-- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based rich-text editor with configurable toolbar.
+- <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based editor toolkit.
 ]]>
         </Markdown>
 
