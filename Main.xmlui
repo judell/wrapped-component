@@ -343,6 +343,10 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
 - <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine.
 - <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based editor toolkit.
 - <a href="/gauge" target="_blank">**Gauge**</a> wraps `smart-webcomponents-react` — and adds **XMLUI theming integration**.
+
+## A third-pass solution: theming
+
+`wrapCompound` handles state, events, APIs, and tracing — but not styling. Third-party components have their own CSS systems that don't know about XMLUI's design tokens. The <a href="/gauge" target="_blank">Gauge + Theming</a> page shows how to bridge a library's CSS custom properties to XMLUI's theme system using an SCSS module and `defaultThemeVars`, so the component automatically adapts to theme and tone changes.
 ]]>
         </Markdown>
 
@@ -1244,11 +1248,10 @@ $backgroundColor-Gauge: createThemeVar("Input:backgroundColor-#{$componentName}"
 
 The `Input:` prefix places this variable in the Input category of XMLUI's theme variable taxonomy. How did we know to use `Input:` rather than, say, `Display:` or just the bare variable name? And how did we know that `$color-surface-50` and `$textColor-primary` were the right tokens to map to in `defaultThemeVars`?
 
-XMLUI has thousands of theme variables organized into categories. To navigate this vocabulary we used [xmlui-mcp](https://www.npmjs.com/package/@anthropic/xmlui-mcp), a Model Context Protocol server that gives Claude access to XMLUI's documentation, component source, and theme variable definitions. When asked "what tokens control background color for input-style components?", the MCP server searched the theme variable defaults and found the `Input:backgroundColor-*` pattern used by Slider, TextBox, and other input components. Similarly, searching for "text color" surfaced `$textColor-primary` (which resolves to `$color-surface-950` and automatically inverts in dark mode).
+XMLUI has thousands of theme variables organized into categories. To navigate this vocabulary we used [xmlui-mcp](https://github.com/xmlui-org/xmlui-mcp), a Model Context Protocol server that gives agents access to XMLUI's documentation, component source, and theme variable definitions. When asked "what tokens control background color for input-style components?", the MCP server searched the theme variable defaults and found the `Input:backgroundColor-*` pattern used by Slider, TextBox, and other input components. Similarly, searching for "text color" surfaced `$textColor-primary` (which resolves to `$color-surface-950` and automatically inverts in dark mode).
 
-The MCP server also helped us discover Smart UI's own CSS custom properties (`--smart-background`, `--smart-primary`, etc.) by searching the library's source. This led to the key insight: instead of targeting individual SVG class selectors, we could map XMLUI tokens to Smart UI's own theming API, reducing the bridge from ~15 variables to just three.
+We also discovered Smart UI's own CSS custom properties (`--smart-background`, `--smart-primary`, etc.) by inspecting the library's source. This led to the key insight: instead of targeting individual SVG class selectors, we could map XMLUI tokens to Smart UI's own theming API, reducing the bridge from ~15 variables to just three.
 
-We recommend xmlui-mcp as a tool for discovering the right tokens when building theme bridges for new components.
 ]]></Markdown>
 
       <VStack gap="0">
