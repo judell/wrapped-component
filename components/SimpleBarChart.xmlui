@@ -1,0 +1,13 @@
+<Component name="SimpleBarChart">
+  <EChart
+    height="{$props.height || '350px'}"
+    option="{
+      {
+        xAxis: { type: 'category', data: $props.data.map(function(d) { return d[$props.xKey] }) },
+        yAxis: { type: 'value' },
+        series: $props.yKeys.split(',').map(function(k) { return { type: 'bar', name: k.trim(), data: $props.data.map(function(d) { return d[k.trim()] }) } }),
+        tooltip: { trigger: 'axis' },
+        legend: {}
+      }
+    }" />
+</Component>

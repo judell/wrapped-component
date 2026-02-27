@@ -1,0 +1,15 @@
+<Component name="SimplePieChart">
+  <EChart
+    height="{$props.height || '350px'}"
+    option="{
+      {
+        series: [{
+          type: 'pie',
+          radius: $props.radius || '60%',
+          data: $props.data.map(function(d) { return { value: d[$props.valueKey], name: d[$props.nameKey] } })
+        }],
+        tooltip: { trigger: 'item' },
+        legend: { orient: 'vertical', left: 'left' }
+      }
+    }" />
+</Component>

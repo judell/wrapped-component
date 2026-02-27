@@ -1505,6 +1505,144 @@ Any color the user specifies explicitly in the option overrides the theme defaul
       </Card>
 
       <Markdown><![CDATA[
+### Bridging the simplicity gap
+
+The `<EChart>` component exposes the full ECharts API, which is powerful but verbose. XMLUI's component system bridges the gap. Here are three XMLUI-level components — `SimpleBarChart`, `SimpleLineChart`, and `SimplePieChart` — that wrap `<EChart>` with a simple `data`/`xKey`/`yKeys` API, similar to the core Recharts wrappers but backed by ECharts:
+]]></Markdown>
+
+      <Markdown><![CDATA[
+#### SimpleBarChart
+]]></Markdown>
+
+      <Card var.barData="{[
+        { month: 'Mon', revenue: 120, expenses: 80 },
+        { month: 'Tue', revenue: 200, expenses: 120 },
+        { month: 'Wed', revenue: 150, expenses: 90 },
+        { month: 'Thu', revenue: 80, expenses: 60 },
+        { month: 'Fri', revenue: 70, expenses: 50 },
+        { month: 'Sat', revenue: 110, expenses: 80 },
+        { month: 'Sun', revenue: 130, expenses: 100 }
+      ]}">
+        <SimpleBarChart data="{barData}" xKey="month" yKeys="revenue,expenses" />
+      </Card>
+
+      <Markdown><![CDATA[
+```xml
+<SimpleBarChart data="{barData}" xKey="month" yKeys="revenue,expenses" />
+```
+]]></Markdown>
+
+      <Markdown><![CDATA[
+#### SimpleLineChart
+]]></Markdown>
+
+      <Card var.lineData="{[
+        { month: 'Jan', users: 820, sessions: 1200 },
+        { month: 'Feb', users: 932, sessions: 1400 },
+        { month: 'Mar', users: 901, sessions: 1350 },
+        { month: 'Apr', users: 934, sessions: 1500 },
+        { month: 'May', users: 1290, sessions: 1800 },
+        { month: 'Jun', users: 1330, sessions: 2100 }
+      ]}">
+        <SimpleLineChart data="{lineData}" xKey="month" yKeys="users,sessions" />
+      </Card>
+
+      <Markdown><![CDATA[
+```xml
+<SimpleLineChart data="{lineData}" xKey="month" yKeys="users,sessions" />
+```
+]]></Markdown>
+
+      <Markdown><![CDATA[
+#### SimplePieChart
+]]></Markdown>
+
+      <Card var.pieData="{[
+        { name: 'Search', value: 1048 },
+        { name: 'Direct', value: 735 },
+        { name: 'Email', value: 580 },
+        { name: 'Social', value: 484 },
+        { name: 'Other', value: 300 }
+      ]}">
+        <SimplePieChart data="{pieData}" nameKey="name" valueKey="value" />
+      </Card>
+
+      <Markdown><![CDATA[
+```xml
+<SimplePieChart data="{pieData}" nameKey="name" valueKey="value" />
+```
+
+Each component is a single `.xmlui` file in the `components/` folder. They map simple props (`data`, `xKey`, `yKeys`) to an ECharts option object. When you outgrow them, drop down to `<EChart option="{...}" />` directly — the full API is always available.
+]]></Markdown>
+
+      <VStack gap="0">
+      <ExpandableItem summary="components/SimpleBarChart.xmlui">
+        <Markdown><![CDATA[
+```xml
+<EChart
+  height="{$props.height || '350px'}"
+  option="{
+    {
+      xAxis: { type: 'category', data: $props.data.map(function(d) { return d[$props.xKey] }) },
+      yAxis: { type: 'value' },
+      series: $props.yKeys.split(',').map(function(k) {
+        return { type: 'bar', name: k.trim(),
+          data: $props.data.map(function(d) { return d[k.trim()] }) }
+      }),
+      tooltip: { trigger: 'axis' },
+      legend: {}
+    }
+  }" />
+```
+]]></Markdown>
+      </ExpandableItem>
+
+      <ExpandableItem summary="components/SimpleLineChart.xmlui">
+        <Markdown><![CDATA[
+```xml
+<EChart
+  height="{$props.height || '350px'}"
+  option="{
+    {
+      xAxis: { type: 'category', data: $props.data.map(function(d) { return d[$props.xKey] }) },
+      yAxis: { type: 'value' },
+      series: $props.yKeys.split(',').map(function(k) {
+        return { type: 'line', name: k.trim(),
+          data: $props.data.map(function(d) { return d[k.trim()] }),
+          smooth: $props.smooth !== 'false' }
+      }),
+      tooltip: { trigger: 'axis' },
+      legend: {}
+    }
+  }" />
+```
+]]></Markdown>
+      </ExpandableItem>
+
+      <ExpandableItem summary="components/SimplePieChart.xmlui">
+        <Markdown><![CDATA[
+```xml
+<EChart
+  height="{$props.height || '350px'}"
+  option="{
+    {
+      series: [{
+        type: 'pie',
+        radius: $props.radius || '60%',
+        data: $props.data.map(function(d) {
+          return { value: d[$props.valueKey], name: d[$props.nameKey] }
+        })
+      }],
+      tooltip: { trigger: 'item' },
+      legend: { orient: 'vertical', left: 'left' }
+    }
+  }" />
+```
+]]></Markdown>
+      </ExpandableItem>
+      </VStack>
+
+      <Markdown><![CDATA[
 ### Theme adaptation
 
 Use the controls below to switch themes and toggle light/dark mode. The charts update automatically because `useTheme()` triggers a re-render when the theme changes, and the option is rebuilt with new color values.
