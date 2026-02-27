@@ -1544,6 +1544,199 @@ Both strategies connect to the same XMLUI design token system. The choice depend
 ECharts, like Recharts, measures its container DOM element to determine chart dimensions. The render component uses a `ResizeObserver` on the container div (not just `window.resize`) so the chart adapts to layout changes — sidebar toggles, flex reflows, container resizing — not just window dragging. This is the same container-measurement challenge documented in the Recharts commit history, and a candidate for a general `LayoutBridge` utility.
 ]]></Markdown>
 
+      <VStack gap="0">
+      <ExpandableItem summary="EChartRender.tsx -- option-level theming via useTheme()">
+        <Markdown><![CDATA[
+```typescript
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ReactECharts from "echarts-for-react";
+import * as echarts from "echarts";
+import { useTheme } from "../../components-core/theming/ThemeContext";
+import styles from "./EChart.module.scss";
+import classnames from "classnames";
+
+/**
+ * Resolve a value that may be a CSS var() reference to an actual color string.
+ * ECharts renders on canvas, which doesn't understand CSS var() references.
+ */
+function resolveCssValue(value: string | undefined, el: HTMLElement | undefined): string {
+  if (!value || !el) return "";
+  const varMatch = value.match(/var\((--[^)]+)\)/);
+  if (varMatch) {
+    return getComputedStyle(el).getPropertyValue(varMatch[1]).trim();
+  }
+  return value;
+}
+
+export function EChartRender({
+  option, className, width, height,
+  renderer = "canvas", registerComponentApi,
+}: any) {
+  const chartRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { getThemeVar, root } = useTheme();
+
+  // Resolve a theme variable to an actual color value (not a CSS var reference)
+  const resolve = useCallback(
+    (varName: string, fallback: string = "") => {
+      const raw = getThemeVar(varName);
+      return resolveCssValue(raw, root) || fallback;
+    },
+    [getThemeVar, root],
+  );
+
+  // Build the XMLUI-themed color palette (same tokens as Recharts charts)
+  const palette = useMemo(() => {
+    return [
+      resolve("color-primary-500"),
+      resolve("color-success-500"),
+      resolve("color-warn-500"),
+      resolve("color-danger-500"),
+      resolve("color-info-500"),
+      resolve("color-secondary-500"),
+      resolve("color-primary-300"),
+      resolve("color-success-300"),
+      resolve("color-warn-300"),
+      resolve("color-danger-300"),
+      resolve("color-info-300"),
+      resolve("color-secondary-300"),
+    ].filter(Boolean);
+  }, [resolve]);
+
+  const textColor = resolve("textColor-primary", "#333");
+  const borderColor = resolve("color-surface-200", "#ccc");
+  const tooltipBg = resolve("color-surface-50", "#fff");
+
+  // Merge XMLUI theme defaults with user-provided option.
+  // User option wins — spread it last so explicit values override defaults.
+  const themedOption = useMemo(() => {
+    const defaults: any = {
+      color: palette,
+      backgroundColor: "transparent",
+      textStyle: { color: textColor },
+      title: { textStyle: { color: textColor } },
+      legend: { textStyle: { color: textColor } },
+      tooltip: {
+        backgroundColor: tooltipBg,
+        borderColor: borderColor,
+        textStyle: { color: textColor },
+      },
+    };
+    if (!option) return defaults;
+    const merged = { ...defaults, ...option };
+    if (option.color) merged.color = option.color;
+    // ... deep merge for textStyle, tooltip, legend, title, axes ...
+    return merged;
+  }, [option, palette, textColor, borderColor, tooltipBg]);
+
+  // ResizeObserver for container-aware resizing
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let debounceTimer: ReturnType<typeof setTimeout>;
+    const observer = new ResizeObserver(() => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        chartRef.current?.getEchartsInstance()?.resize();
+      }, 100);
+    });
+    observer.observe(container);
+    return () => { clearTimeout(debounceTimer); observer.disconnect(); };
+  }, []);
+
+  return (
+    <div ref={containerRef}
+      className={classnames(styles.echartContainer, className)}
+      style={{ width: width || "100%", height: height || "400px" }}>
+      <ReactECharts ref={chartRef} echarts={echarts}
+        option={themedOption} opts={{ renderer }}
+        style={{ width: "100%", height: "100%" }} notMerge={true} />
+    </div>
+  );
+}
+```
+]]></Markdown>
+      </ExpandableItem>
+
+      <ExpandableItem summary="EChartWrapped.tsx -- wrapComponent config">
+        <Markdown><![CDATA[
+```typescript
+import { EChartRender } from "./EChartRender";
+import { wrapComponent } from "../../components-core/wrapComponent";
+import { createMetadata, d } from "../metadata-helpers";
+
+const COMP = "EChart";
+
+export const EChartMd = createMetadata({
+  status: "experimental",
+  description:
+    "`EChart` wraps Apache ECharts via echarts-for-react, providing a " +
+    "declarative charting component with full XMLUI theming integration. " +
+    "It demonstrates option-level theming — injecting XMLUI design tokens " +
+    "into the ECharts option object at runtime via `useTheme()`.",
+  props: {
+    option: {
+      description:
+        "The ECharts option object. Accepts any valid ECharts configuration. " +
+        "XMLUI theme colors are automatically injected for palette, text, axes, " +
+        "and tooltip unless explicitly overridden in the option.",
+    },
+    width: d("Width of the chart container.", undefined, "string", "100%"),
+    height: d("Height of the chart container.", undefined, "string", "400px"),
+    renderer: {
+      description: "Rendering engine: 'canvas' or 'svg'.",
+      valueType: "string",
+      availableValues: ["canvas", "svg"],
+      defaultValue: "canvas",
+    },
+  },
+  apis: {
+    getEchartsInstance: {
+      description: "Returns the underlying ECharts instance for programmatic access.",
+      signature: "getEchartsInstance(): ECharts",
+    },
+  },
+});
+
+export const echartComponentRenderer = wrapComponent(COMP, EChartRender, EChartMd, {
+  strings: ["width", "height", "renderer"],
+});
+```
+]]></Markdown>
+      </ExpandableItem>
+
+      <ExpandableItem summary="EChart.module.scss -- minimal container (no theming bridge needed)">
+        <Markdown><![CDATA[
+```scss
+@use "../../components-core/theming/themes" as t;
+
+// --- Required boilerplate to collect theme variables ---
+$themeVars: ();
+@function createThemeVar($componentVariable) {
+  $themeVars: t.appendThemeVar($themeVars, $componentVariable) !global;
+  @return t.getThemeVar($themeVars, $componentVariable);
+}
+
+$componentName: "EChart";
+
+@layer components {
+  .echartContainer {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+// --- Export theme variables for the component renderer ---
+:export {
+  themeVars: t.json-stringify($themeVars);
+}
+```
+
+Unlike the Gauge's SCSS module, there are no `createThemeVar` calls mapping to the library's CSS custom properties — because ECharts has none. The SCSS module only provides container styling. All theming happens in the render component via `useTheme()`.
+]]></Markdown>
+      </ExpandableItem>
+      </VStack>
+
     </VStack>
   </Page>
 
