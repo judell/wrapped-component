@@ -82,13 +82,17 @@ Type-aware parsing/coercion for complex props (arrays of objects, nested config)
 
 The ECharts wrapper is built and working. Key findings:
 
-### LayoutBridge hypothesis: validated
+### LayoutBridge hypothesis: partially validated
 
 The EChart render component uses one `ResizeObserver` on its container div, debounced to 100ms. It calls `chart.resize()` when the container changes size. This is the same pattern that the Recharts wrappers implement per-component across 7 sizing commits (~570 lines). The EChart version is 15 lines and works for every chart type.
 
 The difference: the EChart wrapper doesn't fight the library's layout system. It provides explicit container dimensions and lets ECharts handle its own internal layout. The Recharts wrappers try to measure tick labels, calculate margins, and pass adjusted dimensions to `ResponsiveContainer` — that's where the complexity and bugs come from.
 
-A generic LayoutBridge could encapsulate the ResizeObserver + debounce + explicit-dimensions pattern and eliminate the per-component sizing code in Recharts.
+What the ECharts evidence actually proves: ResizeObserver + explicit dimensions works well for a library designed to accept explicit dimensions and handle its own internal layout. It doesn't prove that wrapping a generic LayoutBridge around Recharts would fix Recharts' problems, because many of those bugs are internal to Recharts (margin calculation, tick measurement, stacked bar handling) rather than container-measurement issues.
+
+**Experiment that would provide evidence:** take the BarChart wrapper (the most bug-prone), bypass `ResponsiveContainer` entirely, and pass explicit `width`/`height` from a ResizeObserver to the `<BarChart>` component directly. If the sizing bugs from the commit history (#1657, #1546, #1972) don't reproduce, a LayoutBridge helps Recharts. If they still reproduce, the bugs are Recharts-internal and a LayoutBridge wouldn't help.
+
+**The deeper question:** if ECharts can replace Recharts entirely, does a LayoutBridge for Recharts matter? The stronger case for LayoutBridge is other container-measuring libraries (Monaco, map components, canvas renderers) rather than fixing Recharts specifically.
 
 ### Pass-through vs abstraction
 
@@ -106,9 +110,15 @@ This is a general concern for any canvas-based library (Plotly, Chart.js, Three.
 
 The ECharts `option` object passes through `extractValue` and arrives as a JavaScript object. The XMLUI expression engine handles the parsing. No special structured-data handling was required.
 
+### Could ECharts replace Recharts entirely?
+
+Yes. The six Recharts chart types (bar, line, pie, area, radar, donut) are a subset of what ECharts provides through the single `<EChart>` component. The simplicity gap is bridgeable at the XMLUI layer: user-defined components like `SimpleBarChart`, `SimpleLineChart`, and `SimplePieChart` provide the same `data`/`xKey`/`yKeys` DX as the Recharts wrappers, each in a single `.xmlui` file.
+
+What you'd gain: one wrapper replaces six, 40+ chart types available with zero additional wrapping, composite charts work naturally, and the sizing bugs disappear. What you might lose: bundle size (ECharts ~300KB gzipped vs Recharts ~45KB, mitigable with tree-shaking) and the React-children composition style (less relevant in XMLUI's XML-attribute model). See `echarts-vs-recharts.md` for the full assessment.
+
 ## Revised priorities
 
-1. **LayoutBridge** — validated by both Recharts history and ECharts implementation. The generic pattern is clear: ResizeObserver + debounce + explicit dimensions.
+1. **LayoutBridge** — partially validated. The pattern (ResizeObserver + debounce + explicit dimensions) works for ECharts, but ECharts is designed to accept it. Whether it would fix Recharts' sizing bugs is unproven — many are Recharts-internal. More relevant for other container-measuring libraries (Monaco, maps, canvas renderers), or moot if ECharts replaces Recharts.
 
 2. **useResolvedThemeVar()** — a hook that resolves CSS var() references to actual color strings for canvas-based libraries. Small utility, high value.
 

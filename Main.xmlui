@@ -22,7 +22,11 @@
     <NavLink label="CodeEditor" to="/code-editor" />
     <NavLink label="Tiptap Support Ticket" to="/tiptap-editor" />
     <NavLink label="Gauge + Theming" to="/gauge" />
-    <NavLink label="ECharts" to="/echarts" />
+    <NavGroup label="Charts" initiallyExpanded="{true}">
+      <NavLink label="ECharts" to="/echarts" />
+      <NavLink label="Recharts and ECharts" to="/recharts-and-echarts" />
+      <NavLink label="Recharts vs ECharts" to="/recharts-vs-echarts" />
+    </NavGroup>
   </NavPanel>
 
   <Pages>
@@ -1874,6 +1878,452 @@ Unlike the Gauge's SCSS module, there are no `createThemeVar` calls mapping to t
 ]]></Markdown>
       </ExpandableItem>
       </VStack>
+
+    </VStack>
+  </Page>
+
+  <Page url="/recharts-and-echarts">
+    <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
+
+      <H1>Recharts and ECharts</H1>
+
+      <Markdown><![CDATA[
+The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart components with their simplified prop APIs. ECharts uses the `<EChart>` wrapper with native option objects. Both pick up theme colors automatically.
+]]></Markdown>
+
+      <Markdown><![CDATA[
+### Bar chart
+]]></Markdown>
+
+      <Card var.barData="{[
+        { month: 'Mon', revenue: 120, expenses: 80 },
+        { month: 'Tue', revenue: 200, expenses: 120 },
+        { month: 'Wed', revenue: 150, expenses: 90 },
+        { month: 'Thu', revenue: 80, expenses: 60 },
+        { month: 'Fri', revenue: 70, expenses: 50 },
+        { month: 'Sat', revenue: 110, expenses: 80 },
+        { month: 'Sun', revenue: 130, expenses: 100 }
+      ]}">
+        <HStack>
+          <VStack width="50%">
+            <Text variant="subtitle">Recharts</Text>
+            <BarChart data="{barData}" xKey="month" yKeys="{['revenue', 'expenses']}" showLegend="{true}" orientation="horizontal" height="300px" />
+          </VStack>
+          <VStack width="50%">
+            <Text variant="subtitle">ECharts</Text>
+            <EChart
+              height="300px"
+              option="{
+                {
+                  xAxis: { type: 'category', data: barData.map(function(d) { return d.month }) },
+                  yAxis: { type: 'value' },
+                  series: [
+                    { type: 'bar', name: 'revenue', data: barData.map(function(d) { return d.revenue }) },
+                    { type: 'bar', name: 'expenses', data: barData.map(function(d) { return d.expenses }) }
+                  ],
+                  tooltip: { trigger: 'axis' },
+                  legend: {}
+                }
+              }" />
+          </VStack>
+        </HStack>
+      </Card>
+
+      <Markdown><![CDATA[
+### Line chart
+]]></Markdown>
+
+      <Card var.lineData="{[
+        { month: 'Jan', users: 820, sessions: 1200 },
+        { month: 'Feb', users: 932, sessions: 1400 },
+        { month: 'Mar', users: 901, sessions: 1350 },
+        { month: 'Apr', users: 934, sessions: 1500 },
+        { month: 'May', users: 1290, sessions: 1800 },
+        { month: 'Jun', users: 1330, sessions: 2100 }
+      ]}">
+        <HStack>
+          <VStack width="50%">
+            <Text variant="subtitle">Recharts</Text>
+            <LineChart data="{lineData}" xKey="month" yKeys="{['users', 'sessions']}" showLegend="{true}" height="300px" />
+          </VStack>
+          <VStack width="50%">
+            <Text variant="subtitle">ECharts</Text>
+            <EChart
+              height="300px"
+              option="{
+                {
+                  xAxis: { type: 'category', data: lineData.map(function(d) { return d.month }) },
+                  yAxis: { type: 'value' },
+                  series: [
+                    { type: 'line', name: 'users', data: lineData.map(function(d) { return d.users }), smooth: true },
+                    { type: 'line', name: 'sessions', data: lineData.map(function(d) { return d.sessions }), smooth: true }
+                  ],
+                  tooltip: { trigger: 'axis' },
+                  legend: {}
+                }
+              }" />
+          </VStack>
+        </HStack>
+      </Card>
+
+      <Markdown><![CDATA[
+### Pie chart
+]]></Markdown>
+
+      <Card var.pieData="{[
+        { name: 'Search', value: 1048 },
+        { name: 'Direct', value: 735 },
+        { name: 'Email', value: 580 },
+        { name: 'Social', value: 484 },
+        { name: 'Other', value: 300 }
+      ]}">
+        <HStack>
+          <VStack width="50%">
+            <Text variant="subtitle">Recharts</Text>
+            <PieChart data="{pieData}" dataKey="value" nameKey="name" showLegend="{true}" height="300px" />
+          </VStack>
+          <VStack width="50%">
+            <Text variant="subtitle">ECharts</Text>
+            <EChart
+              height="300px"
+              option="{
+                {
+                  series: [{
+                    type: 'pie',
+                    radius: '60%',
+                    data: pieData
+                  }],
+                  tooltip: { trigger: 'item' },
+                  legend: { orient: 'vertical', left: 'left' }
+                }
+              }" />
+          </VStack>
+        </HStack>
+      </Card>
+
+      <Markdown><![CDATA[
+### Area chart
+]]></Markdown>
+
+      <Card var.areaData="{[
+        { month: 'Jan', sales: 1200, profit: 400 },
+        { month: 'Feb', sales: 1900, profit: 600 },
+        { month: 'Mar', sales: 1600, profit: 500 },
+        { month: 'Apr', sales: 2200, profit: 800 },
+        { month: 'May', sales: 2800, profit: 1100 },
+        { month: 'Jun', sales: 3200, profit: 1400 }
+      ]}">
+        <HStack>
+          <VStack width="50%">
+            <Text variant="subtitle">Recharts</Text>
+            <AreaChart data="{areaData}" nameKey="month" dataKeys="{['sales', 'profit']}" showLegend="{true}" height="300px" />
+          </VStack>
+          <VStack width="50%">
+            <Text variant="subtitle">ECharts</Text>
+            <EChart
+              height="300px"
+              option="{
+                {
+                  xAxis: { type: 'category', data: areaData.map(function(d) { return d.month }) },
+                  yAxis: { type: 'value' },
+                  series: [
+                    { type: 'line', name: 'sales', data: areaData.map(function(d) { return d.sales }), areaStyle: {} },
+                    { type: 'line', name: 'profit', data: areaData.map(function(d) { return d.profit }), areaStyle: {} }
+                  ],
+                  tooltip: { trigger: 'axis' },
+                  legend: {}
+                }
+              }" />
+          </VStack>
+        </HStack>
+      </Card>
+
+      <Markdown><![CDATA[
+### Radar chart
+]]></Markdown>
+
+      <Card var.radarData="{[
+        { skill: 'Communication', teamA: 80, teamB: 90 },
+        { skill: 'Problem Solving', teamA: 95, teamB: 85 },
+        { skill: 'Creativity', teamA: 70, teamB: 75 },
+        { skill: 'Technical', teamA: 90, teamB: 60 },
+        { skill: 'Leadership', teamA: 65, teamB: 80 }
+      ]}">
+        <HStack>
+          <VStack width="50%">
+            <Text variant="subtitle">Recharts</Text>
+            <RadarChart data="{radarData}" nameKey="skill" dataKeys="{['teamA', 'teamB']}" showLegend="{true}" filled="{true}" fillOpacity="{0.4}" height="300px" />
+          </VStack>
+          <VStack width="50%">
+            <Text variant="subtitle">ECharts</Text>
+            <EChart
+              height="300px"
+              option="{
+                {
+                  radar: {
+                    indicator: radarData.map(function(d) { return { name: d.skill, max: 100 } })
+                  },
+                  series: [{
+                    type: 'radar',
+                    data: [
+                      { value: radarData.map(function(d) { return d.teamA }), name: 'teamA', areaStyle: { opacity: 0.4 } },
+                      { value: radarData.map(function(d) { return d.teamB }), name: 'teamB', areaStyle: { opacity: 0.4 } }
+                    ]
+                  }],
+                  tooltip: {},
+                  legend: { data: ['teamA', 'teamB'] }
+                }
+              }" />
+          </VStack>
+        </HStack>
+      </Card>
+
+      <Markdown><![CDATA[
+Both libraries render the same data with the same theme colors. The Recharts versions use simplified props (`xKey`, `yKeys`, `dataKeys`). The ECharts versions use native option objects — more verbose, but the same option syntax works for every chart type ECharts supports, and can be encapsulated in the XMLUI layer using user-defined components (as shown on the ECharts page).
+]]></Markdown>
+
+    </VStack>
+  </Page>
+
+  <Page url="/recharts-vs-echarts">
+    <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
+
+      <H1>Recharts vs ECharts</H1>
+
+      <Markdown><![CDATA[
+Things ECharts can do through the same single `<EChart>` component that have no equivalent in the Recharts wrappers.
+]]></Markdown>
+
+      <Markdown><![CDATA[
+### Composite chart (bar + line on the same axes)
+
+Recharts would need a new composite wrapper or breaking the one-chart-type-per-component model. With ECharts, just add series with different `type` values.
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
+              yAxis: [
+                { type: 'value', name: 'Revenue' },
+                { type: 'value', name: 'Growth %', axisLabel: { formatter: '{value}%' } }
+              ],
+              series: [
+                { type: 'bar', name: 'Revenue', data: [1200, 1900, 1600, 2200, 2800, 3200] },
+                { type: 'line', name: 'Growth', yAxisIndex: 1, data: [0, 58, -16, 38, 27, 14], smooth: true }
+              ],
+              tooltip: { trigger: 'axis' },
+              legend: {}
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Stacked area with gradient fills
+
+Per-series gradient fills aren't exposed by the Recharts `AreaChart` wrapper.
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], boundaryGap: false },
+              yAxis: { type: 'value' },
+              series: [
+                {
+                  type: 'line', name: 'Email', stack: 'total',
+                  data: [120, 132, 101, 134, 90, 230, 210],
+                  areaStyle: {},
+                  smooth: true
+                },
+                {
+                  type: 'line', name: 'Search', stack: 'total',
+                  data: [220, 182, 191, 234, 290, 330, 310],
+                  areaStyle: {},
+                  smooth: true
+                },
+                {
+                  type: 'line', name: 'Direct', stack: 'total',
+                  data: [150, 232, 201, 154, 190, 330, 410],
+                  areaStyle: {},
+                  smooth: true
+                }
+              ],
+              tooltip: { trigger: 'axis' },
+              legend: {}
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Scatter plot
+
+No scatter chart component exists in the Recharts wrappers.
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              xAxis: { name: 'Height (cm)' },
+              yAxis: { name: 'Weight (kg)' },
+              series: [{
+                type: 'scatter',
+                data: [
+                  [161, 51], [167, 59], [159, 49], [157, 63], [155, 53],
+                  [170, 59], [159, 47], [166, 69], [176, 66], [160, 75],
+                  [172, 55], [164, 51], [169, 77], [175, 65], [168, 60],
+                  [180, 80], [177, 72], [171, 68], [182, 85], [174, 70]
+                ],
+                symbolSize: 10
+              }],
+              tooltip: { trigger: 'item' }
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Heatmap
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
+              yAxis: { type: 'category', data: ['Morning', 'Afternoon', 'Evening'] },
+              visualMap: { min: 0, max: 100, calculable: true, orient: 'horizontal', left: 'center', bottom: '0%' },
+              series: [{
+                type: 'heatmap',
+                data: [
+                  [0,0,82],[0,1,63],[0,2,41],
+                  [1,0,91],[1,1,55],[1,2,30],
+                  [2,0,78],[2,1,72],[2,2,58],
+                  [3,0,65],[3,1,88],[3,2,45],
+                  [4,0,43],[4,1,50],[4,2,92]
+                ],
+                label: { show: true }
+              }],
+              tooltip: {}
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Funnel chart
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              series: [{
+                type: 'funnel',
+                data: [
+                  { value: 100, name: 'Visitors' },
+                  { value: 80, name: 'Prospects' },
+                  { value: 60, name: 'Qualified' },
+                  { value: 40, name: 'Negotiation' },
+                  { value: 20, name: 'Closed' }
+                ],
+                label: { position: 'inside' }
+              }],
+              tooltip: { trigger: 'item' }
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Treemap
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="400px"
+          option="{
+            {
+              series: [{
+                type: 'treemap',
+                data: [
+                  { name: 'Engineering', value: 40, children: [
+                    { name: 'Frontend', value: 15 },
+                    { name: 'Backend', value: 18 },
+                    { name: 'DevOps', value: 7 }
+                  ]},
+                  { name: 'Product', value: 25, children: [
+                    { name: 'Design', value: 10 },
+                    { name: 'PM', value: 8 },
+                    { name: 'Research', value: 7 }
+                  ]},
+                  { name: 'Sales', value: 20, children: [
+                    { name: 'Enterprise', value: 12 },
+                    { name: 'SMB', value: 8 }
+                  ]},
+                  { name: 'Operations', value: 15, children: [
+                    { name: 'HR', value: 6 },
+                    { name: 'Finance', value: 5 },
+                    { name: 'Legal', value: 4 }
+                  ]}
+                ]
+              }],
+              tooltip: {}
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Sankey diagram
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="400px"
+          option="{
+            {
+              series: [{
+                type: 'sankey',
+                layout: 'none',
+                emphasis: { focus: 'adjacency' },
+                data: [
+                  { name: 'Organic' },
+                  { name: 'Paid' },
+                  { name: 'Referral' },
+                  { name: 'Landing Page' },
+                  { name: 'Blog' },
+                  { name: 'Signup' },
+                  { name: 'Trial' },
+                  { name: 'Paid Plan' },
+                  { name: 'Churned' }
+                ],
+                links: [
+                  { source: 'Organic', target: 'Landing Page', value: 500 },
+                  { source: 'Organic', target: 'Blog', value: 300 },
+                  { source: 'Paid', target: 'Landing Page', value: 400 },
+                  { source: 'Referral', target: 'Landing Page', value: 200 },
+                  { source: 'Landing Page', target: 'Signup', value: 800 },
+                  { source: 'Blog', target: 'Signup', value: 200 },
+                  { source: 'Landing Page', target: 'Churned', value: 300 },
+                  { source: 'Signup', target: 'Trial', value: 700 },
+                  { source: 'Signup', target: 'Churned', value: 300 },
+                  { source: 'Trial', target: 'Paid Plan', value: 400 },
+                  { source: 'Trial', target: 'Churned', value: 300 }
+                ]
+              }],
+              tooltip: {}
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+All of the above use the same `<EChart>` component and the same `option` prop. No new wrapper code was needed for any of them. The Recharts wrappers would each require a new Native component with its own sizing logic, prop mapping, and theming code.
+]]></Markdown>
 
     </VStack>
   </Page>

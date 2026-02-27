@@ -14,7 +14,7 @@ Theme colors are injected automatically via `useTheme()`. Any color the user spe
 
 ## The tradeoff
 
-The XMLUI author needs to know ECharts' option syntax. With Recharts, you write `<BarChart data="{d}" yKeys="revenue,expenses" />`. With EChart, you write the option object. ECharts has excellent documentation, but it's more to learn.
+The XMLUI author needs to know ECharts' option syntax. With Recharts, you write `<BarChart data="{d}" yKeys="revenue,expenses" />`. With EChart, you write the option object. ECharts has excellent documentation, but it's more to learn. User-defined components are a great way to bridge the gap — `SimpleBarChart`, `SimpleLineChart`, and `SimplePieChart` each map a simple `data`/`xKey`/`yKeys` API to an ECharts option in a single `.xmlui` file, giving you Recharts-level simplicity backed by ECharts. When you outgrow them, the full API is one `option` prop away.
 
 ## The sizing story
 
