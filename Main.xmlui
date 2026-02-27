@@ -22,6 +22,7 @@
     <NavLink label="CodeEditor" to="/code-editor" />
     <NavLink label="Tiptap Support Ticket" to="/tiptap-editor" />
     <NavLink label="Gauge + Theming" to="/gauge" />
+    <NavLink label="ECharts" to="/echarts" />
   </NavPanel>
 
   <Pages>
@@ -342,11 +343,23 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
 - <a href="/knob" target="_blank">**Knob**</a> wraps `react-knob-headless` — a circular dial input.
 - <a href="/code-editor" target="_blank">**CodeEditor**</a> wraps `@monaco-editor/react` — the VS Code editor engine.
 - <a href="/tiptap-editor" target="_blank">**TiptapEditor**</a> wraps `@tiptap/react` — a ProseMirror-based editor toolkit.
-- <a href="/gauge" target="_blank">**Gauge**</a> wraps `smart-webcomponents-react` — and adds **XMLUI theming integration**.
+- <a href="/gauge" target="_blank">**Gauge**</a> wraps `smart-webcomponents-react` — and adds **XMLUI theming integration** via CSS custom properties.
+- <a href="/echarts" target="_blank">**EChart**</a> wraps `Apache ECharts` — and adds **option-level theming** via `useTheme()`.
 
 ## A third-pass solution: theming
 
 `wrapCompound` handles state, events, APIs, and tracing — but not styling. Third-party components have their own CSS systems that don't know about XMLUI's design tokens. The <a href="/gauge" target="_blank">Gauge + Theming</a> page shows how to bridge a library's CSS custom properties to XMLUI's theme system using an SCSS module and `defaultThemeVars`, so the component automatically adapts to theme and tone changes.
+
+## A fourth-pass solution: option-level theming
+
+The SCSS bridge works when a library exposes CSS custom properties. But some libraries — notably charting libraries like [Apache ECharts](https://echarts.apache.org/) — control all styling through a JavaScript configuration object, not CSS. There are no `--echart-*` custom properties to bridge to.
+
+For these libraries, theming happens at runtime: the render component calls `useTheme()` to read XMLUI design tokens and injects them into the library's option object. The <a href="/echarts" target="_blank">ECharts</a> page demonstrates this pattern. The same XMLUI color palette that Recharts uses (via the same `useTheme()` hook used by 35+ XMLUI components) flows into ECharts' `color`, `textStyle`, axis, and tooltip configuration automatically.
+
+Two bridging strategies, one theme system:
+
+- **CSS-level** (Gauge): SCSS module maps `createThemeVar` calls to the library's CSS custom properties. The render component stays pure React.
+- **Option-level** (ECharts): The render component reads theme tokens via `useTheme()` and merges them into the library's config object. The XMLUI author just passes data; theme colors are injected automatically.
 ]]>
         </Markdown>
 
@@ -1381,6 +1394,155 @@ export const gaugeComponentRenderer = wrapCompound(COMP, GaugeRender, GaugeMd, {
 ]]></Markdown>
       </ExpandableItem>
       </VStack>
+
+    </VStack>
+  </Page>
+
+
+  <Page url="/echarts">
+    <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
+
+      <H1>ECharts</H1>
+
+      <Markdown><![CDATA[
+The Gauge page showed CSS-level theming: an SCSS module bridges XMLUI design tokens to Smart UI's CSS custom properties. The render component stays pure React.
+
+Apache ECharts takes a different approach to styling. There are no CSS custom properties to bridge to — all colors, fonts, and visual properties live in a JavaScript `option` object passed to the chart. This means the SCSS bridge pattern doesn't apply.
+
+Instead, the render component reads XMLUI design tokens at runtime using `useTheme()` — the same React context hook that 35+ XMLUI components already use — and merges them into the ECharts option. The XMLUI author just passes data; theme colors are injected automatically.
+
+### How it works
+
+The render component builds themed defaults and merges them with the user's option:
+
+```typescript
+const { getThemeVar } = useTheme();
+
+const palette = [
+  getThemeVar("color-primary-500"),
+  getThemeVar("color-success-500"),
+  getThemeVar("color-warn-500"),
+  // ...same tokens as Recharts charts
+].filter(Boolean);
+
+const themedOption = deepMerge({
+  color: palette,
+  textStyle: { color: getThemeVar("textColor-primary") },
+  tooltip: { backgroundColor: getThemeVar("color-surface-50") },
+  // axis defaults, grid defaults...
+}, userOption);  // user option wins
+```
+
+Any color the user specifies explicitly in the option overrides the theme default. This keeps the XMLUI author's API simple while ensuring charts look right in any theme.
+]]></Markdown>
+
+      <Markdown><![CDATA[
+### Bar chart
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
+              yAxis: { type: 'value' },
+              series: [
+                { type: 'bar', name: 'Revenue', data: [120, 200, 150, 80, 70, 110, 130] },
+                { type: 'bar', name: 'Expenses', data: [80, 120, 90, 60, 50, 80, 100] }
+              ],
+              tooltip: { trigger: 'axis' },
+              legend: {}
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Line chart
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] },
+              yAxis: { type: 'value' },
+              series: [
+                { type: 'line', name: 'Users', data: [820, 932, 901, 934, 1290, 1330], smooth: true },
+                { type: 'line', name: 'Sessions', data: [1200, 1400, 1350, 1500, 1800, 2100], smooth: true }
+              ],
+              tooltip: { trigger: 'axis' },
+              legend: {}
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Pie chart
+]]></Markdown>
+
+      <Card>
+        <EChart
+          height="350px"
+          option="{
+            {
+              series: [{
+                type: 'pie',
+                radius: '60%',
+                data: [
+                  { value: 1048, name: 'Search' },
+                  { value: 735, name: 'Direct' },
+                  { value: 580, name: 'Email' },
+                  { value: 484, name: 'Social' },
+                  { value: 300, name: 'Other' }
+                ]
+              }],
+              tooltip: { trigger: 'item' },
+              legend: { orient: 'vertical', left: 'left' }
+            }
+          }" />
+      </Card>
+
+      <Markdown><![CDATA[
+### Theme adaptation
+
+Use the controls below to switch themes and toggle light/dark mode. The charts update automatically because `useTheme()` triggers a re-render when the theme changes, and the option is rebuilt with new color values.
+]]></Markdown>
+
+      <Card>
+        <HStack gap="1rem" alignItems="center">
+          <Select
+            label="Theme"
+            initialValue="xmlui"
+            onDidChange="{ (newTheme) => setTheme(newTheme) }"
+          >
+            <Option value="xmlui" label="default"/>
+            <Option value="earthtone" label="earthtone"/>
+          </Select>
+          <ToneSwitch />
+        </HStack>
+      </Card>
+
+      <Markdown><![CDATA[
+### Two bridging strategies
+
+| | CSS-level (Gauge) | Option-level (ECharts) |
+|---|---|---|
+| Where theming happens | SCSS module | Render component |
+| Mechanism | `createThemeVar` → CSS custom properties | `useTheme()` → option object |
+| Render component | Pure React, no XMLUI imports | Imports `useTheme` from XMLUI |
+| Works when library has | CSS custom properties or class-based styling | JavaScript config object |
+| Theme changes | CSS cascade updates automatically | React re-render rebuilds option |
+
+Both strategies connect to the same XMLUI design token system. The choice depends on how the third-party library exposes its styling API.
+]]></Markdown>
+
+      <Markdown><![CDATA[
+### Resize handling
+
+ECharts, like Recharts, measures its container DOM element to determine chart dimensions. The render component uses a `ResizeObserver` on the container div (not just `window.resize`) so the chart adapts to layout changes — sidebar toggles, flex reflows, container resizing — not just window dragging. This is the same container-measurement challenge documented in the Recharts commit history, and a candidate for a general `LayoutBridge` utility.
+]]></Markdown>
 
     </VStack>
   </Page>
