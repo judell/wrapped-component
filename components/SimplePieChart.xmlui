@@ -5,11 +5,11 @@
       {
         series: [{
           type: 'pie',
-          radius: $props.radius || '60%',
+          radius: $props.radius || ['40%', '70%'],
           data: $props.data.map(function(d) { return { value: d[$props.valueKey], name: d[$props.nameKey] } })
         }],
         tooltip: { trigger: 'item' },
-        legend: { orient: 'vertical', left: 'left' }
+        legend: { bottom: 0, left: 'center' }
       }
     }" />
 </Component>

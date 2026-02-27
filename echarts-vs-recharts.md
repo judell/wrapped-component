@@ -30,6 +30,12 @@ The Recharts wrappers reimplemented container measurement in every Native file. 
 
 The EChart wrapper uses one `ResizeObserver` and it just works. This strongly supports the LayoutBridge hypothesis in PENDING.md: the problem isn't library-specific, it's a generic container-measurement challenge that should be solved once.
 
+## ECharts advantages beyond the API
+
+Series toggling via legend clicks works out of the box — click a legend item to hide/show that series. The area chart tooltip is more complete than Recharts' default.
+
+Minor glitch: when a pie chart has both outside labels and a left-positioned legend in a constrained container, leader lines can overlap the legend. Solved by using donuts with bottom-centered legends. A minor layout consideration compared to the many sizing issues encountered with Recharts.
+
 ## What this suggests for wrapper design
 
 The pass-through pattern (expose the library's native API, add theming and resize handling) scales better than the abstraction pattern (rewrite the API in XMLUI-specific props). It eliminates the "silently dropped props" problem, eliminates per-component sizing code, and gives users the full power of the underlying library.

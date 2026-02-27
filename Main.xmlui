@@ -1483,7 +1483,7 @@ Any color the user specifies explicitly in the option overrides the theme defaul
       </Card>
 
       <Markdown><![CDATA[
-### Pie chart
+### Donut chart
 ]]></Markdown>
 
       <Card>
@@ -1493,7 +1493,7 @@ Any color the user specifies explicitly in the option overrides the theme defaul
             {
               series: [{
                 type: 'pie',
-                radius: '60%',
+                radius: ['40%', '70%'],
                 data: [
                   { value: 1048, name: 'Search' },
                   { value: 735, name: 'Direct' },
@@ -1503,7 +1503,7 @@ Any color the user specifies explicitly in the option overrides the theme defaul
                 ]
               }],
               tooltip: { trigger: 'item' },
-              legend: { orient: 'vertical', left: 'left' }
+              legend: { bottom: 0, left: 'center' }
             }
           }" />
       </Card>
@@ -1632,13 +1632,13 @@ Each component is a single `.xmlui` file in the `components/` folder. They map s
     {
       series: [{
         type: 'pie',
-        radius: $props.radius || '60%',
+        radius: $props.radius || ['40%', '70%'],
         data: $props.data.map(function(d) {
           return { value: d[$props.valueKey], name: d[$props.nameKey] }
         })
       }],
       tooltip: { trigger: 'item' },
-      legend: { orient: 'vertical', left: 'left' }
+      legend: { bottom: 0, left: 'center' }
     }
   }" />
 ```
@@ -1904,12 +1904,12 @@ The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart 
         { month: 'Sat', revenue: 110, expenses: 80 },
         { month: 'Sun', revenue: 130, expenses: 100 }
       ]}">
-        <HStack>
-          <VStack width="50%">
+        <HStack wrapContent="true">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">Recharts</Text>
             <BarChart data="{barData}" xKey="month" yKeys="{['revenue', 'expenses']}" showLegend="{true}" orientation="horizontal" height="300px" />
           </VStack>
-          <VStack width="50%">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">ECharts</Text>
             <EChart
               height="300px"
@@ -1941,12 +1941,12 @@ The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart 
         { month: 'May', users: 1290, sessions: 1800 },
         { month: 'Jun', users: 1330, sessions: 2100 }
       ]}">
-        <HStack>
-          <VStack width="50%">
+        <HStack wrapContent="true">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">Recharts</Text>
             <LineChart data="{lineData}" xKey="month" yKeys="{['users', 'sessions']}" showLegend="{true}" height="300px" />
           </VStack>
-          <VStack width="50%">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">ECharts</Text>
             <EChart
               height="300px"
@@ -1967,7 +1967,7 @@ The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart 
       </Card>
 
       <Markdown><![CDATA[
-### Pie chart
+### Donut chart
 ]]></Markdown>
 
       <Card var.pieData="{[
@@ -1977,12 +1977,12 @@ The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart 
         { name: 'Social', value: 484 },
         { name: 'Other', value: 300 }
       ]}">
-        <HStack>
-          <VStack width="50%">
+        <HStack wrapContent="true">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">Recharts</Text>
             <PieChart data="{pieData}" dataKey="value" nameKey="name" showLegend="{true}" height="300px" />
           </VStack>
-          <VStack width="50%">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">ECharts</Text>
             <EChart
               height="300px"
@@ -1990,11 +1990,11 @@ The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart 
                 {
                   series: [{
                     type: 'pie',
-                    radius: '60%',
+                    radius: ['40%', '70%'],
                     data: pieData
                   }],
                   tooltip: { trigger: 'item' },
-                  legend: { orient: 'vertical', left: 'left' }
+                  legend: { bottom: 0, left: 'center' }
                 }
               }" />
           </VStack>
@@ -2013,12 +2013,12 @@ The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart 
         { month: 'May', sales: 2800, profit: 1100 },
         { month: 'Jun', sales: 3200, profit: 1400 }
       ]}">
-        <HStack>
-          <VStack width="50%">
+        <HStack wrapContent="true">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">Recharts</Text>
             <AreaChart data="{areaData}" nameKey="month" dataKeys="{['sales', 'profit']}" showLegend="{true}" height="300px" />
           </VStack>
-          <VStack width="50%">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">ECharts</Text>
             <EChart
               height="300px"
@@ -2049,12 +2049,12 @@ The same data, rendered by both libraries. Recharts uses XMLUI's built-in chart 
         { skill: 'Technical', teamA: 90, teamB: 60 },
         { skill: 'Leadership', teamA: 65, teamB: 80 }
       ]}">
-        <HStack>
-          <VStack width="50%">
+        <HStack wrapContent="true">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">Recharts</Text>
             <RadarChart data="{radarData}" nameKey="skill" dataKeys="{['teamA', 'teamB']}" showLegend="{true}" filled="{true}" fillOpacity="{0.4}" height="300px" />
           </VStack>
-          <VStack width="50%">
+          <VStack minWidth="300px" width="50%">
             <Text variant="subtitle">ECharts</Text>
             <EChart
               height="300px"
