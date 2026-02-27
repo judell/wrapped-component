@@ -27,7 +27,7 @@
   <Pages>
 
     <Page url="/">
-      <VStack padding="2rem" gap="0">
+      <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
         <Markdown>
           <![CDATA[
 
@@ -354,7 +354,7 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
     </Page>
 
     <Page url="/slider-and-sliderw">
-      <VStack padding="2rem" gap="0">
+      <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
 
         <H1>
           Slider and SliderW
@@ -372,8 +372,8 @@ These tests confirm they behave identically for all currently-wrapped features.
           <H2>
             Basic: default props
           </H2>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider
               </Text>
@@ -383,7 +383,7 @@ These tests confirm they behave identically for all currently-wrapped features.
               </Text>
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW
               </Text>
@@ -400,8 +400,8 @@ These tests confirm they behave identically for all currently-wrapped features.
           <H2>
             Custom range: 0–100, step 10
           </H2>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider
               </Text>
@@ -417,7 +417,7 @@ These tests confirm they behave identically for all currently-wrapped features.
               </Text>
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW
               </Text>
@@ -440,15 +440,15 @@ These tests confirm they behave identically for all currently-wrapped features.
           <H2>
             Boolean props: disabled
           </H2>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider (disabled)
               </Text>
               <Slider enabled="{false}" initialValue="5" />
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW (disabled)
               </Text>
@@ -462,15 +462,15 @@ These tests confirm they behave identically for all currently-wrapped features.
           <H2>
             ReadOnly
           </H2>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider (readOnly)
               </Text>
               <Slider readOnly="{true}" initialValue="7" />
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW (readOnly)
               </Text>
@@ -484,8 +484,8 @@ These tests confirm they behave identically for all currently-wrapped features.
           <H2>
             API: setValue / value
           </H2>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider
               </Text>
@@ -498,7 +498,7 @@ These tests confirm they behave identically for all currently-wrapped features.
               <Text>
                 Value: {s4Val}
               </Text>
-              <HStack>
+              <HStack wrapContent="{true}">
                 <Button onClick="{s4.setValue(0)}">
                   Set 0
                 </Button>
@@ -511,7 +511,7 @@ These tests confirm they behave identically for all currently-wrapped features.
               </HStack>
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW
               </Text>
@@ -524,7 +524,7 @@ These tests confirm they behave identically for all currently-wrapped features.
               <Text>
                 Value: {sw4Val}
               </Text>
-              <HStack>
+              <HStack wrapContent="{true}">
                 <Button onClick="{sw4.setValue(0)}">
                   Set 0
                 </Button>
@@ -544,8 +544,8 @@ These tests confirm they behave identically for all currently-wrapped features.
           <H2>
             Range slider (two thumbs)
           </H2>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider
               </Text>
@@ -561,7 +561,7 @@ These tests confirm they behave identically for all currently-wrapped features.
               </Text>
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW
               </Text>
@@ -583,7 +583,7 @@ These tests confirm they behave identically for all currently-wrapped features.
     </Page>
 
     <Page url="/slider-vs-sliderw">
-      <VStack padding="2rem" gap="0">
+      <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
 
         <H1>
           Slider vs SliderW
@@ -601,15 +601,15 @@ Open the inspector (gear icon) and compare what happens when you move each slide
 ]]>
         </Markdown>
 
-        <HStack>
-          <VStack width="50%">
+        <HStack wrapContent="{true}">
+          <VStack width="{responsive('100%', '50%')}">
             <Text fontWeight="bold">
               Slider trace
             </Text>
             <Image src="slider-trace.png" />
           </VStack>
           <SpaceFiller />
-          <VStack width="50%">
+          <VStack width="{responsive('100%', '50%')}">
             <Text fontWeight="bold">
               SliderW trace
             </Text>
@@ -646,8 +646,8 @@ Here's the pipeline in action. Two journeys exercise **SliderW**: one replays a 
 The hand-written **Slider** renderer never forwards it — so it's silently ignored.
 **SliderW** forwards all native props automatically.
           </Markdown>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider (inverted — ignored)
               </Text>
@@ -663,7 +663,7 @@ The hand-written **Slider** renderer never forwards it — so it's silently igno
               </Text>
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW (inverted — works)
               </Text>
@@ -691,8 +691,8 @@ The hand-written **Slider** renderer never forwards it — so it's silently igno
 attributes like `title` pass through. The hand-written renderer
 never forwards it. Hover each slider to compare.
           </Markdown>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider (title — ignored)
               </Text>
@@ -707,7 +707,7 @@ never forwards it. Hover each slider to compare.
               </Text>
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW (title — hover me!)
               </Text>
@@ -735,8 +735,8 @@ in reverse visual order (C, B, A). The hand-written renderer
 drops tabIndex, so **Slider** follows default DOM order.
 Click below the sliders, then press Tab repeatedly.
           </Markdown>
-          <HStack>
-            <VStack gap="1rem" width="50%">
+          <HStack wrapContent="{true}">
+            <VStack gap="1rem" width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider (tabIndex — ignored)
               </Text>
@@ -760,7 +760,7 @@ Click below the sliders, then press Tab repeatedly.
               </VStack>
             </VStack>
             <SpaceFiller />
-            <VStack gap="1rem" width="50%">
+            <VStack gap="1rem" width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW (tabIndex — works: C, B, A)
               </Text>
@@ -799,8 +799,8 @@ set `aria-label="Volume"`. Click **Query DOM** to run
 `getByRole('slider', { name: 'Volume' })` does the same thing under the hood.
 ]]>
           </Markdown>
-          <HStack>
-            <VStack width="50%">
+          <HStack wrapContent="{true}">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 Slider (aria-label — ignored)
               </Text>
@@ -811,7 +811,7 @@ set `aria-label="Volume"`. Click **Query DOM** to run
                 initialValue="50" />
             </VStack>
             <SpaceFiller />
-            <VStack width="50%">
+            <VStack width="{responsive('100%', '50%')}">
               <Text fontWeight="bold">
                 SliderW (aria-label — works)
               </Text>
@@ -834,7 +834,7 @@ If both wrappers forwarded the attribute, it would find **2 matches**.
     </Page>
 
     <Page url="/knob">
-      <VStack padding="2rem" gap="0">
+      <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
 
         <H1>
           Knob
@@ -854,7 +854,7 @@ Drag up/down on the knob to change the value, or use the buttons below.
           <H2>
             Basic: 0–100
           </H2>
-          <HStack alignItems="center" gap="0">
+          <HStack alignItems="center" gap="0" wrapContent="{true}">
             <Knob
               id="k1"
               minValue="0"
@@ -866,7 +866,7 @@ Drag up/down on the knob to change the value, or use the buttons below.
               Value: {knobVal}
             </Text>
           </HStack>
-          <HStack>
+          <HStack wrapContent="{true}">
             <Button onClick="{k1.setValue(0)}">
               Set 0
             </Button>
@@ -883,7 +883,7 @@ Drag up/down on the knob to change the value, or use the buttons below.
           <H2>
             Custom range: 0–1000, step 50
           </H2>
-          <HStack alignItems="center" gap="0">
+          <HStack alignItems="center" gap="0" wrapContent="{true}">
             <Knob
               id="k2"
               minValue="0"
@@ -908,7 +908,7 @@ Drag up/down on the knob to change the value, or use the buttons below.
     </Page>
 
     <Page url="/code-editor">
-      <VStack padding="2rem" gap="0">
+      <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
 
         <H1>
           CodeEditor
@@ -934,8 +934,8 @@ Edit the markdown below and watch the rendered preview update in real time.
               initialValue="{true}"
               onDidChange="{(v) => showLineNums = v}" />
           </HStack>
-          <HStack>
-            <Card width="50%">
+          <HStack wrapContent="{true}">
+            <Card width="{responsive('100%', '50%')}">
               <CodeEditor
                 id="ce1"
                 language="markdown"
@@ -947,7 +947,7 @@ Edit the markdown below and watch the rendered preview update in real time.
                 initialValue="{'# wrapCompound\n\nIt works with **any** React component library.'}"
                 onDidChange="{(v) => mdVal = v}" />
             </Card>
-            <Card width="50%">
+            <Card width="{responsive('100%', '50%')}">
               <Markdown>
                 {mdVal}
               </Markdown>
@@ -970,7 +970,7 @@ Edit the markdown below and watch the rendered preview update in real time.
     </Page>
 
     <Page url="/tiptap-editor">
-      <VStack padding="2rem" gap="0">
+      <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
 
         <H1>Tiptap Support Ticket</H1>
 
@@ -1088,7 +1088,7 @@ export const tiptapEditorComponentRenderer = wrapCompound(
     </Page>
 
   <Page url="/gauge">
-    <VStack padding="2rem" gap="0">
+    <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
 
       <H1>Gauge + Theming</H1>
 
@@ -1190,7 +1190,7 @@ Use the theme selector below to switch between the default theme and `earthtone`
 ]]></Markdown>
 
       <Card var.gaugeVal="42">
-        <HStack alignItems="center">
+        <HStack alignItems="center" wrapContent="{true}">
           <Gauge
             id="g1"
             minValue="0"
@@ -1227,6 +1227,8 @@ Three pieces connect Smart UI's styling to XMLUI's design tokens:
 1. The SCSS module declares XMLUI theme variables and maps them to Smart UI's own CSS custom properties (`--smart-background`, `--smart-primary`, etc.).
 2. The `defaultThemeVars` in `GaugeWrapped.tsx` maps each SCSS variable to an XMLUI design token (e.g. `$color-primary`, `$textColor-primary`) that automatically adapts to light/dark mode.
 3. The render component (`GaugeRender.tsx`) is pure React -- it imports only Smart UI's Gauge and the SCSS module. It uses `classnames(styles.gaugeContainer, className)` on the outer div, which is what connects the theming bridge to the DOM. No XMLUI imports, no theme logic.
+
+The SCSS bridge also handles responsive layout. Smart UI Gauge renders at a fixed pixel width, which overflows on small screens. Adding `max-width: 100%` and `width: 100% !important` to the `:global(smart-gauge)` selector makes it respect its container's width. This is a case where the bridge goes beyond color theming into layout — the same SCSS module that maps design tokens also constrains the component's sizing behavior.
 
 ### The pattern
 
