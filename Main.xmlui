@@ -443,6 +443,24 @@ Canvas-based libraries like ECharts are opaque to the DOM. A screen reader can't
 - **Debugging and observability.** When a chart misbehaves — wrong data, unexpected zoom state, legend out of sync — the trace shows exactly what the chart reported. This is especially valuable for composite charts where multiple series interact, and for embedded dashboards where reproducing the user's exact interaction sequence is difficult.
 
 - **Cross-library consistency.** The `captureNativeEvents` / `onNativeEvent` pattern is generic. The wrapper knows nothing about eCharts — it just traces whatever the render component reports. The same pattern can bridge events from any canvas-based or opaque third-party library (D3, Three.js, map libraries) into the same trace system, giving a unified view of what happened across the whole application.
+
+## Why not backport to Radix?
+
+The `captureNativeEvents` pattern could be added to every Radix-wrapped component — Slider, Checkbox, RadioGroup, Accordion, Tabs, and the rest. It's mechanically straightforward. But it wouldn't add much value, because Radix components are DOM-based. A Radix checkbox renders a real `<button>` with `aria-checked`. A Radix slider renders a `<span>` with `aria-valuenow`. A Radix accordion renders `<div>` elements with `aria-expanded`. Screen readers already see all of this. Playwright can already query these elements by role and assert their state. And XMLUI's own event system already traces the interactions that matter — `didChange` fires with the new value when a slider moves or a checkbox toggles.
+
+Native event capture solves the problem of opacity: when a library renders to canvas, or uses a proprietary DOM structure that hides semantic meaning, the trace system can't see what happened without explicit bridging. Radix doesn't have that problem. Its whole design philosophy is to produce accessible, semantically meaningful DOM. Adding `captureNativeEvents` to Radix components would produce traces that duplicate what XMLUI events and standard ARIA attributes already provide.
+
+## What's next?
+
+The value of `captureNativeEvents` scales with the opacity of the wrapped library. ECharts renders entirely on canvas — that's why native event capture matters there. The next render function to demonstrate broad applicability should be another library that hides its state from the DOM:
+
+- **A map library** (Leaflet, Mapbox GL, or MapLibre). Maps render on canvas, and their interactions — pan, zoom, marker clicks, layer toggles, viewport changes — are invisible to the DOM. A `MapRender` component with `formatDisplayLabel` could trace "zoom: 14", "marker: 123 Main St", "layer: satellite: hide" the same way ECharts traces bar clicks and legend toggles.
+
+- **A 3D or WebGL library** (Three.js, Babylon.js). Fully canvas-based, with rich interaction models (object selection, camera orbit, scene graph changes) that the DOM can't see at all.
+
+- **A code editor** (Monaco is already wrapped via `wrapCompound` but without `captureNativeEvents`). Monaco's internal events — cursor movement, selection changes, find/replace actions, folding — are semantically rich but invisible to the trace system today.
+
+Any of these would confirm that the pattern generalizes: one generic option in `wrapComponent`, one library-specific `formatDisplayLabel` in the render component, and the trace system sees inside another opaque library.
 ]]>
         </Markdown>
 
