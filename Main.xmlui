@@ -26,6 +26,7 @@
       <NavLink label="ECharts" to="/echarts" />
       <NavLink label="Recharts and ECharts" to="/recharts-and-echarts" />
       <NavLink label="Recharts vs ECharts" to="/recharts-vs-echarts" />
+      <NavLink label="ECharts Catalog" to="/echarts-catalog" />
     </NavGroup>
   </NavPanel>
 
@@ -51,7 +52,7 @@ This approach has three problems:
 
 3. **Duplicated plumbing.** The state lifecycle code (parse initial value, sync external changes, call updateState, register APIs) is nearly identical across every stateful component, but each one reimplements it from scratch.
 
-## A first-pass solution: wrapComponent
+## First pass: wrapComponent
 
 `wrapComponent` is a utility that generates the renderer automatically. You declare only the exceptions — which props are booleans, which are events, which need renaming — and everything else passes through by default.
 
@@ -77,7 +78,7 @@ The <a href="/slider-vs-sliderw" target="_blank">Slider vs SliderW</a> page show
 
 With `wrapComponent`, all of these forward automatically because unrecognized props flow through `extractValue` by default.
 
-## A second-pass solution: wrapCompound
+## Second pass: wrapCompound
 
 `wrapComponent` eliminates the hand-written renderer, but you still write **SliderNative.tsx**, the React component that manages local value state, parses `initialValue`, syncs external value changes, calls `updateState`, registers component APIs, and assembles the Radix compound structure.
 
@@ -350,11 +351,11 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
 - <a href="/gauge" target="_blank">**Gauge**</a> wraps `smart-webcomponents-react` — and adds **XMLUI theming integration** via CSS custom properties.
 - <a href="/echarts" target="_blank">**EChart**</a> wraps `Apache ECharts` — and adds **option-level theming** via `useTheme()`.
 
-## A third-pass solution: theming
+## Third pass: theming
 
 `wrapCompound` handles state, events, APIs, and tracing — but not styling. Third-party components have their own CSS systems that don't know about XMLUI's design tokens. The <a href="/gauge" target="_blank">Gauge + Theming</a> page shows how to bridge a library's CSS custom properties to XMLUI's theme system using an SCSS module and `defaultThemeVars`, so the component automatically adapts to theme and tone changes.
 
-## A fourth-pass solution: option-level theming
+## Fourth pass: option-level theming
 
 The SCSS bridge works when a library exposes CSS custom properties. But some libraries — notably charting libraries like [Apache ECharts](https://echarts.apache.org/) — control all styling through a JavaScript configuration object, not CSS. There are no `--echart-*` custom properties to bridge to.
 
@@ -364,6 +365,84 @@ Two bridging strategies, one theme system:
 
 - **CSS-level** (Gauge): SCSS module maps `createThemeVar` calls to the library's CSS custom properties. The render component stays pure React.
 - **Option-level** (ECharts): The render component reads theme tokens via `useTheme()` and merges them into the library's config object. The XMLUI author just passes data; theme colors are injected automatically.
+
+## Fifth pass: native events
+
+XMLUI's trace system already captures component lifecycle events (mount, update, unmount) and user interactions that flow through XMLUI's own event system (click, change, submit). But wrapped components like ECharts also fire their own native events — bar clicks with data values, legend toggles, zoom changes — that the trace system can't see unless explicitly bridged.
+
+The fifth pass adds a `captureNativeEvents` option to `wrapComponent`. When enabled, the wrapper injects an `onNativeEvent` callback into the render component's props. The render component calls this callback whenever a native event fires, and the wrapper traces it with a `native:` prefix (e.g., `native:click`, `native:legendselectchanged`).
+
+For ECharts, the render component maps a list of known event names to `onNativeEvent` via the `onEvents` prop. A `nativeEventDisplayLabel` helper in `wrapComponent.tsx` extracts human-readable labels from the native event objects — `Revenue → May = 2800` for a bar click, `Series 1: hide` for a legend toggle, `20% – 80%` for a zoom change.
+
+The changes are additive and eCharts-specific for now:
+
+- `wrapComponent.tsx`: added `captureNativeEvents` config option, `nativeEventDisplayLabel()` helper, and the `onNativeEvent` callback that traces native events
+- `EChartRender.tsx`: added an `ECHARTS_EVENTS` list (adduced from the [ECharts events documentation](https://echarts.apache.org/en/api.html#events)) and an `onEvents` map that forwards each native event to `onNativeEvent`
+- `EChartWrapped.tsx`: added `captureNativeEvents: true` to the wrapper config
+
+All 17 events from the ECharts documentation are wired in the render component: `click`, `dblclick`, `legendselectchanged`, `legendselected`, `legendunselected`, `legendscroll`, `datazoom`, `datarangeselected`, `selectchanged`, `restore`, `dataviewchanged`, `magictypechanged`, `brush`, `brushEnd`, `timelinechanged`, `timelineplaychanged`, and `graphroam`. If a user triggers any of them, they trace.
+
+To validate the list and discover any events the documentation might miss, a diagnostic monkey-patch of the eCharts instance's `trigger` method logs events not in the `ECHARTS_EVENTS` list. A Playwright spec (`traces/specs/discover-echart-events.spec.ts`) exercises all 20 chart types on the <a href="/echarts-catalog" target="_blank">ECharts Catalog</a> page — clicking data items, toggling legends, dispatching zoom/select/brush actions, dragging graph nodes — and reports the observed event vocabulary.
+
+The discovery run confirmed 7 of those event types actually firing:
+
+| Event | What triggers it | Example trace label |
+|---|---|---|
+| `click` | Clicking a data item | `Series 1 → C = 60` |
+| `dblclick` | Double-clicking a data item | `Series 1 → C = 60` |
+| `legendselectchanged` | Toggling a legend item | `Series 1: hide` |
+| `datazoom` | Zooming via slider or API | `20% – 80%` |
+| `selectchanged` | Select/unselect actions | |
+| `brush` | Brush selection | |
+| `datarangeselected` | VisualMap slider adjustment | |
+
+The discovery tool also found 4 noise events correctly excluded from the list: `rendered`, `finished`, `updated` (render lifecycle), and `brushselected` (empty batch on every interaction).
+
+The automated discovery approach is interesting as a complement to building the event list from documentation. It can confirm which events actually fire for a given set of chart configurations, and surface undocumented events the docs might not mention. It shouldn't replace doc inspection — the docs define the full event namespace, while discovery only finds events that the current demos happen to trigger. Here is the Playwright script written for the discovery tool as it probes the native event vocabulary of ECharts:
+
+<video controls width="100%" src="fifth-pass-discovery.mp4"></video>
+
+Here is a sample trace showing native events captured during interactive use. Each event carries a human-readable label extracted by the render component — click values, zoom ranges, visual map slider positions, graph roam coordinates:
+
+```
+--- Trace: EChart click (7ms) ---
+    [interaction] click EChart
+    [native:selectchanged] selectchanged cat-treemap "none selected"
+    [native:click] click cat-treemap "series0 → B1 = 15"
+
+--- Trace: EChart click (85ms) ---
+    [interaction] click EChart
+    [native:datazoom] datazoom cat-datazoom "69% – 100%"
+
+--- Trace: datarangeselected cat-heatmap (dragging visualMap slider) ---
+    [native:datarangeselected] datarangeselected cat-heatmap "50 – 100"
+    ...
+    [native:datarangeselected] datarangeselected cat-heatmap "72 – 100"
+    ...
+    [native:datarangeselected] datarangeselected cat-heatmap "0 – 100"
+
+--- Trace: graphroam cat-graph (scrolling to zoom) ---
+    [native:graphroam] graphroam cat-graph "zoom: 0.91"
+    ...
+
+--- Trace: graphroam cat-graph (dragging to pan) ---
+    [native:graphroam] graphroam cat-graph "roam"
+    ...
+```
+
+The continuous events (`datarangeselected`, `graphroam`) fire on every frame during a drag — useful raw data, but a candidate for debouncing in the viewer.
+
+## Why this matters
+
+Canvas-based libraries like ECharts are opaque to the DOM. A screen reader can't see that a bar represents "Revenue → May = 2800", and a test framework can't assert that a legend toggle hid the right series. Native event capture changes both of those:
+
+- **Accessibility.** The trace carries structured, human-readable descriptions of what just happened inside the canvas — data values, series names, zoom ranges. This is the raw material needed to announce chart interactions to non-sighted users via ARIA live regions. The labels are already there; the announcement channel is a next step.
+
+- **Granular testing.** A Playwright test can now assert not just "a click happened on a canvas" but "clicking the third bar produced `Revenue → Mar = 1600`". The trace captures the actual data values the chart rendered, making it possible to write end-to-end tests that verify chart content, not just chart presence.
+
+- **Debugging and observability.** When a chart misbehaves — wrong data, unexpected zoom state, legend out of sync — the trace shows exactly what the chart reported. This is especially valuable for composite charts where multiple series interact, and for embedded dashboards where reproducing the user's exact interaction sequence is difficult.
+
+- **Cross-library consistency.** The `captureNativeEvents` / `onNativeEvent` pattern is generic. The wrapper knows nothing about eCharts — it just traces whatever the render component reports. The same pattern can bridge events from any canvas-based or opaque third-party library (D3, Three.js, map libraries) into the same trace system, giving a unified view of what happened across the whole application.
 ]]>
         </Markdown>
 
@@ -2102,6 +2181,7 @@ Recharts would need a new composite wrapper or breaking the one-chart-type-per-c
 
       <Card>
         <EChart
+          id="compositeChart"
           height="350px"
           option="{
             {
@@ -2324,6 +2404,433 @@ No scatter chart component exists in the Recharts wrappers.
       <Markdown><![CDATA[
 All of the above use the same `<EChart>` component and the same `option` prop. No new wrapper code was needed for any of them. The Recharts wrappers would each require a new Native component with its own sizing logic, prop mapping, and theming code.
 ]]></Markdown>
+
+    </VStack>
+  </Page>
+
+  <Page url="/echarts-catalog">
+    <VStack padding="{responsive('0.75rem', '2rem')}" gap="1rem">
+
+      <H1>ECharts Catalog</H1>
+      <Markdown><![CDATA[
+Every chart type and interactive feature in the ECharts kit, each in its simplest form. Used by the event discovery spec to exercise the full event vocabulary.
+]]></Markdown>
+
+      <H2>Bar</H2>
+      <Card>
+        <EChart id="cat-bar" height="300px" option="{
+          {
+            xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E'] },
+            yAxis: { type: 'value' },
+            series: [
+              { type: 'bar', name: 'Series 1', data: [40, 80, 60, 90, 50] },
+              { type: 'bar', name: 'Series 2', data: [30, 50, 70, 40, 60] }
+            ],
+            legend: {},
+            tooltip: { trigger: 'axis' }
+          }
+        }" />
+      </Card>
+
+      <H2>Line</H2>
+      <Card>
+        <EChart id="cat-line" height="300px" option="{
+          {
+            xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
+            yAxis: { type: 'value' },
+            series: [
+              { type: 'line', name: 'Users', data: [120, 200, 150, 80, 230], smooth: true },
+              { type: 'line', name: 'Views', data: [80, 140, 110, 200, 180], smooth: true }
+            ],
+            legend: {},
+            tooltip: { trigger: 'axis' }
+          }
+        }" />
+      </Card>
+
+      <H2>Pie / Donut</H2>
+      <Card>
+        <EChart id="cat-pie" height="300px" option="{
+          {
+            series: [{
+              type: 'pie',
+              radius: ['40%', '70%'],
+              data: [
+                { value: 335, name: 'Email' },
+                { value: 234, name: 'Search' },
+                { value: 154, name: 'Direct' },
+                { value: 135, name: 'Social' }
+              ]
+            }],
+            legend: { bottom: 0, left: 'center' },
+            tooltip: { trigger: 'item' }
+          }
+        }" />
+      </Card>
+
+      <H2>Scatter</H2>
+      <Card>
+        <EChart id="cat-scatter" height="300px" option="{
+          {
+            xAxis: { name: 'X' },
+            yAxis: { name: 'Y' },
+            series: [{
+              type: 'scatter',
+              name: 'Points',
+              data: [[10,8],[20,15],[30,22],[40,18],[50,30],[60,25],[70,35],[80,28],[90,40],[100,38]],
+              symbolSize: 12
+            }],
+            tooltip: { trigger: 'item' }
+          }
+        }" />
+      </Card>
+
+      <H2>Area (stacked)</H2>
+      <Card>
+        <EChart id="cat-area" height="300px" option="{
+          {
+            xAxis: { type: 'category', data: ['Q1', 'Q2', 'Q3', 'Q4'], boundaryGap: false },
+            yAxis: { type: 'value' },
+            series: [
+              { type: 'line', name: 'Product A', stack: 'total', areaStyle: {}, data: [120, 132, 101, 134] },
+              { type: 'line', name: 'Product B', stack: 'total', areaStyle: {}, data: [220, 182, 191, 234] },
+              { type: 'line', name: 'Product C', stack: 'total', areaStyle: {}, data: [150, 232, 201, 154] }
+            ],
+            legend: {},
+            tooltip: { trigger: 'axis' }
+          }
+        }" />
+      </Card>
+
+      <H2>Heatmap + visualMap</H2>
+      <Card>
+        <EChart id="cat-heatmap" height="300px" option="{
+          {
+            xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
+            yAxis: { type: 'category', data: ['AM', 'PM', 'Eve'] },
+            visualMap: { min: 0, max: 100, calculable: true, orient: 'horizontal', left: 'center', bottom: 0 },
+            series: [{
+              type: 'heatmap',
+              data: [[0,0,82],[0,1,63],[0,2,41],[1,0,91],[1,1,55],[1,2,30],[2,0,78],[2,1,72],[2,2,58],[3,0,65],[3,1,88],[3,2,45],[4,0,43],[4,1,50],[4,2,92]],
+              label: { show: true }
+            }],
+            tooltip: {}
+          }
+        }" />
+      </Card>
+
+      <H2>Funnel</H2>
+      <Card>
+        <EChart id="cat-funnel" height="300px" option="{
+          {
+            series: [{
+              type: 'funnel',
+              data: [
+                { value: 100, name: 'Visit' },
+                { value: 80, name: 'Inquiry' },
+                { value: 60, name: 'Order' },
+                { value: 40, name: 'Click' },
+                { value: 20, name: 'Show' }
+              ],
+              label: { position: 'inside' }
+            }],
+            legend: { bottom: 0 },
+            tooltip: { trigger: 'item' }
+          }
+        }" />
+      </Card>
+
+      <H2>Treemap</H2>
+      <Card>
+        <EChart id="cat-treemap" height="350px" option="{
+          {
+            series: [{
+              type: 'treemap',
+              data: [
+                { name: 'A', value: 40, children: [{ name: 'A1', value: 20 }, { name: 'A2', value: 20 }] },
+                { name: 'B', value: 30, children: [{ name: 'B1', value: 15 }, { name: 'B2', value: 15 }] },
+                { name: 'C', value: 20 },
+                { name: 'D', value: 10 }
+              ]
+            }],
+            tooltip: {}
+          }
+        }" />
+      </Card>
+
+      <H2>Sankey</H2>
+      <Card>
+        <EChart id="cat-sankey" height="350px" option="{
+          {
+            series: [{
+              type: 'sankey',
+              layout: 'none',
+              emphasis: { focus: 'adjacency' },
+              data: [
+                { name: 'Source A' }, { name: 'Source B' },
+                { name: 'Middle' },
+                { name: 'Dest X' }, { name: 'Dest Y' }
+              ],
+              links: [
+                { source: 'Source A', target: 'Middle', value: 50 },
+                { source: 'Source B', target: 'Middle', value: 30 },
+                { source: 'Middle', target: 'Dest X', value: 45 },
+                { source: 'Middle', target: 'Dest Y', value: 35 }
+              ]
+            }],
+            tooltip: {}
+          }
+        }" />
+      </Card>
+
+      <H2>Radar</H2>
+      <Card>
+        <EChart id="cat-radar" height="350px" option="{
+          {
+            radar: {
+              indicator: [
+                { name: 'Sales', max: 100 },
+                { name: 'Admin', max: 100 },
+                { name: 'Tech', max: 100 },
+                { name: 'Support', max: 100 },
+                { name: 'Marketing', max: 100 }
+              ]
+            },
+            series: [{
+              type: 'radar',
+              data: [
+                { value: [80, 60, 90, 70, 50], name: 'Team A' },
+                { value: [60, 80, 50, 90, 70], name: 'Team B' }
+              ],
+              areaStyle: { opacity: 0.3 }
+            }],
+            legend: {},
+            tooltip: {}
+          }
+        }" />
+      </Card>
+
+      <H2>Gauge</H2>
+      <Card>
+        <EChart id="cat-gauge" height="300px" option="{
+          {
+            series: [{
+              type: 'gauge',
+              data: [{ value: 72, name: 'Score' }],
+              detail: { formatter: '{value}%' }
+            }],
+            tooltip: {}
+          }
+        }" />
+      </Card>
+
+      <H2>Candlestick</H2>
+      <Card>
+        <EChart id="cat-candlestick" height="350px" option="{
+          {
+            xAxis: { type: 'category', data: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6'] },
+            yAxis: { type: 'value', min: 90, max: 130 },
+            series: [{
+              type: 'candlestick',
+              data: [
+                [100, 120, 95, 125],
+                [115, 110, 105, 118],
+                [108, 115, 100, 120],
+                [112, 125, 110, 128],
+                [122, 118, 115, 126],
+                [120, 130, 118, 132]
+              ]
+            }],
+            tooltip: { trigger: 'axis' }
+          }
+        }" />
+      </Card>
+
+      <H2>Boxplot</H2>
+      <Card>
+        <EChart id="cat-boxplot" height="300px" option="{
+          {
+            xAxis: { type: 'category', data: ['Group A', 'Group B', 'Group C'] },
+            yAxis: { type: 'value' },
+            series: [{
+              type: 'boxplot',
+              data: [
+                [655, 850, 940, 980, 1175],
+                [672, 780, 840, 920, 1070],
+                [780, 840, 855, 880, 940]
+              ]
+            }],
+            tooltip: { trigger: 'item' }
+          }
+        }" />
+      </Card>
+
+      <H2>Graph (force layout)</H2>
+      <Card>
+        <EChart id="cat-graph" height="400px" option="{
+          {
+            series: [{
+              type: 'graph',
+              layout: 'force',
+              roam: true,
+              draggable: true,
+              force: { repulsion: 200, edgeLength: 100 },
+              data: [
+                { name: 'Node 1', symbolSize: 40 },
+                { name: 'Node 2', symbolSize: 30 },
+                { name: 'Node 3', symbolSize: 35 },
+                { name: 'Node 4', symbolSize: 25 },
+                { name: 'Node 5', symbolSize: 20 }
+              ],
+              links: [
+                { source: 'Node 1', target: 'Node 2' },
+                { source: 'Node 1', target: 'Node 3' },
+                { source: 'Node 2', target: 'Node 4' },
+                { source: 'Node 3', target: 'Node 5' },
+                { source: 'Node 4', target: 'Node 5' }
+              ],
+              label: { show: true }
+            }],
+            tooltip: {}
+          }
+        }" />
+      </Card>
+
+      <H2>Bar with dataZoom slider</H2>
+      <Card>
+        <EChart id="cat-datazoom" height="350px" option="{
+          {
+            xAxis: { type: 'category', data: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] },
+            yAxis: { type: 'value' },
+            dataZoom: [
+              { type: 'slider', start: 0, end: 100 },
+              { type: 'inside' }
+            ],
+            series: [{ type: 'bar', name: 'Sales', data: [50,80,60,90,70,100,85,110,95,120,75,130] }],
+            legend: {},
+            tooltip: { trigger: 'axis' }
+          }
+        }" />
+      </Card>
+
+      <H2>Line with toolbox</H2>
+      <Card>
+        <EChart id="cat-toolbox" height="350px" option="{
+          {
+            xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
+            yAxis: { type: 'value' },
+            toolbox: {
+              feature: {
+                saveAsImage: {},
+                restore: {},
+                dataView: { readOnly: true },
+                magicType: { type: ['line', 'bar'] }
+              }
+            },
+            series: [
+              { type: 'line', name: 'Revenue', data: [150, 230, 224, 218, 335] }
+            ],
+            legend: {},
+            tooltip: { trigger: 'axis' }
+          }
+        }" />
+      </Card>
+
+      <H2>Bar with brush selection</H2>
+      <Card>
+        <EChart id="cat-brush" height="350px" option="{
+          {
+            xAxis: { type: 'category', data: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] },
+            yAxis: { type: 'value' },
+            brush: { toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'], xAxisIndex: 0 },
+            toolbox: { feature: { brush: { type: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'] } } },
+            series: [{ type: 'bar', name: 'Values', data: [30, 50, 70, 40, 60, 80, 20, 90] }],
+            legend: {},
+            tooltip: { trigger: 'axis' }
+          }
+        }" />
+      </Card>
+
+      <H2>Line with timeline</H2>
+      <Card>
+        <EChart id="cat-timeline" height="400px" option="{
+          {
+            baseOption: {
+              timeline: {
+                axisType: 'category',
+                data: ['2020', '2021', '2022', '2023'],
+                autoPlay: false,
+                playInterval: 1500
+              },
+              xAxis: { type: 'category', data: ['Q1', 'Q2', 'Q3', 'Q4'] },
+              yAxis: { type: 'value' },
+              legend: {},
+              tooltip: { trigger: 'axis' }
+            },
+            options: [
+              { series: [{ type: 'bar', name: 'Revenue', data: [100, 120, 140, 160] }] },
+              { series: [{ type: 'bar', name: 'Revenue', data: [130, 150, 170, 200] }] },
+              { series: [{ type: 'bar', name: 'Revenue', data: [160, 180, 210, 240] }] },
+              { series: [{ type: 'bar', name: 'Revenue', data: [200, 220, 260, 300] }] }
+            ]
+          }
+        }" />
+      </Card>
+
+      <H2>Parallel coordinates</H2>
+      <Card>
+        <EChart id="cat-parallel" height="350px" option="{
+          {
+            parallelAxis: [
+              { dim: 0, name: 'Price' },
+              { dim: 1, name: 'Rating' },
+              { dim: 2, name: 'Sales' },
+              { dim: 3, name: 'Stock' }
+            ],
+            series: [{
+              type: 'parallel',
+              data: [
+                [12, 4.5, 200, 50],
+                [18, 3.8, 150, 30],
+                [25, 4.2, 300, 80],
+                [8, 4.9, 100, 20],
+                [30, 3.5, 250, 60]
+              ],
+              lineStyle: { width: 2, opacity: 0.6 }
+            }],
+            tooltip: {}
+          }
+        }" />
+      </Card>
+
+      <H2>Sunburst</H2>
+      <Card>
+        <EChart id="cat-sunburst" height="400px" option="{
+          {
+            series: [{
+              type: 'sunburst',
+              data: [
+                { name: 'Engineering', children: [
+                  { name: 'Frontend', value: 15 },
+                  { name: 'Backend', value: 18 },
+                  { name: 'DevOps', value: 7 }
+                ]},
+                { name: 'Product', children: [
+                  { name: 'Design', value: 10 },
+                  { name: 'PM', value: 8 }
+                ]},
+                { name: 'Sales', children: [
+                  { name: 'Enterprise', value: 12 },
+                  { name: 'SMB', value: 8 }
+                ]}
+              ],
+              radius: ['15%', '90%'],
+              label: { rotate: 'radial' }
+            }],
+            tooltip: {}
+          }
+        }" />
+      </Card>
 
     </VStack>
   </Page>

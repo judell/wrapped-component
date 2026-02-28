@@ -2534,13 +2534,15 @@
             eventTitle += ` (${e.duration.toFixed(1)}ms)`;
           }
 
-          // Build a descriptive label: prefer displayLabel (standard convention for behavioral events),
-          // fall back to componentLabel, then component name
-          let label = e.componentLabel ? `"${e.componentLabel}"` : "";
-          if (!label && e.displayLabel) {
-            label = (e.component ? e.component + " " : "") + `"${e.displayLabel}"`;
-          } else if (!label && e.component) {
-            label = e.component;
+          // Build a descriptive label: combine componentLabel/componentType with displayLabel
+          let label = "";
+          const compName = e.componentLabel || e.component || "";
+          if (compName && e.displayLabel) {
+            label = `${compName} "${e.displayLabel}"`;
+          } else if (e.displayLabel) {
+            label = `"${e.displayLabel}"`;
+          } else if (compName) {
+            label = compName;
           }
 
           events.push({

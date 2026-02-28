@@ -1,0 +1,293 @@
+{
+  "timestamp": "2026-02-28T04:44:27.441Z",
+  "chartsExercised": 20,
+  "unknownEvents": [
+    "brushselected",
+    "finished",
+    "rendered",
+    "updated"
+  ],
+  "knownEventTypes": [
+    "brush",
+    "click",
+    "datarangeselected",
+    "datazoom",
+    "dblclick",
+    "legendselectchanged",
+    "selectchanged"
+  ],
+  "eventCounts": {
+    "selectchanged": 45,
+    "click": 28,
+    "dblclick": 5,
+    "legendselectchanged": 16,
+    "datazoom": 18,
+    "brush": 9,
+    "datarangeselected": 3
+  },
+  "sampleTraces": [
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "click",
+      "label": "Series 1 → C = 60",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "click",
+      "label": "Series 1 → E = 50",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "click",
+      "label": "Series 1 → C = 60",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "click",
+      "label": "Series 1 → C = 60",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "click",
+      "label": "Series 1 → C = 60",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "dblclick",
+      "label": "Series 1 → C = 60",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Series 1: hide",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Series 1: show",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Series 2: hide",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Series 2: show",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "datazoom",
+      "label": "20% – 80%",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "datazoom",
+      "label": "0% – 100%",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "brush",
+      "label": "",
+      "component": "cat-bar"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Users: hide",
+      "component": "cat-line"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Users: show",
+      "component": "cat-line"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Views: hide",
+      "component": "cat-line"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Views: show",
+      "component": "cat-line"
+    },
+    {
+      "kind": "datazoom",
+      "label": "20% – 80%",
+      "component": "cat-line"
+    },
+    {
+      "kind": "datazoom",
+      "label": "0% – 100%",
+      "component": "cat-line"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-line"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-line"
+    },
+    {
+      "kind": "brush",
+      "label": "",
+      "component": "cat-line"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "click",
+      "label": "series\u00000 → Social = 135",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "click",
+      "label": "series\u00000 → Search = 234",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "datazoom",
+      "label": "20% – 80%",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "datazoom",
+      "label": "0% – 100%",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "brush",
+      "label": "",
+      "component": "cat-pie"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Points: hide",
+      "component": "cat-scatter"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Points: show",
+      "component": "cat-scatter"
+    },
+    {
+      "kind": "datazoom",
+      "label": "20% – 80%",
+      "component": "cat-scatter"
+    },
+    {
+      "kind": "datazoom",
+      "label": "0% – 100%",
+      "component": "cat-scatter"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-scatter"
+    },
+    {
+      "kind": "selectchanged",
+      "label": "",
+      "component": "cat-scatter"
+    },
+    {
+      "kind": "brush",
+      "label": "",
+      "component": "cat-scatter"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Product A: hide",
+      "component": "cat-area"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Product A: show",
+      "component": "cat-area"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Product B: hide",
+      "component": "cat-area"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Product B: show",
+      "component": "cat-area"
+    },
+    {
+      "kind": "legendselectchanged",
+      "label": "Product C: hide",
+      "component": "cat-area"
+    }
+  ],
+  "discoveryMessages": [
+    "[xs:echart-discovery] unknown event: \"brushselected\" {type: brushselected, escapeConnect: undefined, batch: Array(0)}",
+    "[xs:echart-discovery] unknown event: \"brushselected\" {type: brushselected, escapeConnect: undefined, batch: Array(1)}",
+    "[xs:echart-discovery] unknown event: \"finished\" undefined",
+    "[xs:echart-discovery] unknown event: \"rendered\" {elapsedTime: 0}",
+    "[xs:echart-discovery] unknown event: \"rendered\" {elapsedTime: 1}",
+    "[xs:echart-discovery] unknown event: \"rendered\" {elapsedTime: 3}",
+    "[xs:echart-discovery] unknown event: \"rendered\" {elapsedTime: 4}",
+    "[xs:echart-discovery] unknown event: \"rendered\" {elapsedTime: 5}",
+    "[xs:echart-discovery] unknown event: \"rendered\" {elapsedTime: 6}",
+    "[xs:echart-discovery] unknown event: \"updated\" undefined"
+  ],
+  "summary": "4 unknown, 7 known event types"
+}
