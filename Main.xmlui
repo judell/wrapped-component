@@ -37,33 +37,21 @@
         <Markdown>
           <![CDATA[
 
-This demo asks a practical engineering question: how do we wrap third-party React libraries for XMLUI without hand-written boilerplate, while preserving accessibility, theming, traceability, and testability?
+This demo asks a practical engineering question: how do we wrap third-party React libraries for XMLUI without hand-written boilerplate, with full accessibility, theming, traceability, and testability?
 
-It presents a five-pass evolution of the wrapper strategy, with working examples and trace/test evidence.
+It presents a five-phase evolution of the wrapper strategy, with working examples and trace/test evidence.
 
-### What this demo proves
+### What this demo illustrates
 
-1. **Pass 1 (`wrapComponent`)** — Removes hand-written renderer boilerplate and stops silent prop drops by forwarding native props by default.
+1. **Phase 1 (`wrapComponent`)** — Removes hand-written renderer boilerplate and stops silent prop drops by forwarding native props by default.
 
-2. **Pass 2 (`wrapCompound`)** — Removes duplicated state-lifecycle plumbing (`initialValue`, external sync, `updateState`, API wiring) from each wrapped component.
+2. **Phase 2 (`wrapCompound`)** — Removes duplicated state-lifecycle plumbing (`initialValue`, external sync, `updateState`, API wiring) from each wrapped component.
 
-3. **Pass 3 (CSS-level theming)** — Bridges XMLUI tokens to third-party CSS custom properties (Gauge example).
+3. **Phase 3 (CSS-level theming)** — Bridges XMLUI tokens to third-party CSS custom properties (Gauge example).
 
-4. **Pass 4 (Option-level theming)** — Handles libraries like ECharts that style via JS config objects, not CSS variables.
+4. **Phase 4 (Option-level theming)** — Handles libraries like ECharts that style via JS config objects, not CSS variables.
 
-5. **Pass 5 (Native event capture)** — Bridges library-native events into XMLUI traces (`native:*`) so opaque components become testable and observable. Can be enabled per-component or globally via `config.json`.
-
-### How to read this demo
-
-**10-minute path (recommended):** <a href="/slider-vs-sliderw">Slider vs SliderW</a> | <a href="/gauge">Gauge + Theming</a> | <a href="/echarts">ECharts</a> | <a href="/tiptap-editor">Tiptap Support Ticket</a>
-
-**Evidence path (deeper):** <a href="/slider-and-sliderw">Slider and SliderW</a> | <a href="/recharts-and-echarts">Recharts and ECharts</a> | <a href="/recharts-vs-echarts">Recharts vs ECharts</a> | <a href="/echarts-catalog">ECharts Catalog</a>
-
-**Also:** <a href="/knob">Knob</a> and <a href="/code-editor">CodeEditor</a> demonstrate that `wrapCompound` works beyond Radix — with `react-knob-headless` and Monaco Editor respectively.
-
-### Scope and terminology
-
-Claims about "Recharts vs ECharts" refer to the current XMLUI wrappers, not intrinsic limits of the libraries themselves. The goal is wrapper design quality: less boilerplate, fewer dropped capabilities, stronger traces, and better long-term maintainability.
+5. **Phase 5 (Native event capture)** — Bridges library-native events into XMLUI traces (`native:*`) so opaque components become testable and observable. Can be enabled per-component or globally via `config.json`.
 
 ---
 
@@ -84,7 +72,23 @@ This approach has three problems:
 
 3. **Duplicated plumbing.** The state lifecycle code (parse initial value, sync external changes, call updateState, register APIs) is nearly identical across every stateful component, but each one reimplements it from scratch.
 
-## First pass: wrapComponent
+## The opportunity
+
+Solving these problems opens up three capabilities:
+
+- Easily wrap and theme arbitrary React components
+- Gather rich trace/debug info at the semantic level
+- Leverage those traces for testing and accessibility
+
+## Five phases
+
+1. [Phase 1: wrapComponent](#phase-1-wrapcomponent)
+2. [Phase 2: wrapCompound](#phase-2-wrapcompound)
+3. [Phase 3: theming](#phase-3-theming)
+4. [Phase 4: option-level theming](#phase-4-option-level-theming)
+5. [Phase 5: native events](#phase-5-native-events)
+
+## Phase 1: wrapComponent
 
 `wrapComponent` is a utility that generates the renderer automatically. You declare only the exceptions — which props are booleans, which are events, which need renaming — and everything else passes through by default.
 
@@ -110,7 +114,10 @@ The <a href="/slider-vs-sliderw" target="_blank">Slider vs SliderW</a> page show
 
 With `wrapComponent`, all of these forward automatically because unrecognized props flow through `extractValue` by default.
 
-## Second pass: wrapCompound
+> [!INFO]
+> Open the inspector (cog icon, top right) to see the traces these components produce as you interact with them. Note that only SliderW emits semantic trace events (like `value:change`), not the hand-written Slider — that's the wrapper at work.
+
+## Phase 2: wrapCompound
 
 `wrapComponent` eliminates the hand-written renderer, but you still write **SliderNative.tsx**, the React component that manages local value state, parses `initialValue`, syncs external value changes, calls `updateState`, registers component APIs, and assembles the Radix compound structure.
 
@@ -124,7 +131,7 @@ None of that is slider-specific. Every Radix compound component (RadioGroup, Tog
 
 The StateWrapper manages local state, fires `updateState` on changes, and passes three clean props to your render component: `value`, `onChange`, and `registerApi`. Your component never imports anything from XMLUI — it's pure React.
 
-## What you write at each stage
+### What you write at each stage
 
 `wrapComponent` replaces the 40-line renderer with a 13-line config.
 
@@ -373,7 +380,7 @@ export const SliderRender = forwardRef(({
 
         <Markdown>
           <![CDATA[
-## Beyond Radix
+### Beyond Radix
 
 Everything above wraps Radix UI components. But `wrapCompound` is library-agnostic — it handles the XMLUI state lifecycle for any React component.
 
@@ -383,11 +390,11 @@ Everything above wraps Radix UI components. But `wrapCompound` is library-agnost
 - <a href="/gauge" target="_blank">**Gauge**</a> wraps `smart-webcomponents-react` — and adds **XMLUI theming integration** via CSS custom properties.
 - <a href="/echarts" target="_blank">**EChart**</a> wraps `Apache ECharts` — and adds **option-level theming** via `useTheme()`.
 
-## Third pass: theming
+## Phase 3: theming
 
 `wrapCompound` handles state, events, APIs, and tracing — but not styling. Third-party components have their own CSS systems that don't know about XMLUI's design tokens. The <a href="/gauge" target="_blank">Gauge + Theming</a> page shows how to bridge a library's CSS custom properties to XMLUI's theme system using an SCSS module and `defaultThemeVars`, so the component automatically adapts to theme and tone changes.
 
-## Fourth pass: option-level theming
+## Phase 4: option-level theming
 
 The SCSS bridge works when a library exposes CSS custom properties. But some libraries — notably charting libraries like [Apache ECharts](https://echarts.apache.org/) — control all styling through a JavaScript configuration object, not CSS. There are no `--echart-*` custom properties to bridge to.
 
@@ -398,11 +405,11 @@ Two bridging strategies, one theme system:
 - **CSS-level** (Gauge): SCSS module maps `createThemeVar` calls to the library's CSS custom properties. The render component stays pure React.
 - **Option-level** (ECharts): The render component reads theme tokens via `useTheme()` and merges them into the library's config object. The XMLUI author just passes data; theme colors are injected automatically.
 
-## Fifth pass: native events
+## Phase 5: native events
 
 XMLUI's trace system already captures component lifecycle events (mount, update, unmount) and user interactions that flow through XMLUI's own event system (click, change, submit). But wrapped components like ECharts also fire their own native events — bar clicks with data values, legend toggles, zoom changes — that the trace system can't see unless explicitly bridged.
 
-The fifth pass adds a `captureNativeEvents` option to both `wrapComponent` and `wrapCompound`. When enabled, the wrapper injects an `onNativeEvent` callback into the render component's props. The render component calls this callback whenever a native event fires, and the wrapper traces it with a `native:` prefix (e.g., `native:click`, `native:legendselectchanged`). The option can be set per-component in the wrapper config, or globally via `captureNativeEvents: true` in `config.json`'s `appGlobals`.
+Phase 5 adds a `captureNativeEvents` option to both `wrapComponent` and `wrapCompound`. When enabled, the wrapper injects an `onNativeEvent` callback into the render component's props. The render component calls this callback whenever a native event fires, and the wrapper traces it with a `native:` prefix (e.g., `native:click`, `native:legendselectchanged`). The option can be set per-component in the wrapper config, or globally via `captureNativeEvents: true` in `config.json`'s `appGlobals`.
 
 For ECharts, the render component maps a list of known event names to `onNativeEvent` via the `onEvents` prop. A `formatDisplayLabel` helper in the render component extracts human-readable labels from the native event objects — `Revenue → May = 2800` for a bar click, `Series 1: hide` for a legend toggle, `20% – 80%` for a zoom change.
 
@@ -464,7 +471,7 @@ Here is a sample trace showing native events captured during interactive use. Ea
 
 The continuous events (`datarangeselected`, `graphroam`) fire on every frame during a drag — useful raw data, but a candidate for debouncing in the viewer.
 
-## Why this matters
+### Why this matters
 
 Canvas-based libraries like ECharts are opaque to the DOM. A screen reader can't see that a bar represents "Revenue → May = 2800", and a test framework can't assert that a legend toggle hid the right series. Native event capture changes both of those:
 
@@ -476,13 +483,13 @@ Canvas-based libraries like ECharts are opaque to the DOM. A screen reader can't
 
 - **Cross-library consistency.** The `captureNativeEvents` / `onNativeEvent` pattern is generic. The wrapper knows nothing about eCharts — it just traces whatever the render component reports. The same pattern can bridge events from any canvas-based or opaque third-party library (D3, Three.js, map libraries) into the same trace system, giving a unified view of what happened across the whole application.
 
-## Why not backport to Radix?
+### Why not backport to Radix?
 
 The `captureNativeEvents` pattern could be added to every Radix-wrapped component — Slider, Checkbox, RadioGroup, Accordion, Tabs, and the rest. It's mechanically straightforward. But it wouldn't add much value, because Radix components are DOM-based. A Radix checkbox renders a real `<button>` with `aria-checked`. A Radix slider renders a `<span>` with `aria-valuenow`. A Radix accordion renders `<div>` elements with `aria-expanded`. Screen readers already see all of this. Playwright can already query these elements by role and assert their state. And XMLUI's own event system already traces the interactions that matter — `didChange` fires with the new value when a slider moves or a checkbox toggles.
 
 Native event capture solves the problem of opacity: when a library renders to canvas, or uses a proprietary DOM structure that hides semantic meaning, the trace system can't see what happened without explicit bridging. Radix doesn't have that problem. Its whole design philosophy is to produce accessible, semantically meaningful DOM. Adding `captureNativeEvents` to Radix components would produce traces that duplicate what XMLUI events and standard ARIA attributes already provide.
 
-## What's next?
+### What's next?
 
 The value of `captureNativeEvents` scales with the opacity of the wrapped library. ECharts renders entirely on canvas — that's why native event capture matters there. The next render function to demonstrate broad applicability should be another library that hides its state from the DOM:
 
@@ -492,13 +499,13 @@ The value of `captureNativeEvents` scales with the opacity of the wrapped librar
 
 - **A code editor** (Monaco is already wrapped via `wrapCompound` but without `captureNativeEvents`). Monaco's internal events — cursor movement, selection changes, find/replace actions, folding — are semantically rich but invisible to the trace system today.
 
-Any of these would confirm that the pattern generalizes: one generic option in `wrapComponent`, one library-specific `formatDisplayLabel` in the render component, and the trace system sees inside another opaque library.
+- **A rich text editor** (Tiptap/ProseMirror). The editor content lives in the DOM as a `contenteditable` div, but the editing operations — formatting toggles, structural changes, undo/redo — live in ProseMirror's transaction layer, which is invisible to the trace system.
 
-## Second proof of concept: Tiptap
+Any of these would confirm that the pattern generalizes: one generic option in `wrapComponent`, one library-specific `formatDisplayLabel` in the render component, and the trace system sees inside another opaque library. We'll use Tiptap.
 
-ECharts proved the pattern for a canvas-based library with a fixed event vocabulary. Tiptap tests a different kind of opacity. The editor content lives in the DOM (it's a `contenteditable` div), so screen readers can see the text. But the editing operations — formatting toggles, structural changes, undo/redo — live in ProseMirror's transaction layer, which is invisible to the trace system.
+### Tiptap
 
-The architectural difference from eCharts is significant. ECharts has a fixed vocabulary of named events (`click`, `legendselectchanged`, `datazoom`) that the render component subscribes to individually. Tiptap funnels everything through a single `onTransaction` callback. Every user action produces a ProseMirror transaction with typed steps — `addMark`, `removeMark`, `replace`, `replaceAround` — that describe exactly what changed. Instead of enumerating an event vocabulary, a `classifyTransaction` function inspects each transaction's steps and derives the event type and display label.
+The architectural difference from ECharts is significant. ECharts has a fixed vocabulary of named events (`click`, `legendselectchanged`, `datazoom`) that the render component subscribes to individually. Tiptap funnels everything through a single `onTransaction` callback. Every user action produces a ProseMirror transaction with typed steps — `addMark`, `removeMark`, `replace`, `replaceAround` — that describe exactly what changed. Instead of enumerating an event vocabulary, a `classifyTransaction` function inspects each transaction's steps and derives the event type and display label.
 
 The changes are minimal:
 
@@ -519,7 +526,7 @@ The classification covers:
 | `replaceAround` | `structure` | `bulletList`, `blockquote` |
 | focus/blur callbacks | `focus` / `blur` | `focus`, `blur` |
 
-### Sample trace
+#### Sample trace
 
 Here is a trace captured from the customer support workflow on this page. The editor arrives at step 3 pre-loaded with a billing summary template. The agent deletes the placeholder text `[Add your note here]`, types "My note", then moves on. In the raw view, searching for `native:` filters to just the bridged events; narrower searches like `native:input` or `native:delete` isolate specific event types.
 
@@ -569,11 +576,11 @@ Every native event is interleaved with XMLUI's own `value:change` and `handler:s
 
 The native event sits between the DOM interaction and the XMLUI data flow, bridging the gap between "the user pressed backspace" and "the component value changed." A test can now assert that the interaction produced the expected editing operation, not just that a new value appeared.
 
-### Why this matters (from the workflow perspective)
+#### Why this matters (from the workflow perspective)
 
 The earlier "Why this matters" section focused on canvas opacity — ECharts hides everything from the DOM, so native event capture is the only way to see what happened inside the chart. Tiptap is different. Its content lives in a `contenteditable` div; screen readers can see the text. So why bridge its internal events?
 
-Because a Tiptap editor doesn't appear in isolation. It appears at a specific step in a workflow, pre-configured for the task at hand. "Draft your review comments" after viewing a pull request. "Compose release notes" after selecting a version. "Write the customer reply" after reviewing the ticket history. The editor arrives with context from earlier steps — an initial value, a toolbar subset, a placeholder that tells the user what to write. And when the user finishes, the edited content flows to the next step.
+Because a Tiptap editor might not appear in isolation. It might appear at a specific step in a workflow, pre-configured for the task at hand. "Draft your review comments" after viewing a pull request. "Compose release notes" after selecting a version. "Write the customer reply" after reviewing the ticket history. The editor arrives with context from earlier steps — an initial value, a toolbar subset, a placeholder that tells the user what to write. And when the user finishes, the edited content flows to the next step.
 
 XMLUI's `value:change` events confirm the data plumbing: content arrived at the editor, content left the editor. But they say nothing about whether the editing experience actually worked. Native event capture answers a different question: did the embedded tool function as a tool?
 
