@@ -1,7 +1,8 @@
 {
   "appGlobals": {
     "xsVerbose": true,
-    "xsVerboseLogMax": 500
+    "xsVerboseLogMax": 500,
+    "captureNativeEvents": true
   },
   "themes": ["themes/earthtone.json"]
 }

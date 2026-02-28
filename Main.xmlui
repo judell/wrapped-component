@@ -37,12 +37,44 @@
         <Markdown>
           <![CDATA[
 
-Every XMLUI component that wraps a React component needs plumbing — a **renderer** that bridges XMLUI markup to React props, plus **state management** that handles value lifecycle (`initialValue` parsing, `updateState` calls, external value syncing, component API registration). Today, all of this is written by hand.
+This demo asks a practical engineering question: how do we wrap third-party React libraries for XMLUI without hand-written boilerplate, while preserving accessibility, theming, traceability, and testability?
 
-For a component like **Slider**, wrapping Radix's slider for XMLUI requires:
+It presents a five-pass evolution of the wrapper strategy, with working examples and trace/test evidence.
 
-- A **renderer** (~40 lines): calling `extractValue` for each prop, `lookupEventHandler` for each event, `lookupSyncCallback` for each callback, and manually forwarding plumbing like `className`, `registerComponentApi`, `updateState`, and `state.value`
-- A **native component** (~347 lines): `useState`/`useEffect` for `initialValue` parsing, value syncing, `updateState` calls, `registerComponentApi` wiring, and the actual Radix assembly
+### What this demo proves
+
+1. **Pass 1 (`wrapComponent`)** — Removes hand-written renderer boilerplate and stops silent prop drops by forwarding native props by default.
+
+2. **Pass 2 (`wrapCompound`)** — Removes duplicated state-lifecycle plumbing (`initialValue`, external sync, `updateState`, API wiring) from each wrapped component.
+
+3. **Pass 3 (CSS-level theming)** — Bridges XMLUI tokens to third-party CSS custom properties (Gauge example).
+
+4. **Pass 4 (Option-level theming)** — Handles libraries like ECharts that style via JS config objects, not CSS variables.
+
+5. **Pass 5 (Native event capture)** — Bridges library-native events into XMLUI traces (`native:*`) so opaque components become testable and observable. Can be enabled per-component or globally via `config.json`.
+
+### How to read this demo
+
+**10-minute path (recommended):** <a href="/slider-vs-sliderw">Slider vs SliderW</a> | <a href="/gauge">Gauge + Theming</a> | <a href="/echarts">ECharts</a> | <a href="/tiptap-editor">Tiptap Support Ticket</a>
+
+**Evidence path (deeper):** <a href="/slider-and-sliderw">Slider and SliderW</a> | <a href="/recharts-and-echarts">Recharts and ECharts</a> | <a href="/recharts-vs-echarts">Recharts vs ECharts</a> | <a href="/echarts-catalog">ECharts Catalog</a>
+
+**Also:** <a href="/knob">Knob</a> and <a href="/code-editor">CodeEditor</a> demonstrate that `wrapCompound` works beyond Radix — with `react-knob-headless` and Monaco Editor respectively.
+
+### Scope and terminology
+
+Claims about "Recharts vs ECharts" refer to the current XMLUI wrappers, not intrinsic limits of the libraries themselves. The goal is wrapper design quality: less boilerplate, fewer dropped capabilities, stronger traces, and better long-term maintainability.
+
+---
+
+## The problem
+
+Every XMLUI component that wraps a React component needs plumbing — a renderer that bridges XMLUI markup to React props, plus state management that handles value lifecycle (`initialValue` parsing, `updateState` calls, external value syncing, component API registration). Today, all of this is written by hand.
+
+For a component like Slider, wrapping Radix's slider for XMLUI requires:
+
+- A renderer (~40 lines): calling `extractValue` for each prop, `lookupEventHandler` for each event, `lookupSyncCallback` for each callback, and manually forwarding plumbing like `className`, `registerComponentApi`, `updateState`, and `state.value`
+- A native component (~347 lines): `useState`/`useEffect` for `initialValue` parsing, value syncing, `updateState` calls, `registerComponentApi` wiring, and the actual Radix assembly
 
 This approach has three problems:
 
@@ -94,11 +126,11 @@ The StateWrapper manages local state, fires `updateState` on changes, and passes
 
 ## What you write at each stage
 
-`wrapComponent` replace the 40-line renderer with a 13-line config.
+`wrapComponent` replaces the 40-line renderer with a 13-line config.
 
 `wrapCompound` removes the XMLUI plumbing from the native component. You write only **SliderRender.tsx** — pure React that receives `value`, `onChange`, and `registerApi` and assembles the Radix compound structure. No `updateState`, no `initialValue` useEffect, no value sync, no XMLUI imports.
 
-The test we built in phase 1 validated the final refactor. Same baselines, same generated Playwright assertions, same semantic trace comparison. `slider-pass` still PASSES, `slider-fail` still FAILS with the correct value mismatch. The behavioral contract is preserved across the rewrite.
+The [trace-tools](https://github.com/xmlui-org/trace-tools) pipeline — which captures semantic traces, distills them into baselines, and generates Playwright assertions — validated the final refactor. The `slider-pass` journey (where the slider reaches its expected value of 55) still PASSES, and `slider-fail` (where a simulated regression stops at 60) still FAILS with the correct value mismatch. The behavioral contract is preserved across the rewrite.
 ]]>
         </Markdown>
 
@@ -370,13 +402,13 @@ Two bridging strategies, one theme system:
 
 XMLUI's trace system already captures component lifecycle events (mount, update, unmount) and user interactions that flow through XMLUI's own event system (click, change, submit). But wrapped components like ECharts also fire their own native events — bar clicks with data values, legend toggles, zoom changes — that the trace system can't see unless explicitly bridged.
 
-The fifth pass adds a `captureNativeEvents` option to `wrapComponent`. When enabled, the wrapper injects an `onNativeEvent` callback into the render component's props. The render component calls this callback whenever a native event fires, and the wrapper traces it with a `native:` prefix (e.g., `native:click`, `native:legendselectchanged`).
+The fifth pass adds a `captureNativeEvents` option to both `wrapComponent` and `wrapCompound`. When enabled, the wrapper injects an `onNativeEvent` callback into the render component's props. The render component calls this callback whenever a native event fires, and the wrapper traces it with a `native:` prefix (e.g., `native:click`, `native:legendselectchanged`). The option can be set per-component in the wrapper config, or globally via `captureNativeEvents: true` in `config.json`'s `appGlobals`.
 
-For ECharts, the render component maps a list of known event names to `onNativeEvent` via the `onEvents` prop. A `nativeEventDisplayLabel` helper in `wrapComponent.tsx` extracts human-readable labels from the native event objects — `Revenue → May = 2800` for a bar click, `Series 1: hide` for a legend toggle, `20% – 80%` for a zoom change.
+For ECharts, the render component maps a list of known event names to `onNativeEvent` via the `onEvents` prop. A `formatDisplayLabel` helper in the render component extracts human-readable labels from the native event objects — `Revenue → May = 2800` for a bar click, `Series 1: hide` for a legend toggle, `20% – 80%` for a zoom change.
 
 The changes are additive and eCharts-specific for now:
 
-- `wrapComponent.tsx`: added `captureNativeEvents` config option, `nativeEventDisplayLabel()` helper, and the `onNativeEvent` callback that traces native events
+- `wrapComponent.tsx`: added `captureNativeEvents` config option and the `onNativeEvent` callback that traces native events
 - `EChartRender.tsx`: added an `ECHARTS_EVENTS` list (adduced from the [ECharts events documentation](https://echarts.apache.org/en/api.html#events)) and an `onEvents` map that forwards each native event to `onNativeEvent`
 - `EChartWrapped.tsx`: added `captureNativeEvents: true` to the wrapper config
 
@@ -1222,7 +1254,7 @@ Edit the markdown below and watch the rendered preview update in real time.
           </Button>
 
           <Card when="{sent}">
-            <Text fontWeight="bold">Sent by Alex Chen on Feb 26, 2025</Text>
+            <Text fontWeight="bold">Sent by Alex Chen on Feb 27, 2026</Text>
             <Markdown>{replyBody}</Markdown>
           </Card>
         </Card>
@@ -1289,6 +1321,7 @@ export const tiptapEditorComponentRenderer = wrapCompound(
     events: {
       didChange: "onDidChange",
     },
+    captureNativeEvents: true,
   },
 );
 ```
