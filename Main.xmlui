@@ -461,6 +461,103 @@ The value of `captureNativeEvents` scales with the opacity of the wrapped librar
 - **A code editor** (Monaco is already wrapped via `wrapCompound` but without `captureNativeEvents`). Monaco's internal events — cursor movement, selection changes, find/replace actions, folding — are semantically rich but invisible to the trace system today.
 
 Any of these would confirm that the pattern generalizes: one generic option in `wrapComponent`, one library-specific `formatDisplayLabel` in the render component, and the trace system sees inside another opaque library.
+
+## Second proof of concept: Tiptap
+
+ECharts proved the pattern for a canvas-based library with a fixed event vocabulary. Tiptap tests a different kind of opacity. The editor content lives in the DOM (it's a `contenteditable` div), so screen readers can see the text. But the editing operations — formatting toggles, structural changes, undo/redo — live in ProseMirror's transaction layer, which is invisible to the trace system.
+
+The architectural difference from eCharts is significant. ECharts has a fixed vocabulary of named events (`click`, `legendselectchanged`, `datazoom`) that the render component subscribes to individually. Tiptap funnels everything through a single `onTransaction` callback. Every user action produces a ProseMirror transaction with typed steps — `addMark`, `removeMark`, `replace`, `replaceAround` — that describe exactly what changed. Instead of enumerating an event vocabulary, a `classifyTransaction` function inspects each transaction's steps and derives the event type and display label.
+
+The changes are minimal:
+
+- `wrapComponent.tsx`: added `captureNativeEvents` support to `wrapCompound` (same pattern already in `wrapComponent`)
+- `TiptapEditorWrapped.tsx`: added `captureNativeEvents: true`
+- `TiptapEditorRender.tsx`: added `classifyTransaction()` and wired `onTransaction`, `onFocus`, `onBlur` to `onNativeEvent`
+
+The classification covers:
+
+| Step type | Trace event | Example label |
+|---|---|---|
+| `addMark` / `removeMark` | `format` | `bold: on`, `italic: off` |
+| `replace` with text | `input` | `"Hello world"` |
+| `replace` with empty slice | `delete` | `delete` |
+| `replace` with heading node | `structure` | `heading 2` |
+| `replace` with table node | `insert` | `table 3×3` |
+| `replace` with horizontalRule | `insert` | `horizontal rule` |
+| `replaceAround` | `structure` | `bulletList`, `blockquote` |
+| focus/blur callbacks | `focus` / `blur` | `focus`, `blur` |
+
+### Sample trace
+
+Here is a trace captured from the customer support workflow on this page. The editor arrives at step 3 pre-loaded with a billing summary template. The agent deletes the placeholder text `[Add your note here]`, types "My note", then moves on. In the raw view, searching for `native:` filters to just the bridged events; narrower searches like `native:input` or `native:delete` isolate specific event types.
+
+The trace export (filtered to `native` events, newest first) tells the full story:
+
+```
+[native:blur]   blur   te1 "blur"                ← left the editor
+[native:input]  input  te1 ""My note""           ← final typed text
+[native:input]  input  te1 ""e""                 ← typing "My note"
+[native:input]  input  te1 ""t""                    character by character
+[native:input]  input  te1 ""o""
+[native:input]  input  te1 ""n""
+[native:input]  input  te1 "" ""
+[native:input]  input  te1 ""y""
+[native:input]  input  te1 ""M""
+[native:delete] delete te1 "delete"              ← backspace ×16
+[native:delete] delete te1 "delete"                 deleting "[Add your note here]"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:delete] delete te1 "delete"
+[native:focus]  focus  te1 "focus"               ← entered the editor
+```
+
+Each keystroke produces its own `input` event — one transaction per character, just as eCharts fires one `datarangeselected` per frame during a drag. Backspace produces `delete` events. A viewer could collapse consecutive `input` events into a single "typed 'My note'" summary, and consecutive deletes into "deleted 16 characters."
+
+Every native event is interleaved with XMLUI's own `value:change` and `handler:start/complete` events in the full trace. A single backspace, for example, produces this sequence within its trace:
+
+```
+[interaction]        keydown Write your reply...
+[native:delete]      delete te1 "delete"
+[value:change]       didChange TiptapEditor "Hi Jordan Lee, ..."
+[handler:start]      didChange "Write your reply..."
+[state:changes]      didChange
+[handler:complete]   didChange "Write your reply..."
+```
+
+The native event sits between the DOM interaction and the XMLUI data flow, bridging the gap between "the user pressed backspace" and "the component value changed." A test can now assert that the interaction produced the expected editing operation, not just that a new value appeared.
+
+### Why this matters (from the workflow perspective)
+
+The earlier "Why this matters" section focused on canvas opacity — ECharts hides everything from the DOM, so native event capture is the only way to see what happened inside the chart. Tiptap is different. Its content lives in a `contenteditable` div; screen readers can see the text. So why bridge its internal events?
+
+Because a Tiptap editor doesn't appear in isolation. It appears at a specific step in a workflow, pre-configured for the task at hand. "Draft your review comments" after viewing a pull request. "Compose release notes" after selecting a version. "Write the customer reply" after reviewing the ticket history. The editor arrives with context from earlier steps — an initial value, a toolbar subset, a placeholder that tells the user what to write. And when the user finishes, the edited content flows to the next step.
+
+XMLUI's `value:change` events confirm the data plumbing: content arrived at the editor, content left the editor. But they say nothing about whether the editing experience actually worked. Native event capture answers a different question: did the embedded tool function as a tool?
+
+Consider what the trace reveals:
+
+- **The editor received focus when the step activated.** A `native:focus` event confirms the editor is keyboard-accessible within the workflow's focus flow. If focus never arrives, the editor might be visually present but unreachable — a real problem in a multi-step form.
+
+- **The toolbar worked.** `native:format` events like `bold: on` confirm that formatting controls functioned. If an update breaks bold toggling but not text input, `value:change` tests still pass (plain text flows to the next step), but the user's experience degraded. The missing `native:format` event surfaces this.
+
+- **Structural editing worked.** `native:structure` events like `heading 2` or `bulletList` confirm that the editor's document model responded to toolbar actions. A regression that silently drops list conversion would be invisible to data-flow tests but visible in the trace.
+
+- **Undo worked.** Users make mistakes. If undo is broken in the embedded context, the editor is a trap — the user can't recover without clearing and restarting. An expected `native:edit` event for undo that never appears flags this.
+
+- **The editor released focus when the user moved on.** A `native:blur` event confirms clean handoff to the next workflow step.
+
+This is the same pattern as the ECharts case, viewed from a different angle. There, native event capture made an opaque rendering surface visible to the trace system. Here, it makes an opaque interaction layer visible. The text is in the DOM, but the editing operations — format, structure, undo — live in ProseMirror's transaction layer, invisible to anything outside the editor. The trace bridges that gap, giving workflow tests and accessibility tools a structured account of what the user actually did, not just what data emerged.
 ]]>
         </Markdown>
 
