@@ -2,6 +2,8 @@
 
 XMLUI ships a monolithic `xmlui-standalone.umd.js` that includes every component. Today that's ~4.7MB. On the `judell/wrap-component` branch, which adds TipTap, ECharts, Gauge, and other wrapped libraries, it's 9.4MB — and the catalog will keep growing. Selective bundling decouples catalog size from app size: each app gets a bundle containing only what it uses.
 
+Tested end-to-end on four apps: wrapped, community-calendar, core-ssh-server-ui, and myWorkDrive-Client.
+
 ## Why standalone is the default mode
 
 Unless you're hacking the XMLUI engine itself, there's no reason to run the Vite dev server. The dev server exists for engine developers who need HMR while modifying React components, the parser, or the renderer. Everyone else — app developers writing `.xmlui` files — should be in standalone mode. Your app doesn't hot-reload, but it refreshes on every browser reload, and you're not paying for a Node toolchain you don't need.
@@ -51,14 +53,14 @@ This is for release pipelines, not for developers sitting at their laptops. An a
 
 ### Assembly (app developer)
 
-| App | Groups used | Excludable | Bundle | vs Monolithic |
-|---|---|---|---|---|
-| Full catalog (all 86) | 86 | 0 | 12,400 KB | +32% |
-| wrapped | 32 | 54 | 12,200 KB | +30% |
-| community-calendar | 27 | 59 | 7,400 KB | -21% |
-| myWorkDrive-Client | 30 | 56 | 7,400 KB | -21% |
+| App | Groups used | Excluded | Files included | Bundle | vs Monolithic |
+|---|---|---|---|---|---|
+| wrapped | 32 | 54 | 145/204 | 13,117 KB | +39% |
+| core-ssh-server-ui | 36 | 50 | 145/204 | 5,819 KB | -38% |
+| myWorkDrive-Client | 30 | 56 | 135/204 | 5,805 KB | -38% |
+| community-calendar | 27 | 59 | 134/204 | 5,457 KB | -42% |
 
-Apps that pull in heavy dependencies (ECharts 2.7MB, TipTap 1.1MB, Gauge 793KB) get larger bundles than the monolith because IIFE wrapping adds overhead that tree shaking would otherwise eliminate. Apps that stick to core XMLUI components see significant savings.
+The wrapped app is larger than the monolith because it uses ECharts (2.7MB), TipTap (1.1MB), Gauge (793KB), and Recharts (890KB) — IIFE wrapping adds overhead that tree shaking would otherwise eliminate. The other three apps exclude all heavy third-party libraries and see significant savings.
 
 ### Subtraction (CI pipeline)
 
@@ -115,23 +117,28 @@ Vite builds the runtime (`xmlui-core`) plus all 86 entry points. Rollup produces
 
 ### 2. ESM-to-IIFE conversion
 
-`esm-to-iife.mjs` converts the ESM chunks to concatenable IIFEs. Each chunk becomes `var _filename_hash = (function() { ... return exports; })();` with unique global names based on the full filename hash. The script also computes a topological sort and writes:
+`esm-to-iife.mjs` converts the ESM chunks to concatenable IIFEs. Each chunk becomes `var _filename_hash = (function() { ... return exports; })();` with unique global names based on the full filename hash. The script also:
 
-- `chunk-order.json` — concatenation order (shared chunks and runtime first, component entries last)
-- `chunk-deps.json` — dependency graph for selective inclusion
+- Inlines CSS imports as runtime `<style>` tag injection (matching how the monolithic UMD handles component CSS via `vite-plugin-lib-inject-css`)
+- Generates a `css-layer-order.js` bootstrap that injects `@layer reset,base,components,dynamic;` before any component styles — this is critical because CSS layers are ordered by first appearance, and without the explicit declaration, shared chunks that inject `@layer components` CSS before the core would give `components` the lowest priority
+- Computes a topological sort and writes:
+  - `chunk-order.json` — concatenation order (bootstrap first, then shared chunks and runtime, then component entries)
+  - `chunk-deps.json` — dependency graph for selective inclusion
 
 ### 3. CSS handling
 
-The IIFE conversion strips CSS imports from JS chunks. The monolithic UMD uses `vite-plugin-lib-inject-css` to inject styles at runtime via `<style>` tags, but that mechanism relies on ESM import side effects that don't survive IIFE conversion. Instead, the CLI concatenates all CSS files from the chunks directory into `xmlui-standalone.css`, which the app loads via a `<link>` tag:
+Each IIFE chunk inlines its CSS imports as runtime `<style>` tag injection — the same mechanism the monolithic UMD uses. The CLI also assembles a `xmlui-standalone.css` file from all chunk CSS files, prepended with the `@layer` order declaration. Apps can optionally load this via a `<link>` tag for faster initial paint, but it's not required since the JS handles CSS injection.
 
 ```html
+<!-- Both work: -->
+<script src="xmlui/xmlui-standalone.umd.js"></script>
+
+<!-- Optional CSS link for faster initial paint: -->
 <link rel="stylesheet" href="xmlui/xmlui-standalone.css">
 <script src="xmlui/xmlui-standalone.umd.js"></script>
 ```
 
-This is a difference from the monolithic UMD, which needs no `<link>` tag. Apps using selective bundles need both tags.
-
-Output lands in `dist/chunks/`: ~254 JS files, CSS files, `chunk-order.json`, and `chunk-deps.json`.
+Output lands in `dist/chunks/`: ~203 JS files, CSS files, `css-layer-order.js`, `chunk-order.json`, and `chunk-deps.json`.
 
 ## How the CLI assembles a bundle
 
@@ -143,9 +150,11 @@ The CLI:
 1. Scans all `.xmlui` files for component tags (stripping `<Script>` blocks, CDATA, and comments)
 2. Maps tags to chunk IDs via `chunk-manifest.json`
 3. Computes the transitive closure of dependencies from `chunk-deps.json`
-4. Concatenates the needed chunks in dependency order from `chunk-order.json`
-5. Concatenates all CSS files from the chunks directory
-6. Writes `xmlui-standalone.umd.js` and `xmlui-standalone.css` to the app's `xmlui/` directory
+4. Always includes structural primitives that are referenced by name at runtime but invisible to the import-based dependency graph: Fragment, Stack, SpaceFiller, Text, FlowLayout (these are used internally by the rendering engine via `{ type: "Fragment" }` etc.)
+5. Always includes the `css-layer-order.js` bootstrap
+6. Concatenates the needed chunks in dependency order from `chunk-order.json`
+7. Concatenates all CSS files (prepended with `@layer` order declaration)
+8. Writes `xmlui-standalone.umd.js` and `xmlui-standalone.css` to the app's `xmlui/` directory
 
 To see what would be included without writing files:
 
@@ -231,11 +240,7 @@ Lib-mode apps import xmlui as an npm dependency and use Vite's dev server. Stand
 <!-- Before (lib mode) -->
 <script type="module" src="/index.ts"></script>
 
-<!-- After (standalone, monolithic) -->
-<script src="xmlui/xmlui-standalone.umd.js"></script>
-
-<!-- After (standalone, selective) -->
-<link rel="stylesheet" href="xmlui/xmlui-standalone.css">
+<!-- After (standalone — monolithic or selective, same tag) -->
 <script src="xmlui/xmlui-standalone.umd.js"></script>
 ```
 
@@ -249,7 +254,7 @@ Lib-mode apps import xmlui as an npm dependency and use Vite's dev server. Stand
 
 | Repo | Branch | What changes |
 |---|---|---|
-| **xmlui** | `judell/wrap-component` | `ComponentProvider.tsx` env var guards, `vite.config.ts` standalone-chunked mode, `src/chunks/register-*.ts` (86 entry points), `scripts/esm-to-iife.mjs`, `scripts/generate-chunk-entries.mjs`, `scripts/chunk-manifest.json` |
-| **xmlui-cli** | `judell/standalone-selective-bundler` | `commands/buildcmd/` package (tag scanner, manifest resolver, chunk assembler, `xmlui build` subcommand) |
+| **xmlui** | `judell/wrap-component` | `ComponentProvider.tsx` env var guards, `vite.config.ts` standalone-chunked mode, `src/chunks/register-*.ts` (86 entry points), `scripts/esm-to-iife.mjs` (CSS inlining, layer order bootstrap), `scripts/generate-chunk-entries.mjs`, `scripts/chunk-manifest.json`, `src/index-standalone.ts` (tree-shaken core), `src/components-core/StandaloneApp.tsx` (lazy MetadataProvider), `src/components-core/StandaloneExtensionManager.ts` (metadata support) |
+| **xmlui-cli** | `judell/standalone-selective-bundler` | `commands/buildcmd/` package (tag scanner, manifest resolver, chunk assembler with always-include primitives and CSS layer order, `xmlui build` subcommand) |
 | **myWorkDrive-Client** | `judell/standalone` | Lib-to-standalone conversion |
 | **wrapped**, **community-calendar**, **core-ssh-server-ui** | `main` | Unchanged — consumers of the optimized bundle |
