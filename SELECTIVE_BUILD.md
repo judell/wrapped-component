@@ -1,12 +1,8 @@
-# wrapped
-
-A standalone XMLUI app that wraps third-party components (ECharts, TiptapEditor, Slider, Knob) and demonstrates native event capture, trace enrichment, and component testing.
-
-## Standalone selective bundling
+# Standalone selective bundling
 
 The monolithic `xmlui-standalone.umd.js` (9.9MB) includes every XMLUI component. Most apps use a fraction of them. Selective bundling produces a smaller file containing only what the app needs.
 
-### How it works
+## How it works
 
 Every XMLUI component registration in `ComponentProvider.tsx` is gated by an env var:
 
@@ -20,7 +16,7 @@ Setting `VITE_USED_COMPONENTS_Gauge=false` before `vite build --mode standalone`
 
 There are 86 component groups, each with its own env var. The `chunk-manifest.json` maps every XMLUI tag name to its group and env var.
 
-### What drives bundle size
+## What drives bundle size
 
 The XMLUI runtime (React, React Router, lodash-es, immer, @tanstack/react-query, framer-motion) is always present — it's shared across all components and survives tree shaking. There is no explicit "core" to define; tree shaking naturally retains whatever the included components actually import.
 
@@ -34,25 +30,26 @@ The savings come from eliminating heavy third-party dependency chains:
 
 Small XMLUI-native components (Badge, Avatar, Checkbox, etc.) save almost nothing individually because they share dependencies with the rest of the framework.
 
-### Measured results
+## Measured results
 
 | App | Groups used | Excludable | Bundle | Savings |
 |---|---|---|---|---|
 | Baseline (all components) | 86 | 0 | 9,907 KB | -- |
 | wrapped (heavy) | 32 | 54 | 9,746 KB | 161 KB (1.6%) |
-| community-calendar (light) | 27 | 59 | 4,649 KB | 5,258 KB (53%) |
+| community-calendar | 27 | 59 | 4,649 KB | 5,258 KB (53%) |
+| core-ssh-server-ui | 36 | 50 | 4,667 KB | 5,240 KB (53%) |
+| myWorkDrive-Client | 30 | 56 | 4,681 KB | 5,226 KB (53%) |
 
-wrapped uses EChart, TiptapEditor, CodeEditor, Gauge, Slider — all the heavy dependencies — so it can't exclude them. community-calendar uses only core XMLUI components and drops to 4.6MB. Both apps were tested and run correctly with their selective builds.
+wrapped uses EChart, TiptapEditor, CodeEditor, Gauge, Slider — all the heavy dependencies — so it can't exclude them. The other three apps use only core XMLUI components and drop to ~4.7MB. All four apps were tested and run correctly with their selective builds.
 
 ## Repos and branches
-
-Three repos are involved, each on a feature branch:
 
 | Repo | Branch | What changes |
 |---|---|---|
 | **xmlui** | `judell/wrap-component` | `ComponentProvider.tsx` env var guards, `vite.config.ts` env var passthrough, `scripts/build-standalone-selective.mjs`, `scripts/chunk-manifest.json` |
 | **xmlui-cli** | `judell/standalone-selective-bundler` | `commands/buildcmd/` package (tag scanner, manifest resolver, `xmlui build` subcommand) |
-| **wrapped**, **community-calendar** | `main` | Unchanged — consumers of the optimized bundle |
+| **myWorkDrive-Client** | `judell/standalone` | Lib-to-standalone conversion (see below) |
+| **wrapped**, **community-calendar**, **core-ssh-server-ui** | `main` | Unchanged — consumers of the optimized bundle |
 
 ## Repeatable procedure
 
@@ -145,7 +142,74 @@ The filename depends on how the app's `index.html` loads XMLUI. community-calend
 
 ### Step 4: Test
 
-Run the app with `xmlui run` (or any HTTP server) and verify it works.
+Run the app with `xmlui run` (or any HTTP server like `npx http-server .`) and verify it works.
+
+## Converting a lib-mode app to standalone
+
+Lib-mode apps import xmlui as an npm dependency and use Vite's dev server. Standalone apps load a pre-built UMD bundle via `<script>` tag. An XMLUI app developer writes `.xmlui` files, not TypeScript — standalone is the natural deployment model.
+
+### Conversion steps
+
+1. **Create `config.json`** from `config.ts` — move `appGlobals`, `resources`, and `defaultTheme` into JSON format:
+
+```json
+{
+  "name": "MyApp",
+  "appGlobals": {
+    "apiUrl": "http://localhost:8357/api/v3"
+  },
+  "resources": {
+    "favicon": "resources/favicon.ico"
+  },
+  "defaultTheme": "myTheme"
+}
+```
+
+2. **Create `themes/*.json`** from `themes/*.ts` — convert the TypeScript `ThemeDefinition` to JSON with `name`, `id`, `themeVars`, and `resources` fields.
+
+3. **Flatten component layout** — standalone expects `Main.xmlui` at the project root and all components flat in `components/`. If the lib-mode app has subdirectories like `components/filesView/FilesTableView.xmlui`, move the files up to `components/FilesTableView.xmlui`.
+
+4. **Add `codeBehind` attributes** — standalone does not auto-discover `.xs` companion files. Every `<Component>` with an `.xs` file needs an explicit attribute:
+
+```xml
+<Component name="MyComponent" codeBehind="MyComponent.xmlui.xs">
+```
+
+`Main.xmlui.xs` is the exception — standalone auto-discovers it by convention.
+
+5. **Fix relative import paths** — flattening changes the directory depth. Update `<script>` imports:
+
+```xml
+<!-- Before (in subdirectory) -->
+<script>
+  import { myFunc } from "../../shared.xs";
+</script>
+
+<!-- After (flat in components/) -->
+<script>
+  import { myFunc } from "../shared.xs";
+</script>
+```
+
+6. **Link resources** — if resources were under `public/resources/` (served at root by Vite), symlink or copy to `resources/` at the project root.
+
+7. **Swap the entry point** in `index.html`:
+
+```html
+<!-- Before -->
+<script type="module" src="/index.ts"></script>
+
+<!-- After -->
+<script src="xmlui/xmlui-standalone.umd.js"></script>
+```
+
+8. **Copy the standalone UMD bundle** into `xmlui/`.
+
+### Gotchas
+
+- Bare function calls that worked in lib mode via scope (e.g. `getFileExtension(path)`) may need `window.MwdHelpers.getFileExtension(path)` in standalone — `.xs` scripts run in a different scope.
+- `npx http-server .` must be run from the project root, not from `public/`.
+- The lib-mode `index.ts` entry point (`import { startApp } from "xmlui"`) and its HMR handling are not needed in standalone.
 
 ## Development escape hatch: `--chunks-dir`
 
