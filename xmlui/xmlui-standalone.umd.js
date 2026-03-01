@@ -246670,6 +246670,2003 @@ window.Xmlui?.registerExtension({
 
 (function() {
 "use strict";
+(function(){var s=document.createElement("style");s.textContent=`@layer components{._htmlTable_1c76w_14{background-color:var(--xmlui-backgroundColor-HtmlTable);color:var(--xmlui-textColor-HtmlTable);font-family:var(--xmlui-fontFamily-HtmlTable);font-size:var(--xmlui-fontSize-HtmlTable);font-weight:var(--xmlui-fontWeight-HtmlTable);text-transform:var(--xmlui-textTransform-HtmlTable);margin-top:var(--xmlui-marginTop-HtmlTable);margin-bottom:var(--xmlui-marginBottom-HtmlTable);width:var(--xmlui-width-HtmlTable);border-left:var(--xmlui-borderLeft-HtmlTable, var(--xmlui-borderHorizontal-HtmlTable, var(--xmlui-border-HtmlTable)));border-right:var(--xmlui-borderRight-HtmlTable, var(--xmlui-borderHorizontal-HtmlTable, var(--xmlui-border-HtmlTable)));border-top:var(--xmlui-borderTop-HtmlTable, var(--xmlui-borderVertical-HtmlTable, var(--xmlui-border-HtmlTable)));border-bottom:var(--xmlui-borderBottom-HtmlTable, var(--xmlui-borderVertical-HtmlTable, var(--xmlui-border-HtmlTable)));border-left-style:var(--xmlui-borderLeftStyle-HtmlTable, var(--xmlui-borderHorizontalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)));border-right-style:var(--xmlui-borderRightStyle-HtmlTable, var(--xmlui-borderHorizontalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)));border-top-style:var(--xmlui-borderTopStyle-HtmlTable, var(--xmlui-borderVerticalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlTable, var(--xmlui-borderVerticalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)));border-left-width:var(--xmlui-borderLeftWidth-HtmlTable, var(--xmlui-borderHorizontalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)));border-right-width:var(--xmlui-borderRightWidth-HtmlTable, var(--xmlui-borderHorizontalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)));border-top-width:var(--xmlui-borderTopWidth-HtmlTable, var(--xmlui-borderVerticalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlTable, var(--xmlui-borderVerticalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)));border-left-color:var(--xmlui-borderLeftColor-HtmlTable, var(--xmlui-borderHorizontalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)));border-right-color:var(--xmlui-borderRightColor-HtmlTable, var(--xmlui-borderHorizontalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)));border-top-color:var(--xmlui-borderTopColor-HtmlTable, var(--xmlui-borderVerticalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlTable, var(--xmlui-borderVerticalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable));padding:var(--xmlui-padding-HtmlTable);padding-left:var(--xmlui-paddingLeft-HtmlTable, var(--xmlui-paddingHorizontal-HtmlTable, var(--xmlui-padding-HtmlTable)));padding-right:var(--xmlui-paddingRight-HtmlTable, var(--xmlui-paddingHorizontal-HtmlTable, var(--xmlui-padding-HtmlTable)));padding-top:var(--xmlui-paddingTop-HtmlTable, var(--xmlui-paddingVertical-HtmlTable, var(--xmlui-padding-HtmlTable)));padding-bottom:var(--xmlui-paddingBottom-HtmlTable, var(--xmlui-paddingVertical-HtmlTable, var(--xmlui-padding-HtmlTable)))}}@layer components{._htmlThead_1c76w_52{background-color:var(--xmlui-backgroundColor-HtmlThead);color:var(--xmlui-textColor-HtmlThead);font-weight:var(--xmlui-fontWeight-HtmlThead);font-size:var(--xmlui-fontSize-HtmlThead);text-transform:var(--xmlui-textTransform-HtmlThead);border-left:var(--xmlui-borderLeft-HtmlThead, var(--xmlui-borderHorizontal-HtmlThead, var(--xmlui-border-HtmlThead)));border-right:var(--xmlui-borderRight-HtmlThead, var(--xmlui-borderHorizontal-HtmlThead, var(--xmlui-border-HtmlThead)));border-top:var(--xmlui-borderTop-HtmlThead, var(--xmlui-borderVertical-HtmlThead, var(--xmlui-border-HtmlThead)));border-bottom:var(--xmlui-borderBottom-HtmlThead, var(--xmlui-borderVertical-HtmlThead, var(--xmlui-border-HtmlThead)));border-left-style:var(--xmlui-borderLeftStyle-HtmlThead, var(--xmlui-borderHorizontalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)));border-right-style:var(--xmlui-borderRightStyle-HtmlThead, var(--xmlui-borderHorizontalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)));border-top-style:var(--xmlui-borderTopStyle-HtmlThead, var(--xmlui-borderVerticalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlThead, var(--xmlui-borderVerticalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)));border-left-width:var(--xmlui-borderLeftWidth-HtmlThead, var(--xmlui-borderHorizontalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)));border-right-width:var(--xmlui-borderRightWidth-HtmlThead, var(--xmlui-borderHorizontalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)));border-top-width:var(--xmlui-borderTopWidth-HtmlThead, var(--xmlui-borderVerticalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlThead, var(--xmlui-borderVerticalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)));border-left-color:var(--xmlui-borderLeftColor-HtmlThead, var(--xmlui-borderHorizontalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)));border-right-color:var(--xmlui-borderRightColor-HtmlThead, var(--xmlui-borderHorizontalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)));border-top-color:var(--xmlui-borderTopColor-HtmlThead, var(--xmlui-borderVerticalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlThead, var(--xmlui-borderVerticalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead));padding:var(--xmlui-padding-HtmlThead);padding-left:var(--xmlui-paddingLeft-HtmlThead, var(--xmlui-paddingHorizontal-HtmlThead, var(--xmlui-padding-HtmlThead)));padding-right:var(--xmlui-paddingRight-HtmlThead, var(--xmlui-paddingHorizontal-HtmlThead, var(--xmlui-padding-HtmlThead)));padding-top:var(--xmlui-paddingTop-HtmlThead, var(--xmlui-paddingVertical-HtmlThead, var(--xmlui-padding-HtmlThead)));padding-bottom:var(--xmlui-paddingBottom-HtmlThead, var(--xmlui-paddingVertical-HtmlThead, var(--xmlui-padding-HtmlThead)))}}@layer components{._htmlTbody_1c76w_86{background-color:var(--xmlui-backgroundColor-HtmlTbody);color:var(--xmlui-textColor-HtmlTbody);text-align:var(--xmlui-textAlign-HtmlTbody);vertical-align:var(--xmlui-verticalAlignment-HtmlTbody);text-transform:var(--xmlui-textTransform-HtmlTbody)}}@layer components{._htmlTfoot_1c76w_95{background-color:var(--xmlui-backgroundColor-HtmlTfoot);color:var(--xmlui-textColor-HtmlTfoot)}}@layer components{._htmlTh_1c76w_52{background-color:var(--xmlui-backgroundColor-HtmlTh);color:var(--xmlui-textColor-HtmlTh);font-weight:var(--xmlui-fontWeight-HtmlTh);font-size:var(--xmlui-fontSize-HtmlTh);border-left:var(--xmlui-borderLeft-HtmlTh, var(--xmlui-borderHorizontal-HtmlTh, var(--xmlui-border-HtmlTh)));border-right:var(--xmlui-borderRight-HtmlTh, var(--xmlui-borderHorizontal-HtmlTh, var(--xmlui-border-HtmlTh)));border-top:var(--xmlui-borderTop-HtmlTh, var(--xmlui-borderVertical-HtmlTh, var(--xmlui-border-HtmlTh)));border-bottom:var(--xmlui-borderBottom-HtmlTh, var(--xmlui-borderVertical-HtmlTh, var(--xmlui-border-HtmlTh)));border-left-style:var(--xmlui-borderLeftStyle-HtmlTh, var(--xmlui-borderHorizontalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)));border-right-style:var(--xmlui-borderRightStyle-HtmlTh, var(--xmlui-borderHorizontalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)));border-top-style:var(--xmlui-borderTopStyle-HtmlTh, var(--xmlui-borderVerticalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlTh, var(--xmlui-borderVerticalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)));border-left-width:var(--xmlui-borderLeftWidth-HtmlTh, var(--xmlui-borderHorizontalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)));border-right-width:var(--xmlui-borderRightWidth-HtmlTh, var(--xmlui-borderHorizontalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)));border-top-width:var(--xmlui-borderTopWidth-HtmlTh, var(--xmlui-borderVerticalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlTh, var(--xmlui-borderVerticalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)));border-left-color:var(--xmlui-borderLeftColor-HtmlTh, var(--xmlui-borderHorizontalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)));border-right-color:var(--xmlui-borderRightColor-HtmlTh, var(--xmlui-borderHorizontalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)));border-top-color:var(--xmlui-borderTopColor-HtmlTh, var(--xmlui-borderVerticalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlTh, var(--xmlui-borderVerticalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh));padding:var(--xmlui-padding-HtmlTh);padding-left:var(--xmlui-paddingLeft-HtmlTh, var(--xmlui-paddingHorizontal-HtmlTh, var(--xmlui-padding-HtmlTh)));padding-right:var(--xmlui-paddingRight-HtmlTh, var(--xmlui-paddingHorizontal-HtmlTh, var(--xmlui-padding-HtmlTh)));padding-top:var(--xmlui-paddingTop-HtmlTh, var(--xmlui-paddingVertical-HtmlTh, var(--xmlui-padding-HtmlTh)));padding-bottom:var(--xmlui-paddingBottom-HtmlTh, var(--xmlui-paddingVertical-HtmlTh, var(--xmlui-padding-HtmlTh)))}._htmlTh_1c76w_52:hover{background-color:var(--xmlui-backgroundColor-HtmlTh--hover)}}@layer components{._htmlTr_1c76w_137{background-color:var(--xmlui-backgroundColor-HtmlTr);color:var(--xmlui-textColor-HtmlTr);font-weight:var(--xmlui-fontWeight-HtmlTr);font-size:var(--xmlui-fontSize-HtmlTr);border-left:var(--xmlui-borderLeft-HtmlTr, var(--xmlui-borderHorizontal-HtmlTr, var(--xmlui-border-HtmlTr)));border-right:var(--xmlui-borderRight-HtmlTr, var(--xmlui-borderHorizontal-HtmlTr, var(--xmlui-border-HtmlTr)));border-top:var(--xmlui-borderTop-HtmlTr, var(--xmlui-borderVertical-HtmlTr, var(--xmlui-border-HtmlTr)));border-bottom:var(--xmlui-borderBottom-HtmlTr, var(--xmlui-borderVertical-HtmlTr, var(--xmlui-border-HtmlTr)));border-left-style:var(--xmlui-borderLeftStyle-HtmlTr, var(--xmlui-borderHorizontalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)));border-right-style:var(--xmlui-borderRightStyle-HtmlTr, var(--xmlui-borderHorizontalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)));border-top-style:var(--xmlui-borderTopStyle-HtmlTr, var(--xmlui-borderVerticalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlTr, var(--xmlui-borderVerticalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)));border-left-width:var(--xmlui-borderLeftWidth-HtmlTr, var(--xmlui-borderHorizontalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)));border-right-width:var(--xmlui-borderRightWidth-HtmlTr, var(--xmlui-borderHorizontalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)));border-top-width:var(--xmlui-borderTopWidth-HtmlTr, var(--xmlui-borderVerticalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlTr, var(--xmlui-borderVerticalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)));border-left-color:var(--xmlui-borderLeftColor-HtmlTr, var(--xmlui-borderHorizontalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)));border-right-color:var(--xmlui-borderRightColor-HtmlTr, var(--xmlui-borderHorizontalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)));border-top-color:var(--xmlui-borderTopColor-HtmlTr, var(--xmlui-borderVerticalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlTr, var(--xmlui-borderVerticalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr))}._htmlTr_1c76w_137:nth-child(2n){background-color:var(--xmlui-backgroundColor-even-HtmlTr)}._htmlTr_1c76w_137:hover{background-color:var(--xmlui-backgroundColor-HtmlTr--hover);color:var(--xmlui-textColor-HtmlTr--hover)}._htmlTr_1c76w_137:hover:not(:has(:not(th))){background-color:initial}}@layer components{._htmlTd_1c76w_175{background-color:var(--xmlui-backgroundColor-HtmlTd);text-align:var(--xmlui-text-align-HtmlTd);vertical-align:var(--xmlui-verticalAlignment-HtmlTd);font-size:var(--xmlui-fontSize-HtmlTd);font-weight:var(--xmlui-fontWeight-HtmlTd);border-left:var(--xmlui-borderLeft-HtmlTd, var(--xmlui-borderHorizontal-HtmlTd, var(--xmlui-border-HtmlTd)));border-right:var(--xmlui-borderRight-HtmlTd, var(--xmlui-borderHorizontal-HtmlTd, var(--xmlui-border-HtmlTd)));border-top:var(--xmlui-borderTop-HtmlTd, var(--xmlui-borderVertical-HtmlTd, var(--xmlui-border-HtmlTd)));border-bottom:var(--xmlui-borderBottom-HtmlTd, var(--xmlui-borderVertical-HtmlTd, var(--xmlui-border-HtmlTd)));border-left-style:var(--xmlui-borderLeftStyle-HtmlTd, var(--xmlui-borderHorizontalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)));border-right-style:var(--xmlui-borderRightStyle-HtmlTd, var(--xmlui-borderHorizontalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)));border-top-style:var(--xmlui-borderTopStyle-HtmlTd, var(--xmlui-borderVerticalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlTd, var(--xmlui-borderVerticalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)));border-left-width:var(--xmlui-borderLeftWidth-HtmlTd, var(--xmlui-borderHorizontalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)));border-right-width:var(--xmlui-borderRightWidth-HtmlTd, var(--xmlui-borderHorizontalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)));border-top-width:var(--xmlui-borderTopWidth-HtmlTd, var(--xmlui-borderVerticalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlTd, var(--xmlui-borderVerticalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)));border-left-color:var(--xmlui-borderLeftColor-HtmlTd, var(--xmlui-borderHorizontalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)));border-right-color:var(--xmlui-borderRightColor-HtmlTd, var(--xmlui-borderHorizontalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)));border-top-color:var(--xmlui-borderTopColor-HtmlTd, var(--xmlui-borderVerticalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlTd, var(--xmlui-borderVerticalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd));padding:var(--xmlui-padding-HtmlTd);padding-left:var(--xmlui-paddingLeft-HtmlTd, var(--xmlui-paddingHorizontal-HtmlTd, var(--xmlui-padding-HtmlTd)));padding-right:var(--xmlui-paddingRight-HtmlTd, var(--xmlui-paddingHorizontal-HtmlTd, var(--xmlui-padding-HtmlTd)));padding-top:var(--xmlui-paddingTop-HtmlTd, var(--xmlui-paddingVertical-HtmlTd, var(--xmlui-padding-HtmlTd)));padding-bottom:var(--xmlui-paddingBottom-HtmlTd, var(--xmlui-paddingVertical-HtmlTd, var(--xmlui-padding-HtmlTd)))}}@layer components{._htmlUl_1c76w_209{margin-top:var(--xmlui-marginTop-HtmlUl);margin-bottom:var(--xmlui-marginBottom-HtmlUl);border-left:var(--xmlui-borderLeft-HtmlUl, var(--xmlui-borderHorizontal-HtmlUl, var(--xmlui-border-HtmlUl)));border-right:var(--xmlui-borderRight-HtmlUl, var(--xmlui-borderHorizontal-HtmlUl, var(--xmlui-border-HtmlUl)));border-top:var(--xmlui-borderTop-HtmlUl, var(--xmlui-borderVertical-HtmlUl, var(--xmlui-border-HtmlUl)));border-bottom:var(--xmlui-borderBottom-HtmlUl, var(--xmlui-borderVertical-HtmlUl, var(--xmlui-border-HtmlUl)));border-left-style:var(--xmlui-borderLeftStyle-HtmlUl, var(--xmlui-borderHorizontalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)));border-right-style:var(--xmlui-borderRightStyle-HtmlUl, var(--xmlui-borderHorizontalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)));border-top-style:var(--xmlui-borderTopStyle-HtmlUl, var(--xmlui-borderVerticalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlUl, var(--xmlui-borderVerticalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)));border-left-width:var(--xmlui-borderLeftWidth-HtmlUl, var(--xmlui-borderHorizontalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)));border-right-width:var(--xmlui-borderRightWidth-HtmlUl, var(--xmlui-borderHorizontalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)));border-top-width:var(--xmlui-borderTopWidth-HtmlUl, var(--xmlui-borderVerticalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlUl, var(--xmlui-borderVerticalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)));border-left-color:var(--xmlui-borderLeftColor-HtmlUl, var(--xmlui-borderHorizontalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)));border-right-color:var(--xmlui-borderRightColor-HtmlUl, var(--xmlui-borderHorizontalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)));border-top-color:var(--xmlui-borderTopColor-HtmlUl, var(--xmlui-borderVerticalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlUl, var(--xmlui-borderVerticalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl));padding:var(--xmlui-padding-HtmlUl);padding-left:var(--xmlui-paddingLeft-HtmlUl, var(--xmlui-paddingHorizontal-HtmlUl, var(--xmlui-padding-HtmlUl)));padding-right:var(--xmlui-paddingRight-HtmlUl, var(--xmlui-paddingHorizontal-HtmlUl, var(--xmlui-padding-HtmlUl)));padding-top:var(--xmlui-paddingTop-HtmlUl, var(--xmlui-paddingVertical-HtmlUl, var(--xmlui-padding-HtmlUl)));padding-bottom:var(--xmlui-paddingBottom-HtmlUl, var(--xmlui-paddingVertical-HtmlUl, var(--xmlui-padding-HtmlUl)))}._htmlOl_1c76w_238{margin-top:var(--xmlui-marginTop-HtmlOl);margin-bottom:var(--xmlui-marginBottom-HtmlOl);border-left:var(--xmlui-borderLeft-HtmlOl, var(--xmlui-borderHorizontal-HtmlOl, var(--xmlui-border-HtmlOl)));border-right:var(--xmlui-borderRight-HtmlOl, var(--xmlui-borderHorizontal-HtmlOl, var(--xmlui-border-HtmlOl)));border-top:var(--xmlui-borderTop-HtmlOl, var(--xmlui-borderVertical-HtmlOl, var(--xmlui-border-HtmlOl)));border-bottom:var(--xmlui-borderBottom-HtmlOl, var(--xmlui-borderVertical-HtmlOl, var(--xmlui-border-HtmlOl)));border-left-style:var(--xmlui-borderLeftStyle-HtmlOl, var(--xmlui-borderHorizontalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)));border-right-style:var(--xmlui-borderRightStyle-HtmlOl, var(--xmlui-borderHorizontalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)));border-top-style:var(--xmlui-borderTopStyle-HtmlOl, var(--xmlui-borderVerticalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlOl, var(--xmlui-borderVerticalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)));border-left-width:var(--xmlui-borderLeftWidth-HtmlOl, var(--xmlui-borderHorizontalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)));border-right-width:var(--xmlui-borderRightWidth-HtmlOl, var(--xmlui-borderHorizontalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)));border-top-width:var(--xmlui-borderTopWidth-HtmlOl, var(--xmlui-borderVerticalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlOl, var(--xmlui-borderVerticalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)));border-left-color:var(--xmlui-borderLeftColor-HtmlOl, var(--xmlui-borderHorizontalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)));border-right-color:var(--xmlui-borderRightColor-HtmlOl, var(--xmlui-borderHorizontalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)));border-top-color:var(--xmlui-borderTopColor-HtmlOl, var(--xmlui-borderVerticalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlOl, var(--xmlui-borderVerticalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl));padding:var(--xmlui-padding-HtmlOl);padding-left:var(--xmlui-paddingLeft-HtmlOl, var(--xmlui-paddingHorizontal-HtmlOl, var(--xmlui-padding-HtmlOl)));padding-right:var(--xmlui-paddingRight-HtmlOl, var(--xmlui-paddingHorizontal-HtmlOl, var(--xmlui-padding-HtmlOl)));padding-top:var(--xmlui-paddingTop-HtmlOl, var(--xmlui-paddingVertical-HtmlOl, var(--xmlui-padding-HtmlOl)));padding-bottom:var(--xmlui-paddingBottom-HtmlOl, var(--xmlui-paddingVertical-HtmlOl, var(--xmlui-padding-HtmlOl)))}._htmlLi_1c76w_267{margin-top:var(--xmlui-marginTop-HtmlLi);margin-bottom:var(--xmlui-marginBottom-HtmlLi);list-style-type:var(--xmlui-listStyleType-HtmlLi);margin-left:var(--xmlui-marginLeft-HtmlLi);border-left:var(--xmlui-borderLeft-HtmlLi, var(--xmlui-borderHorizontal-HtmlLi, var(--xmlui-border-HtmlLi)));border-right:var(--xmlui-borderRight-HtmlLi, var(--xmlui-borderHorizontal-HtmlLi, var(--xmlui-border-HtmlLi)));border-top:var(--xmlui-borderTop-HtmlLi, var(--xmlui-borderVertical-HtmlLi, var(--xmlui-border-HtmlLi)));border-bottom:var(--xmlui-borderBottom-HtmlLi, var(--xmlui-borderVertical-HtmlLi, var(--xmlui-border-HtmlLi)));border-left-style:var(--xmlui-borderLeftStyle-HtmlLi, var(--xmlui-borderHorizontalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)));border-right-style:var(--xmlui-borderRightStyle-HtmlLi, var(--xmlui-borderHorizontalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)));border-top-style:var(--xmlui-borderTopStyle-HtmlLi, var(--xmlui-borderVerticalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlLi, var(--xmlui-borderVerticalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)));border-left-width:var(--xmlui-borderLeftWidth-HtmlLi, var(--xmlui-borderHorizontalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)));border-right-width:var(--xmlui-borderRightWidth-HtmlLi, var(--xmlui-borderHorizontalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)));border-top-width:var(--xmlui-borderTopWidth-HtmlLi, var(--xmlui-borderVerticalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlLi, var(--xmlui-borderVerticalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)));border-left-color:var(--xmlui-borderLeftColor-HtmlLi, var(--xmlui-borderHorizontalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)));border-right-color:var(--xmlui-borderRightColor-HtmlLi, var(--xmlui-borderHorizontalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)));border-top-color:var(--xmlui-borderTopColor-HtmlLi, var(--xmlui-borderVerticalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlLi, var(--xmlui-borderVerticalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi));padding:var(--xmlui-padding-HtmlLi);padding-left:var(--xmlui-paddingLeft-HtmlLi, var(--xmlui-paddingHorizontal-HtmlLi, var(--xmlui-padding-HtmlLi)));padding-right:var(--xmlui-paddingRight-HtmlLi, var(--xmlui-paddingHorizontal-HtmlLi, var(--xmlui-padding-HtmlLi)));padding-top:var(--xmlui-paddingTop-HtmlLi, var(--xmlui-paddingVertical-HtmlLi, var(--xmlui-padding-HtmlLi)));padding-bottom:var(--xmlui-paddingBottom-HtmlLi, var(--xmlui-paddingVertical-HtmlLi, var(--xmlui-padding-HtmlLi)))}}@layer components{._htmlH1_1c76w_308,._htmlH2_1c76w_309,._htmlH3_1c76w_310,._htmlH4_1c76w_311,._htmlH5_1c76w_312,._htmlH6_1c76w_313{margin-top:var(--xmlui-marginTop-HtmlHeading);margin-bottom:var(--xmlui-marginBottom-HtmlHeading)}}@layer components{._htmlVideo_1c76w_319{margin-top:var(--xmlui-marginTop-HtmlVideo);margin-bottom:var(--xmlui-marginBottom-HtmlVideo)}}@layer components{._htmlDetails_1c76w_325{margin-top:var(--xmlui-marginTop-HtmlDetails);margin-bottom:var(--xmlui-marginBottom-HtmlDetails);border-left:var(--xmlui-borderLeft-HtmlDetails, var(--xmlui-borderHorizontal-HtmlDetails, var(--xmlui-border-HtmlDetails)));border-right:var(--xmlui-borderRight-HtmlDetails, var(--xmlui-borderHorizontal-HtmlDetails, var(--xmlui-border-HtmlDetails)));border-top:var(--xmlui-borderTop-HtmlDetails, var(--xmlui-borderVertical-HtmlDetails, var(--xmlui-border-HtmlDetails)));border-bottom:var(--xmlui-borderBottom-HtmlDetails, var(--xmlui-borderVertical-HtmlDetails, var(--xmlui-border-HtmlDetails)));border-left-style:var(--xmlui-borderLeftStyle-HtmlDetails, var(--xmlui-borderHorizontalStyle-HtmlDetails, var(--xmlui-borderStyle-HtmlDetails)));border-right-style:var(--xmlui-borderRightStyle-HtmlDetails, var(--xmlui-borderHorizontalStyle-HtmlDetails, var(--xmlui-borderStyle-HtmlDetails)));border-top-style:var(--xmlui-borderTopStyle-HtmlDetails, var(--xmlui-borderVerticalStyle-HtmlDetails, var(--xmlui-borderStyle-HtmlDetails)));border-bottom-style:var(--xmlui-borderBottomStyle-HtmlDetails, var(--xmlui-borderVerticalStyle-HtmlDetails, var(--xmlui-borderStyle-HtmlDetails)));border-left-width:var(--xmlui-borderLeftWidth-HtmlDetails, var(--xmlui-borderHorizontalWidth-HtmlDetails, var(--xmlui-borderWidth-HtmlDetails)));border-right-width:var(--xmlui-borderRightWidth-HtmlDetails, var(--xmlui-borderHorizontalWidth-HtmlDetails, var(--xmlui-borderWidth-HtmlDetails)));border-top-width:var(--xmlui-borderTopWidth-HtmlDetails, var(--xmlui-borderVerticalWidth-HtmlDetails, var(--xmlui-borderWidth-HtmlDetails)));border-bottom-width:var(--xmlui-borderBottomWidth-HtmlDetails, var(--xmlui-borderVerticalWidth-HtmlDetails, var(--xmlui-borderWidth-HtmlDetails)));border-left-color:var(--xmlui-borderLeftColor-HtmlDetails, var(--xmlui-borderHorizontalColor-HtmlDetails, var(--xmlui-borderColor-HtmlDetails)));border-right-color:var(--xmlui-borderRightColor-HtmlDetails, var(--xmlui-borderHorizontalColor-HtmlDetails, var(--xmlui-borderColor-HtmlDetails)));border-top-color:var(--xmlui-borderTopColor-HtmlDetails, var(--xmlui-borderVerticalColor-HtmlDetails, var(--xmlui-borderColor-HtmlDetails)));border-bottom-color:var(--xmlui-borderBottomColor-HtmlDetails, var(--xmlui-borderVerticalColor-HtmlDetails, var(--xmlui-borderColor-HtmlDetails)));border-start-start-radius:var(--xmlui-borderStartStartRadius-HtmlDetails, var(--xmlui-borderRadius-HtmlDetails));border-start-end-radius:var(--xmlui-borderStartEndRadius-HtmlDetails, var(--xmlui-borderRadius-HtmlDetails));border-end-start-radius:var(--xmlui-borderEndStartRadius-HtmlDetails, var(--xmlui-borderRadius-HtmlDetails));border-end-end-radius:var(--xmlui-borderEndEndRadius-HtmlDetails, var(--xmlui-borderRadius-HtmlDetails));padding:var(--xmlui-padding-HtmlDetails);padding-left:var(--xmlui-paddingLeft-HtmlDetails, var(--xmlui-paddingHorizontal-HtmlDetails, var(--xmlui-padding-HtmlDetails)));padding-right:var(--xmlui-paddingRight-HtmlDetails, var(--xmlui-paddingHorizontal-HtmlDetails, var(--xmlui-padding-HtmlDetails)));padding-top:var(--xmlui-paddingTop-HtmlDetails, var(--xmlui-paddingVertical-HtmlDetails, var(--xmlui-padding-HtmlDetails)));padding-bottom:var(--xmlui-paddingBottom-HtmlDetails, var(--xmlui-paddingVertical-HtmlDetails, var(--xmlui-padding-HtmlDetails)))}}@layer components{._htmlDetails_1c76w_325{margin-top:var(--xmlui-marginTop-HtmlDetails);margin-bottom:var(--xmlui-marginBottom-HtmlDetails)}}`;document.head.appendChild(s)})();
+const { j: jsxRuntimeExports } = _jsx_runtime_QMS4LbMm;
+const { c: createComponentRenderer, b: createMetadata, w: d } = _metadata_helpers_CsmBqXtx;
+const { p: parseScssVar } = _themeVars_Cxp4lXoj;
+const { L: LinkNative } = _LinkNative_DEwryRum;
+const { H: Heading } = _HeadingNative_Bp19yvOT;
+const { T: Text } = _TextNative_DxaCk9TM;
+const { U: PropsTrasform } = _extractParam_BhKprw7e;
+const { c: classnames } = _index_3mVGQzGF;
+const COMP = "br";
+const BR = "Br";
+const BrMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `br` tag for line breaks.",
+  isHtmlTag: true
+});
+const BrCapitalizedMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `br` tag for line breaks.",
+  isHtmlTag: true
+});
+const brComponentRenderer = createComponentRenderer(
+  COMP,
+  BrMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("br", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const BrComponentRenderer = createComponentRenderer(
+  BR,
+  BrCapitalizedMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("br", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const themeVarsTable = `'{"textColor-HtmlTable": "var(--xmlui-textColor-HtmlTable)", "backgroundColor-HtmlTable": "var(--xmlui-backgroundColor-HtmlTable)", "fontFamily-HtmlTable": "var(--xmlui-fontFamily-HtmlTable)", "fontSize-HtmlTable": "var(--xmlui-fontSize-HtmlTable)", "fontWeight-HtmlTable": "var(--xmlui-fontWeight-HtmlTable)", "textTransform-HtmlTable": "var(--xmlui-textTransform-HtmlTable)", "marginTop-HtmlTable": "var(--xmlui-marginTop-HtmlTable)", "marginBottom-HtmlTable": "var(--xmlui-marginBottom-HtmlTable)", "width-HtmlTable": "var(--xmlui-width-HtmlTable)", "border-HtmlTable": "var(--xmlui-border-HtmlTable)", "borderHorizontal-HtmlTable": "var(--xmlui-borderHorizontal-HtmlTable, var(--xmlui-border-HtmlTable))", "borderVertical-HtmlTable": "var(--xmlui-borderVertical-HtmlTable, var(--xmlui-border-HtmlTable))", "borderLeft-HtmlTable": "var(--xmlui-borderLeft-HtmlTable, var(--xmlui-borderHorizontal-HtmlTable, var(--xmlui-border-HtmlTable)))", "borderRight-HtmlTable": "var(--xmlui-borderRight-HtmlTable, var(--xmlui-borderHorizontal-HtmlTable, var(--xmlui-border-HtmlTable)))", "borderTop-HtmlTable": "var(--xmlui-borderTop-HtmlTable, var(--xmlui-borderVertical-HtmlTable, var(--xmlui-border-HtmlTable)))", "borderBottom-HtmlTable": "var(--xmlui-borderBottom-HtmlTable, var(--xmlui-borderVertical-HtmlTable, var(--xmlui-border-HtmlTable)))", "borderWidth-HtmlTable": "var(--xmlui-borderWidth-HtmlTable)", "borderHorizontalWidth-HtmlTable": "var(--xmlui-borderHorizontalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable))", "borderLeftWidth-HtmlTable": "var(--xmlui-borderLeftWidth-HtmlTable, var(--xmlui-borderHorizontalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)))", "borderRightWidth-HtmlTable": "var(--xmlui-borderRightWidth-HtmlTable, var(--xmlui-borderHorizontalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)))", "borderVerticalWidth-HtmlTable": "var(--xmlui-borderVerticalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable))", "borderTopWidth-HtmlTable": "var(--xmlui-borderTopWidth-HtmlTable, var(--xmlui-borderVerticalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)))", "borderBottomWidth-HtmlTable": "var(--xmlui-borderBottomWidth-HtmlTable, var(--xmlui-borderVerticalWidth-HtmlTable, var(--xmlui-borderWidth-HtmlTable)))", "borderStyle-HtmlTable": "var(--xmlui-borderStyle-HtmlTable)", "borderHorizontalStyle-HtmlTable": "var(--xmlui-borderHorizontalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable))", "borderLeftStyle-HtmlTable": "var(--xmlui-borderLeftStyle-HtmlTable, var(--xmlui-borderHorizontalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)))", "borderRightStyle-HtmlTable": "var(--xmlui-borderRightStyle-HtmlTable, var(--xmlui-borderHorizontalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)))", "borderVerticalStyle-HtmlTable": "var(--xmlui-borderVerticalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable))", "borderTopStyle-HtmlTable": "var(--xmlui-borderTopStyle-HtmlTable, var(--xmlui-borderVerticalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)))", "borderBottomStyle-HtmlTable": "var(--xmlui-borderBottomStyle-HtmlTable, var(--xmlui-borderVerticalStyle-HtmlTable, var(--xmlui-borderStyle-HtmlTable)))", "borderColor-HtmlTable": "var(--xmlui-borderColor-HtmlTable)", "borderHorizontalColor-HtmlTable": "var(--xmlui-borderHorizontalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable))", "borderLeftColor-HtmlTable": "var(--xmlui-borderLeftColor-HtmlTable, var(--xmlui-borderHorizontalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)))", "borderRightColor-HtmlTable": "var(--xmlui-borderRightColor-HtmlTable, var(--xmlui-borderHorizontalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)))", "borderVerticalColor-HtmlTable": "var(--xmlui-borderVerticalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable))", "borderTopColor-HtmlTable": "var(--xmlui-borderTopColor-HtmlTable, var(--xmlui-borderVerticalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)))", "borderBottomColor-HtmlTable": "var(--xmlui-borderBottomColor-HtmlTable, var(--xmlui-borderVerticalColor-HtmlTable, var(--xmlui-borderColor-HtmlTable)))", "borderStartStartRadius-HtmlTable": "var(--xmlui-borderStartStartRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable))", "borderStartEndRadius-HtmlTable": "var(--xmlui-borderStartEndRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable))", "borderEndStartRadius-HtmlTable": "var(--xmlui-borderEndStartRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable))", "borderEndEndRadius-HtmlTable": "var(--xmlui-borderEndEndRadius-HtmlTable, var(--xmlui-borderRadius-HtmlTable))", "padding-HtmlTable": "var(--xmlui-padding-HtmlTable)", "paddingHorizontal-HtmlTable": "var(--xmlui-paddingHorizontal-HtmlTable, var(--xmlui-padding-HtmlTable))", "paddingVertical-HtmlTable": "var(--xmlui-paddingVertical-HtmlTable, var(--xmlui-padding-HtmlTable))", "paddingLeft-HtmlTable": "var(--xmlui-paddingLeft-HtmlTable, var(--xmlui-paddingHorizontal-HtmlTable, var(--xmlui-padding-HtmlTable)))", "paddingRight-HtmlTable": "var(--xmlui-paddingRight-HtmlTable, var(--xmlui-paddingHorizontal-HtmlTable, var(--xmlui-padding-HtmlTable)))", "paddingTop-HtmlTable": "var(--xmlui-paddingTop-HtmlTable, var(--xmlui-paddingVertical-HtmlTable, var(--xmlui-padding-HtmlTable)))", "paddingBottom-HtmlTable": "var(--xmlui-paddingBottom-HtmlTable, var(--xmlui-paddingVertical-HtmlTable, var(--xmlui-padding-HtmlTable)))"}'`;
+const themeVarsThead = `'{"backgroundColor-HtmlThead": "var(--xmlui-backgroundColor-HtmlThead)", "textColor-HtmlThead": "var(--xmlui-textColor-HtmlThead)", "fontWeight-HtmlThead": "var(--xmlui-fontWeight-HtmlThead)", "fontSize-HtmlThead": "var(--xmlui-fontSize-HtmlThead)", "textTransform-HtmlThead": "var(--xmlui-textTransform-HtmlThead)", "border-HtmlThead": "var(--xmlui-border-HtmlThead)", "borderHorizontal-HtmlThead": "var(--xmlui-borderHorizontal-HtmlThead, var(--xmlui-border-HtmlThead))", "borderVertical-HtmlThead": "var(--xmlui-borderVertical-HtmlThead, var(--xmlui-border-HtmlThead))", "borderLeft-HtmlThead": "var(--xmlui-borderLeft-HtmlThead, var(--xmlui-borderHorizontal-HtmlThead, var(--xmlui-border-HtmlThead)))", "borderRight-HtmlThead": "var(--xmlui-borderRight-HtmlThead, var(--xmlui-borderHorizontal-HtmlThead, var(--xmlui-border-HtmlThead)))", "borderTop-HtmlThead": "var(--xmlui-borderTop-HtmlThead, var(--xmlui-borderVertical-HtmlThead, var(--xmlui-border-HtmlThead)))", "borderBottom-HtmlThead": "var(--xmlui-borderBottom-HtmlThead, var(--xmlui-borderVertical-HtmlThead, var(--xmlui-border-HtmlThead)))", "borderWidth-HtmlThead": "var(--xmlui-borderWidth-HtmlThead)", "borderHorizontalWidth-HtmlThead": "var(--xmlui-borderHorizontalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead))", "borderLeftWidth-HtmlThead": "var(--xmlui-borderLeftWidth-HtmlThead, var(--xmlui-borderHorizontalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)))", "borderRightWidth-HtmlThead": "var(--xmlui-borderRightWidth-HtmlThead, var(--xmlui-borderHorizontalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)))", "borderVerticalWidth-HtmlThead": "var(--xmlui-borderVerticalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead))", "borderTopWidth-HtmlThead": "var(--xmlui-borderTopWidth-HtmlThead, var(--xmlui-borderVerticalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)))", "borderBottomWidth-HtmlThead": "var(--xmlui-borderBottomWidth-HtmlThead, var(--xmlui-borderVerticalWidth-HtmlThead, var(--xmlui-borderWidth-HtmlThead)))", "borderStyle-HtmlThead": "var(--xmlui-borderStyle-HtmlThead)", "borderHorizontalStyle-HtmlThead": "var(--xmlui-borderHorizontalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead))", "borderLeftStyle-HtmlThead": "var(--xmlui-borderLeftStyle-HtmlThead, var(--xmlui-borderHorizontalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)))", "borderRightStyle-HtmlThead": "var(--xmlui-borderRightStyle-HtmlThead, var(--xmlui-borderHorizontalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)))", "borderVerticalStyle-HtmlThead": "var(--xmlui-borderVerticalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead))", "borderTopStyle-HtmlThead": "var(--xmlui-borderTopStyle-HtmlThead, var(--xmlui-borderVerticalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)))", "borderBottomStyle-HtmlThead": "var(--xmlui-borderBottomStyle-HtmlThead, var(--xmlui-borderVerticalStyle-HtmlThead, var(--xmlui-borderStyle-HtmlThead)))", "borderColor-HtmlThead": "var(--xmlui-borderColor-HtmlThead)", "borderHorizontalColor-HtmlThead": "var(--xmlui-borderHorizontalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead))", "borderLeftColor-HtmlThead": "var(--xmlui-borderLeftColor-HtmlThead, var(--xmlui-borderHorizontalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)))", "borderRightColor-HtmlThead": "var(--xmlui-borderRightColor-HtmlThead, var(--xmlui-borderHorizontalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)))", "borderVerticalColor-HtmlThead": "var(--xmlui-borderVerticalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead))", "borderTopColor-HtmlThead": "var(--xmlui-borderTopColor-HtmlThead, var(--xmlui-borderVerticalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)))", "borderBottomColor-HtmlThead": "var(--xmlui-borderBottomColor-HtmlThead, var(--xmlui-borderVerticalColor-HtmlThead, var(--xmlui-borderColor-HtmlThead)))", "borderStartStartRadius-HtmlThead": "var(--xmlui-borderStartStartRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead))", "borderStartEndRadius-HtmlThead": "var(--xmlui-borderStartEndRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead))", "borderEndStartRadius-HtmlThead": "var(--xmlui-borderEndStartRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead))", "borderEndEndRadius-HtmlThead": "var(--xmlui-borderEndEndRadius-HtmlThead, var(--xmlui-borderRadius-HtmlThead))", "padding-HtmlThead": "var(--xmlui-padding-HtmlThead)", "paddingHorizontal-HtmlThead": "var(--xmlui-paddingHorizontal-HtmlThead, var(--xmlui-padding-HtmlThead))", "paddingVertical-HtmlThead": "var(--xmlui-paddingVertical-HtmlThead, var(--xmlui-padding-HtmlThead))", "paddingLeft-HtmlThead": "var(--xmlui-paddingLeft-HtmlThead, var(--xmlui-paddingHorizontal-HtmlThead, var(--xmlui-padding-HtmlThead)))", "paddingRight-HtmlThead": "var(--xmlui-paddingRight-HtmlThead, var(--xmlui-paddingHorizontal-HtmlThead, var(--xmlui-padding-HtmlThead)))", "paddingTop-HtmlThead": "var(--xmlui-paddingTop-HtmlThead, var(--xmlui-paddingVertical-HtmlThead, var(--xmlui-padding-HtmlThead)))", "paddingBottom-HtmlThead": "var(--xmlui-paddingBottom-HtmlThead, var(--xmlui-paddingVertical-HtmlThead, var(--xmlui-padding-HtmlThead)))"}'`;
+const themeVarsTbody = `'{"backgroundColor-HtmlTbody": "var(--xmlui-backgroundColor-HtmlTbody)", "textColor-HtmlTbody": "var(--xmlui-textColor-HtmlTbody)", "textAlign-HtmlTbody": "var(--xmlui-textAlign-HtmlTbody)", "verticalAlignment-HtmlTbody": "var(--xmlui-verticalAlignment-HtmlTbody)", "textTransform-HtmlTbody": "var(--xmlui-textTransform-HtmlTbody)"}'`;
+const themeVarsTfoot = `'{"backgroundColor-HtmlTfoot": "var(--xmlui-backgroundColor-HtmlTfoot)", "textColor-HtmlTfoot": "var(--xmlui-textColor-HtmlTfoot)"}'`;
+const themeVarsTh = `'{"backgroundColor-HtmlTh": "var(--xmlui-backgroundColor-HtmlTh)", "textColor-HtmlTh": "var(--xmlui-textColor-HtmlTh)", "fontWeight-HtmlTh": "var(--xmlui-fontWeight-HtmlTh)", "fontSize-HtmlTh": "var(--xmlui-fontSize-HtmlTh)", "backgroundColor-HtmlTh--hover": "var(--xmlui-backgroundColor-HtmlTh--hover)", "border-HtmlTh": "var(--xmlui-border-HtmlTh)", "borderHorizontal-HtmlTh": "var(--xmlui-borderHorizontal-HtmlTh, var(--xmlui-border-HtmlTh))", "borderVertical-HtmlTh": "var(--xmlui-borderVertical-HtmlTh, var(--xmlui-border-HtmlTh))", "borderLeft-HtmlTh": "var(--xmlui-borderLeft-HtmlTh, var(--xmlui-borderHorizontal-HtmlTh, var(--xmlui-border-HtmlTh)))", "borderRight-HtmlTh": "var(--xmlui-borderRight-HtmlTh, var(--xmlui-borderHorizontal-HtmlTh, var(--xmlui-border-HtmlTh)))", "borderTop-HtmlTh": "var(--xmlui-borderTop-HtmlTh, var(--xmlui-borderVertical-HtmlTh, var(--xmlui-border-HtmlTh)))", "borderBottom-HtmlTh": "var(--xmlui-borderBottom-HtmlTh, var(--xmlui-borderVertical-HtmlTh, var(--xmlui-border-HtmlTh)))", "borderWidth-HtmlTh": "var(--xmlui-borderWidth-HtmlTh)", "borderHorizontalWidth-HtmlTh": "var(--xmlui-borderHorizontalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh))", "borderLeftWidth-HtmlTh": "var(--xmlui-borderLeftWidth-HtmlTh, var(--xmlui-borderHorizontalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)))", "borderRightWidth-HtmlTh": "var(--xmlui-borderRightWidth-HtmlTh, var(--xmlui-borderHorizontalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)))", "borderVerticalWidth-HtmlTh": "var(--xmlui-borderVerticalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh))", "borderTopWidth-HtmlTh": "var(--xmlui-borderTopWidth-HtmlTh, var(--xmlui-borderVerticalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)))", "borderBottomWidth-HtmlTh": "var(--xmlui-borderBottomWidth-HtmlTh, var(--xmlui-borderVerticalWidth-HtmlTh, var(--xmlui-borderWidth-HtmlTh)))", "borderStyle-HtmlTh": "var(--xmlui-borderStyle-HtmlTh)", "borderHorizontalStyle-HtmlTh": "var(--xmlui-borderHorizontalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh))", "borderLeftStyle-HtmlTh": "var(--xmlui-borderLeftStyle-HtmlTh, var(--xmlui-borderHorizontalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)))", "borderRightStyle-HtmlTh": "var(--xmlui-borderRightStyle-HtmlTh, var(--xmlui-borderHorizontalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)))", "borderVerticalStyle-HtmlTh": "var(--xmlui-borderVerticalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh))", "borderTopStyle-HtmlTh": "var(--xmlui-borderTopStyle-HtmlTh, var(--xmlui-borderVerticalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)))", "borderBottomStyle-HtmlTh": "var(--xmlui-borderBottomStyle-HtmlTh, var(--xmlui-borderVerticalStyle-HtmlTh, var(--xmlui-borderStyle-HtmlTh)))", "borderColor-HtmlTh": "var(--xmlui-borderColor-HtmlTh)", "borderHorizontalColor-HtmlTh": "var(--xmlui-borderHorizontalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh))", "borderLeftColor-HtmlTh": "var(--xmlui-borderLeftColor-HtmlTh, var(--xmlui-borderHorizontalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)))", "borderRightColor-HtmlTh": "var(--xmlui-borderRightColor-HtmlTh, var(--xmlui-borderHorizontalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)))", "borderVerticalColor-HtmlTh": "var(--xmlui-borderVerticalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh))", "borderTopColor-HtmlTh": "var(--xmlui-borderTopColor-HtmlTh, var(--xmlui-borderVerticalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)))", "borderBottomColor-HtmlTh": "var(--xmlui-borderBottomColor-HtmlTh, var(--xmlui-borderVerticalColor-HtmlTh, var(--xmlui-borderColor-HtmlTh)))", "borderStartStartRadius-HtmlTh": "var(--xmlui-borderStartStartRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh))", "borderStartEndRadius-HtmlTh": "var(--xmlui-borderStartEndRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh))", "borderEndStartRadius-HtmlTh": "var(--xmlui-borderEndStartRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh))", "borderEndEndRadius-HtmlTh": "var(--xmlui-borderEndEndRadius-HtmlTh, var(--xmlui-borderRadius-HtmlTh))", "padding-HtmlTh": "var(--xmlui-padding-HtmlTh)", "paddingHorizontal-HtmlTh": "var(--xmlui-paddingHorizontal-HtmlTh, var(--xmlui-padding-HtmlTh))", "paddingVertical-HtmlTh": "var(--xmlui-paddingVertical-HtmlTh, var(--xmlui-padding-HtmlTh))", "paddingLeft-HtmlTh": "var(--xmlui-paddingLeft-HtmlTh, var(--xmlui-paddingHorizontal-HtmlTh, var(--xmlui-padding-HtmlTh)))", "paddingRight-HtmlTh": "var(--xmlui-paddingRight-HtmlTh, var(--xmlui-paddingHorizontal-HtmlTh, var(--xmlui-padding-HtmlTh)))", "paddingTop-HtmlTh": "var(--xmlui-paddingTop-HtmlTh, var(--xmlui-paddingVertical-HtmlTh, var(--xmlui-padding-HtmlTh)))", "paddingBottom-HtmlTh": "var(--xmlui-paddingBottom-HtmlTh, var(--xmlui-paddingVertical-HtmlTh, var(--xmlui-padding-HtmlTh)))"}'`;
+const themeVarsTr = `'{"backgroundColor-HtmlTr": "var(--xmlui-backgroundColor-HtmlTr)", "backgroundColor-HtmlTr--hover": "var(--xmlui-backgroundColor-HtmlTr--hover)", "backgroundColor-even-HtmlTr": "var(--xmlui-backgroundColor-even-HtmlTr)", "textColor-HtmlTr": "var(--xmlui-textColor-HtmlTr)", "textColor-HtmlTr--hover": "var(--xmlui-textColor-HtmlTr--hover)", "fontSize-HtmlTr": "var(--xmlui-fontSize-HtmlTr)", "fontWeight-HtmlTr": "var(--xmlui-fontWeight-HtmlTr)", "border-HtmlTr": "var(--xmlui-border-HtmlTr)", "borderHorizontal-HtmlTr": "var(--xmlui-borderHorizontal-HtmlTr, var(--xmlui-border-HtmlTr))", "borderVertical-HtmlTr": "var(--xmlui-borderVertical-HtmlTr, var(--xmlui-border-HtmlTr))", "borderLeft-HtmlTr": "var(--xmlui-borderLeft-HtmlTr, var(--xmlui-borderHorizontal-HtmlTr, var(--xmlui-border-HtmlTr)))", "borderRight-HtmlTr": "var(--xmlui-borderRight-HtmlTr, var(--xmlui-borderHorizontal-HtmlTr, var(--xmlui-border-HtmlTr)))", "borderTop-HtmlTr": "var(--xmlui-borderTop-HtmlTr, var(--xmlui-borderVertical-HtmlTr, var(--xmlui-border-HtmlTr)))", "borderBottom-HtmlTr": "var(--xmlui-borderBottom-HtmlTr, var(--xmlui-borderVertical-HtmlTr, var(--xmlui-border-HtmlTr)))", "borderWidth-HtmlTr": "var(--xmlui-borderWidth-HtmlTr)", "borderHorizontalWidth-HtmlTr": "var(--xmlui-borderHorizontalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr))", "borderLeftWidth-HtmlTr": "var(--xmlui-borderLeftWidth-HtmlTr, var(--xmlui-borderHorizontalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)))", "borderRightWidth-HtmlTr": "var(--xmlui-borderRightWidth-HtmlTr, var(--xmlui-borderHorizontalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)))", "borderVerticalWidth-HtmlTr": "var(--xmlui-borderVerticalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr))", "borderTopWidth-HtmlTr": "var(--xmlui-borderTopWidth-HtmlTr, var(--xmlui-borderVerticalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)))", "borderBottomWidth-HtmlTr": "var(--xmlui-borderBottomWidth-HtmlTr, var(--xmlui-borderVerticalWidth-HtmlTr, var(--xmlui-borderWidth-HtmlTr)))", "borderStyle-HtmlTr": "var(--xmlui-borderStyle-HtmlTr)", "borderHorizontalStyle-HtmlTr": "var(--xmlui-borderHorizontalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr))", "borderLeftStyle-HtmlTr": "var(--xmlui-borderLeftStyle-HtmlTr, var(--xmlui-borderHorizontalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)))", "borderRightStyle-HtmlTr": "var(--xmlui-borderRightStyle-HtmlTr, var(--xmlui-borderHorizontalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)))", "borderVerticalStyle-HtmlTr": "var(--xmlui-borderVerticalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr))", "borderTopStyle-HtmlTr": "var(--xmlui-borderTopStyle-HtmlTr, var(--xmlui-borderVerticalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)))", "borderBottomStyle-HtmlTr": "var(--xmlui-borderBottomStyle-HtmlTr, var(--xmlui-borderVerticalStyle-HtmlTr, var(--xmlui-borderStyle-HtmlTr)))", "borderColor-HtmlTr": "var(--xmlui-borderColor-HtmlTr)", "borderHorizontalColor-HtmlTr": "var(--xmlui-borderHorizontalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr))", "borderLeftColor-HtmlTr": "var(--xmlui-borderLeftColor-HtmlTr, var(--xmlui-borderHorizontalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)))", "borderRightColor-HtmlTr": "var(--xmlui-borderRightColor-HtmlTr, var(--xmlui-borderHorizontalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)))", "borderVerticalColor-HtmlTr": "var(--xmlui-borderVerticalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr))", "borderTopColor-HtmlTr": "var(--xmlui-borderTopColor-HtmlTr, var(--xmlui-borderVerticalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)))", "borderBottomColor-HtmlTr": "var(--xmlui-borderBottomColor-HtmlTr, var(--xmlui-borderVerticalColor-HtmlTr, var(--xmlui-borderColor-HtmlTr)))", "borderStartStartRadius-HtmlTr": "var(--xmlui-borderStartStartRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr))", "borderStartEndRadius-HtmlTr": "var(--xmlui-borderStartEndRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr))", "borderEndStartRadius-HtmlTr": "var(--xmlui-borderEndStartRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr))", "borderEndEndRadius-HtmlTr": "var(--xmlui-borderEndEndRadius-HtmlTr, var(--xmlui-borderRadius-HtmlTr))"}'`;
+const themeVarsTd = `'{"backgroundColor-HtmlTd": "var(--xmlui-backgroundColor-HtmlTd)", "text-align-HtmlTd": "var(--xmlui-text-align-HtmlTd)", "verticalAlignment-HtmlTd": "var(--xmlui-verticalAlignment-HtmlTd)", "fontSize-HtmlTd": "var(--xmlui-fontSize-HtmlTd)", "fontWeight-HtmlTd": "var(--xmlui-fontWeight-HtmlTd)", "border-HtmlTd": "var(--xmlui-border-HtmlTd)", "borderHorizontal-HtmlTd": "var(--xmlui-borderHorizontal-HtmlTd, var(--xmlui-border-HtmlTd))", "borderVertical-HtmlTd": "var(--xmlui-borderVertical-HtmlTd, var(--xmlui-border-HtmlTd))", "borderLeft-HtmlTd": "var(--xmlui-borderLeft-HtmlTd, var(--xmlui-borderHorizontal-HtmlTd, var(--xmlui-border-HtmlTd)))", "borderRight-HtmlTd": "var(--xmlui-borderRight-HtmlTd, var(--xmlui-borderHorizontal-HtmlTd, var(--xmlui-border-HtmlTd)))", "borderTop-HtmlTd": "var(--xmlui-borderTop-HtmlTd, var(--xmlui-borderVertical-HtmlTd, var(--xmlui-border-HtmlTd)))", "borderBottom-HtmlTd": "var(--xmlui-borderBottom-HtmlTd, var(--xmlui-borderVertical-HtmlTd, var(--xmlui-border-HtmlTd)))", "borderWidth-HtmlTd": "var(--xmlui-borderWidth-HtmlTd)", "borderHorizontalWidth-HtmlTd": "var(--xmlui-borderHorizontalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd))", "borderLeftWidth-HtmlTd": "var(--xmlui-borderLeftWidth-HtmlTd, var(--xmlui-borderHorizontalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)))", "borderRightWidth-HtmlTd": "var(--xmlui-borderRightWidth-HtmlTd, var(--xmlui-borderHorizontalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)))", "borderVerticalWidth-HtmlTd": "var(--xmlui-borderVerticalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd))", "borderTopWidth-HtmlTd": "var(--xmlui-borderTopWidth-HtmlTd, var(--xmlui-borderVerticalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)))", "borderBottomWidth-HtmlTd": "var(--xmlui-borderBottomWidth-HtmlTd, var(--xmlui-borderVerticalWidth-HtmlTd, var(--xmlui-borderWidth-HtmlTd)))", "borderStyle-HtmlTd": "var(--xmlui-borderStyle-HtmlTd)", "borderHorizontalStyle-HtmlTd": "var(--xmlui-borderHorizontalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd))", "borderLeftStyle-HtmlTd": "var(--xmlui-borderLeftStyle-HtmlTd, var(--xmlui-borderHorizontalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)))", "borderRightStyle-HtmlTd": "var(--xmlui-borderRightStyle-HtmlTd, var(--xmlui-borderHorizontalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)))", "borderVerticalStyle-HtmlTd": "var(--xmlui-borderVerticalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd))", "borderTopStyle-HtmlTd": "var(--xmlui-borderTopStyle-HtmlTd, var(--xmlui-borderVerticalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)))", "borderBottomStyle-HtmlTd": "var(--xmlui-borderBottomStyle-HtmlTd, var(--xmlui-borderVerticalStyle-HtmlTd, var(--xmlui-borderStyle-HtmlTd)))", "borderColor-HtmlTd": "var(--xmlui-borderColor-HtmlTd)", "borderHorizontalColor-HtmlTd": "var(--xmlui-borderHorizontalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd))", "borderLeftColor-HtmlTd": "var(--xmlui-borderLeftColor-HtmlTd, var(--xmlui-borderHorizontalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)))", "borderRightColor-HtmlTd": "var(--xmlui-borderRightColor-HtmlTd, var(--xmlui-borderHorizontalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)))", "borderVerticalColor-HtmlTd": "var(--xmlui-borderVerticalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd))", "borderTopColor-HtmlTd": "var(--xmlui-borderTopColor-HtmlTd, var(--xmlui-borderVerticalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)))", "borderBottomColor-HtmlTd": "var(--xmlui-borderBottomColor-HtmlTd, var(--xmlui-borderVerticalColor-HtmlTd, var(--xmlui-borderColor-HtmlTd)))", "borderStartStartRadius-HtmlTd": "var(--xmlui-borderStartStartRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd))", "borderStartEndRadius-HtmlTd": "var(--xmlui-borderStartEndRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd))", "borderEndStartRadius-HtmlTd": "var(--xmlui-borderEndStartRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd))", "borderEndEndRadius-HtmlTd": "var(--xmlui-borderEndEndRadius-HtmlTd, var(--xmlui-borderRadius-HtmlTd))", "padding-HtmlTd": "var(--xmlui-padding-HtmlTd)", "paddingHorizontal-HtmlTd": "var(--xmlui-paddingHorizontal-HtmlTd, var(--xmlui-padding-HtmlTd))", "paddingVertical-HtmlTd": "var(--xmlui-paddingVertical-HtmlTd, var(--xmlui-padding-HtmlTd))", "paddingLeft-HtmlTd": "var(--xmlui-paddingLeft-HtmlTd, var(--xmlui-paddingHorizontal-HtmlTd, var(--xmlui-padding-HtmlTd)))", "paddingRight-HtmlTd": "var(--xmlui-paddingRight-HtmlTd, var(--xmlui-paddingHorizontal-HtmlTd, var(--xmlui-padding-HtmlTd)))", "paddingTop-HtmlTd": "var(--xmlui-paddingTop-HtmlTd, var(--xmlui-paddingVertical-HtmlTd, var(--xmlui-padding-HtmlTd)))", "paddingBottom-HtmlTd": "var(--xmlui-paddingBottom-HtmlTd, var(--xmlui-paddingVertical-HtmlTd, var(--xmlui-padding-HtmlTd)))"}'`;
+const themeVarsList = `'{"border-HtmlOl": "var(--xmlui-border-HtmlOl)", "borderHorizontal-HtmlOl": "var(--xmlui-borderHorizontal-HtmlOl, var(--xmlui-border-HtmlOl))", "borderVertical-HtmlOl": "var(--xmlui-borderVertical-HtmlOl, var(--xmlui-border-HtmlOl))", "borderLeft-HtmlOl": "var(--xmlui-borderLeft-HtmlOl, var(--xmlui-borderHorizontal-HtmlOl, var(--xmlui-border-HtmlOl)))", "borderRight-HtmlOl": "var(--xmlui-borderRight-HtmlOl, var(--xmlui-borderHorizontal-HtmlOl, var(--xmlui-border-HtmlOl)))", "borderTop-HtmlOl": "var(--xmlui-borderTop-HtmlOl, var(--xmlui-borderVertical-HtmlOl, var(--xmlui-border-HtmlOl)))", "borderBottom-HtmlOl": "var(--xmlui-borderBottom-HtmlOl, var(--xmlui-borderVertical-HtmlOl, var(--xmlui-border-HtmlOl)))", "borderWidth-HtmlOl": "var(--xmlui-borderWidth-HtmlOl)", "borderHorizontalWidth-HtmlOl": "var(--xmlui-borderHorizontalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl))", "borderLeftWidth-HtmlOl": "var(--xmlui-borderLeftWidth-HtmlOl, var(--xmlui-borderHorizontalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)))", "borderRightWidth-HtmlOl": "var(--xmlui-borderRightWidth-HtmlOl, var(--xmlui-borderHorizontalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)))", "borderVerticalWidth-HtmlOl": "var(--xmlui-borderVerticalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl))", "borderTopWidth-HtmlOl": "var(--xmlui-borderTopWidth-HtmlOl, var(--xmlui-borderVerticalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)))", "borderBottomWidth-HtmlOl": "var(--xmlui-borderBottomWidth-HtmlOl, var(--xmlui-borderVerticalWidth-HtmlOl, var(--xmlui-borderWidth-HtmlOl)))", "borderStyle-HtmlOl": "var(--xmlui-borderStyle-HtmlOl)", "borderHorizontalStyle-HtmlOl": "var(--xmlui-borderHorizontalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl))", "borderLeftStyle-HtmlOl": "var(--xmlui-borderLeftStyle-HtmlOl, var(--xmlui-borderHorizontalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)))", "borderRightStyle-HtmlOl": "var(--xmlui-borderRightStyle-HtmlOl, var(--xmlui-borderHorizontalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)))", "borderVerticalStyle-HtmlOl": "var(--xmlui-borderVerticalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl))", "borderTopStyle-HtmlOl": "var(--xmlui-borderTopStyle-HtmlOl, var(--xmlui-borderVerticalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)))", "borderBottomStyle-HtmlOl": "var(--xmlui-borderBottomStyle-HtmlOl, var(--xmlui-borderVerticalStyle-HtmlOl, var(--xmlui-borderStyle-HtmlOl)))", "borderColor-HtmlOl": "var(--xmlui-borderColor-HtmlOl)", "borderHorizontalColor-HtmlOl": "var(--xmlui-borderHorizontalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl))", "borderLeftColor-HtmlOl": "var(--xmlui-borderLeftColor-HtmlOl, var(--xmlui-borderHorizontalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)))", "borderRightColor-HtmlOl": "var(--xmlui-borderRightColor-HtmlOl, var(--xmlui-borderHorizontalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)))", "borderVerticalColor-HtmlOl": "var(--xmlui-borderVerticalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl))", "borderTopColor-HtmlOl": "var(--xmlui-borderTopColor-HtmlOl, var(--xmlui-borderVerticalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)))", "borderBottomColor-HtmlOl": "var(--xmlui-borderBottomColor-HtmlOl, var(--xmlui-borderVerticalColor-HtmlOl, var(--xmlui-borderColor-HtmlOl)))", "borderStartStartRadius-HtmlOl": "var(--xmlui-borderStartStartRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl))", "borderStartEndRadius-HtmlOl": "var(--xmlui-borderStartEndRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl))", "borderEndStartRadius-HtmlOl": "var(--xmlui-borderEndStartRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl))", "borderEndEndRadius-HtmlOl": "var(--xmlui-borderEndEndRadius-HtmlOl, var(--xmlui-borderRadius-HtmlOl))", "padding-HtmlOl": "var(--xmlui-padding-HtmlOl)", "paddingHorizontal-HtmlOl": "var(--xmlui-paddingHorizontal-HtmlOl, var(--xmlui-padding-HtmlOl))", "paddingVertical-HtmlOl": "var(--xmlui-paddingVertical-HtmlOl, var(--xmlui-padding-HtmlOl))", "paddingLeft-HtmlOl": "var(--xmlui-paddingLeft-HtmlOl, var(--xmlui-paddingHorizontal-HtmlOl, var(--xmlui-padding-HtmlOl)))", "paddingRight-HtmlOl": "var(--xmlui-paddingRight-HtmlOl, var(--xmlui-paddingHorizontal-HtmlOl, var(--xmlui-padding-HtmlOl)))", "paddingTop-HtmlOl": "var(--xmlui-paddingTop-HtmlOl, var(--xmlui-paddingVertical-HtmlOl, var(--xmlui-padding-HtmlOl)))", "paddingBottom-HtmlOl": "var(--xmlui-paddingBottom-HtmlOl, var(--xmlui-paddingVertical-HtmlOl, var(--xmlui-padding-HtmlOl)))", "marginTop-HtmlOl": "var(--xmlui-marginTop-HtmlOl)", "marginBottom-HtmlOl": "var(--xmlui-marginBottom-HtmlOl)", "border-HtmlUl": "var(--xmlui-border-HtmlUl)", "borderHorizontal-HtmlUl": "var(--xmlui-borderHorizontal-HtmlUl, var(--xmlui-border-HtmlUl))", "borderVertical-HtmlUl": "var(--xmlui-borderVertical-HtmlUl, var(--xmlui-border-HtmlUl))", "borderLeft-HtmlUl": "var(--xmlui-borderLeft-HtmlUl, var(--xmlui-borderHorizontal-HtmlUl, var(--xmlui-border-HtmlUl)))", "borderRight-HtmlUl": "var(--xmlui-borderRight-HtmlUl, var(--xmlui-borderHorizontal-HtmlUl, var(--xmlui-border-HtmlUl)))", "borderTop-HtmlUl": "var(--xmlui-borderTop-HtmlUl, var(--xmlui-borderVertical-HtmlUl, var(--xmlui-border-HtmlUl)))", "borderBottom-HtmlUl": "var(--xmlui-borderBottom-HtmlUl, var(--xmlui-borderVertical-HtmlUl, var(--xmlui-border-HtmlUl)))", "borderWidth-HtmlUl": "var(--xmlui-borderWidth-HtmlUl)", "borderHorizontalWidth-HtmlUl": "var(--xmlui-borderHorizontalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl))", "borderLeftWidth-HtmlUl": "var(--xmlui-borderLeftWidth-HtmlUl, var(--xmlui-borderHorizontalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)))", "borderRightWidth-HtmlUl": "var(--xmlui-borderRightWidth-HtmlUl, var(--xmlui-borderHorizontalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)))", "borderVerticalWidth-HtmlUl": "var(--xmlui-borderVerticalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl))", "borderTopWidth-HtmlUl": "var(--xmlui-borderTopWidth-HtmlUl, var(--xmlui-borderVerticalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)))", "borderBottomWidth-HtmlUl": "var(--xmlui-borderBottomWidth-HtmlUl, var(--xmlui-borderVerticalWidth-HtmlUl, var(--xmlui-borderWidth-HtmlUl)))", "borderStyle-HtmlUl": "var(--xmlui-borderStyle-HtmlUl)", "borderHorizontalStyle-HtmlUl": "var(--xmlui-borderHorizontalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl))", "borderLeftStyle-HtmlUl": "var(--xmlui-borderLeftStyle-HtmlUl, var(--xmlui-borderHorizontalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)))", "borderRightStyle-HtmlUl": "var(--xmlui-borderRightStyle-HtmlUl, var(--xmlui-borderHorizontalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)))", "borderVerticalStyle-HtmlUl": "var(--xmlui-borderVerticalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl))", "borderTopStyle-HtmlUl": "var(--xmlui-borderTopStyle-HtmlUl, var(--xmlui-borderVerticalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)))", "borderBottomStyle-HtmlUl": "var(--xmlui-borderBottomStyle-HtmlUl, var(--xmlui-borderVerticalStyle-HtmlUl, var(--xmlui-borderStyle-HtmlUl)))", "borderColor-HtmlUl": "var(--xmlui-borderColor-HtmlUl)", "borderHorizontalColor-HtmlUl": "var(--xmlui-borderHorizontalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl))", "borderLeftColor-HtmlUl": "var(--xmlui-borderLeftColor-HtmlUl, var(--xmlui-borderHorizontalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)))", "borderRightColor-HtmlUl": "var(--xmlui-borderRightColor-HtmlUl, var(--xmlui-borderHorizontalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)))", "borderVerticalColor-HtmlUl": "var(--xmlui-borderVerticalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl))", "borderTopColor-HtmlUl": "var(--xmlui-borderTopColor-HtmlUl, var(--xmlui-borderVerticalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)))", "borderBottomColor-HtmlUl": "var(--xmlui-borderBottomColor-HtmlUl, var(--xmlui-borderVerticalColor-HtmlUl, var(--xmlui-borderColor-HtmlUl)))", "borderStartStartRadius-HtmlUl": "var(--xmlui-borderStartStartRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl))", "borderStartEndRadius-HtmlUl": "var(--xmlui-borderStartEndRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl))", "borderEndStartRadius-HtmlUl": "var(--xmlui-borderEndStartRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl))", "borderEndEndRadius-HtmlUl": "var(--xmlui-borderEndEndRadius-HtmlUl, var(--xmlui-borderRadius-HtmlUl))", "padding-HtmlUl": "var(--xmlui-padding-HtmlUl)", "paddingHorizontal-HtmlUl": "var(--xmlui-paddingHorizontal-HtmlUl, var(--xmlui-padding-HtmlUl))", "paddingVertical-HtmlUl": "var(--xmlui-paddingVertical-HtmlUl, var(--xmlui-padding-HtmlUl))", "paddingLeft-HtmlUl": "var(--xmlui-paddingLeft-HtmlUl, var(--xmlui-paddingHorizontal-HtmlUl, var(--xmlui-padding-HtmlUl)))", "paddingRight-HtmlUl": "var(--xmlui-paddingRight-HtmlUl, var(--xmlui-paddingHorizontal-HtmlUl, var(--xmlui-padding-HtmlUl)))", "paddingTop-HtmlUl": "var(--xmlui-paddingTop-HtmlUl, var(--xmlui-paddingVertical-HtmlUl, var(--xmlui-padding-HtmlUl)))", "paddingBottom-HtmlUl": "var(--xmlui-paddingBottom-HtmlUl, var(--xmlui-paddingVertical-HtmlUl, var(--xmlui-padding-HtmlUl)))", "marginTop-HtmlUl": "var(--xmlui-marginTop-HtmlUl)", "marginBottom-HtmlUl": "var(--xmlui-marginBottom-HtmlUl)", "border-HtmlLi": "var(--xmlui-border-HtmlLi)", "borderHorizontal-HtmlLi": "var(--xmlui-borderHorizontal-HtmlLi, var(--xmlui-border-HtmlLi))", "borderVertical-HtmlLi": "var(--xmlui-borderVertical-HtmlLi, var(--xmlui-border-HtmlLi))", "borderLeft-HtmlLi": "var(--xmlui-borderLeft-HtmlLi, var(--xmlui-borderHorizontal-HtmlLi, var(--xmlui-border-HtmlLi)))", "borderRight-HtmlLi": "var(--xmlui-borderRight-HtmlLi, var(--xmlui-borderHorizontal-HtmlLi, var(--xmlui-border-HtmlLi)))", "borderTop-HtmlLi": "var(--xmlui-borderTop-HtmlLi, var(--xmlui-borderVertical-HtmlLi, var(--xmlui-border-HtmlLi)))", "borderBottom-HtmlLi": "var(--xmlui-borderBottom-HtmlLi, var(--xmlui-borderVertical-HtmlLi, var(--xmlui-border-HtmlLi)))", "borderWidth-HtmlLi": "var(--xmlui-borderWidth-HtmlLi)", "borderHorizontalWidth-HtmlLi": "var(--xmlui-borderHorizontalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi))", "borderLeftWidth-HtmlLi": "var(--xmlui-borderLeftWidth-HtmlLi, var(--xmlui-borderHorizontalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)))", "borderRightWidth-HtmlLi": "var(--xmlui-borderRightWidth-HtmlLi, var(--xmlui-borderHorizontalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)))", "borderVerticalWidth-HtmlLi": "var(--xmlui-borderVerticalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi))", "borderTopWidth-HtmlLi": "var(--xmlui-borderTopWidth-HtmlLi, var(--xmlui-borderVerticalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)))", "borderBottomWidth-HtmlLi": "var(--xmlui-borderBottomWidth-HtmlLi, var(--xmlui-borderVerticalWidth-HtmlLi, var(--xmlui-borderWidth-HtmlLi)))", "borderStyle-HtmlLi": "var(--xmlui-borderStyle-HtmlLi)", "borderHorizontalStyle-HtmlLi": "var(--xmlui-borderHorizontalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi))", "borderLeftStyle-HtmlLi": "var(--xmlui-borderLeftStyle-HtmlLi, var(--xmlui-borderHorizontalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)))", "borderRightStyle-HtmlLi": "var(--xmlui-borderRightStyle-HtmlLi, var(--xmlui-borderHorizontalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)))", "borderVerticalStyle-HtmlLi": "var(--xmlui-borderVerticalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi))", "borderTopStyle-HtmlLi": "var(--xmlui-borderTopStyle-HtmlLi, var(--xmlui-borderVerticalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)))", "borderBottomStyle-HtmlLi": "var(--xmlui-borderBottomStyle-HtmlLi, var(--xmlui-borderVerticalStyle-HtmlLi, var(--xmlui-borderStyle-HtmlLi)))", "borderColor-HtmlLi": "var(--xmlui-borderColor-HtmlLi)", "borderHorizontalColor-HtmlLi": "var(--xmlui-borderHorizontalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi))", "borderLeftColor-HtmlLi": "var(--xmlui-borderLeftColor-HtmlLi, var(--xmlui-borderHorizontalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)))", "borderRightColor-HtmlLi": "var(--xmlui-borderRightColor-HtmlLi, var(--xmlui-borderHorizontalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)))", "borderVerticalColor-HtmlLi": "var(--xmlui-borderVerticalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi))", "borderTopColor-HtmlLi": "var(--xmlui-borderTopColor-HtmlLi, var(--xmlui-borderVerticalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)))", "borderBottomColor-HtmlLi": "var(--xmlui-borderBottomColor-HtmlLi, var(--xmlui-borderVerticalColor-HtmlLi, var(--xmlui-borderColor-HtmlLi)))", "borderStartStartRadius-HtmlLi": "var(--xmlui-borderStartStartRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi))", "borderStartEndRadius-HtmlLi": "var(--xmlui-borderStartEndRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi))", "borderEndStartRadius-HtmlLi": "var(--xmlui-borderEndStartRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi))", "borderEndEndRadius-HtmlLi": "var(--xmlui-borderEndEndRadius-HtmlLi, var(--xmlui-borderRadius-HtmlLi))", "padding-HtmlLi": "var(--xmlui-padding-HtmlLi)", "paddingHorizontal-HtmlLi": "var(--xmlui-paddingHorizontal-HtmlLi, var(--xmlui-padding-HtmlLi))", "paddingVertical-HtmlLi": "var(--xmlui-paddingVertical-HtmlLi, var(--xmlui-padding-HtmlLi))", "paddingLeft-HtmlLi": "var(--xmlui-paddingLeft-HtmlLi, var(--xmlui-paddingHorizontal-HtmlLi, var(--xmlui-padding-HtmlLi)))", "paddingRight-HtmlLi": "var(--xmlui-paddingRight-HtmlLi, var(--xmlui-paddingHorizontal-HtmlLi, var(--xmlui-padding-HtmlLi)))", "paddingTop-HtmlLi": "var(--xmlui-paddingTop-HtmlLi, var(--xmlui-paddingVertical-HtmlLi, var(--xmlui-padding-HtmlLi)))", "paddingBottom-HtmlLi": "var(--xmlui-paddingBottom-HtmlLi, var(--xmlui-paddingVertical-HtmlLi, var(--xmlui-padding-HtmlLi)))", "marginLeft-HtmlLi": "var(--xmlui-marginLeft-HtmlLi)", "marginTop-HtmlLi": "var(--xmlui-marginTop-HtmlLi)", "marginBottom-HtmlLi": "var(--xmlui-marginBottom-HtmlLi)", "listStyleType-HtmlLi": "var(--xmlui-listStyleType-HtmlLi)"}'`;
+const themeVarsHeading = `'{"marginTop-HtmlHeading": "var(--xmlui-marginTop-HtmlHeading)", "marginBottom-HtmlHeading": "var(--xmlui-marginBottom-HtmlHeading)"}'`;
+const themeVarsVideo = `'{"marginTop-HtmlVideo": "var(--xmlui-marginTop-HtmlVideo)", "marginBottom-HtmlVideo": "var(--xmlui-marginBottom-HtmlVideo)"}'`;
+const themeVarsDetails = `'{"marginTop-HtmlDetails": "var(--xmlui-marginTop-HtmlDetails)", "marginBottom-HtmlDetails": "var(--xmlui-marginBottom-HtmlDetails)"}'`;
+const htmlTable = "_htmlTable_1c76w_14";
+const htmlThead = "_htmlThead_1c76w_52";
+const htmlTbody = "_htmlTbody_1c76w_86";
+const htmlTfoot = "_htmlTfoot_1c76w_95";
+const htmlTh = "_htmlTh_1c76w_52";
+const htmlTr = "_htmlTr_1c76w_137";
+const htmlTd = "_htmlTd_1c76w_175";
+const htmlUl = "_htmlUl_1c76w_209";
+const htmlOl = "_htmlOl_1c76w_238";
+const htmlDetails = "_htmlDetails_1c76w_325";
+const styles = {
+  themeVarsTable,
+  themeVarsThead,
+  themeVarsTbody,
+  themeVarsTfoot,
+  themeVarsTh,
+  themeVarsTr,
+  themeVarsTd,
+  themeVarsList,
+  themeVarsHeading,
+  themeVarsVideo,
+  themeVarsDetails,
+  htmlTable,
+  htmlThead,
+  htmlTbody,
+  htmlTfoot,
+  htmlTh,
+  htmlTr,
+  htmlTd,
+  htmlUl,
+  htmlOl,
+  htmlDetails
+};
+const HtmlAMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `a` tag.",
+  isHtmlTag: true,
+  props: {
+    href: d("Specifies the URL of the page the link goes to"),
+    target: d("Specifies where to open the linked document"),
+    rel: d("Specifies the relationship between the current document and the linked document"),
+    download: d("Indicates that the target will be downloaded when a user clicks on the hyperlink"),
+    hreflang: d("Specifies the language of the linked document"),
+    type: d("Specifies the MIME type of the linked document"),
+    ping: d(
+      "Specifies a space-separated list of URLs to be notified if the user follows the hyperlink"
+    ),
+    referrerPolicy: d("Specifies the referrer policy for the element"),
+    disabled: d("Specifies that the link should be disabled")
+  }
+});
+const htmlATagRenderer = createComponentRenderer(
+  "a",
+  HtmlAMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { disabled } = p.asOptionalBoolean("disabled");
+    const { href, ...rest } = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(LinkNative, { to: href, disabled: disabled ?? false, className, ...rest, children: renderChild(node.children) });
+  }
+);
+const HtmlAbbrMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `abbr` tag.",
+  isHtmlTag: true
+});
+const htmlAbbrTagRenderer = createComponentRenderer(
+  "abbr",
+  HtmlAbbrMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "abbr", children: renderChild(node.children) });
+  }
+);
+const HtmlAddressMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `address` tag.",
+  isHtmlTag: true
+});
+const htmlAddressTagRenderer = createComponentRenderer(
+  "address",
+  HtmlAddressMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("address", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlAreaMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `area` tag.",
+  isHtmlTag: true,
+  props: {
+    alt: d("Specifies an alternate text for the area"),
+    coords: d("Specifies the coordinates of the area"),
+    download: d("Indicates that the target will be downloaded when a user clicks on the area"),
+    href: d("Specifies the URL of the linked document"),
+    hrefLang: d("Specifies the language of the linked document"),
+    referrerPolicy: d("Specifies the referrer policy for the area"),
+    rel: d("Specifies the relationship between the current document and the linked document"),
+    shape: d("Specifies the shape of the area"),
+    target: d("Specifies where to open the linked document"),
+    media: d("Specifies a media query for the linked resource")
+  }
+});
+const htmlAreaTagRenderer = createComponentRenderer(
+  "area",
+  HtmlAreaMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("area", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlArticleMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `article` tag.",
+  isHtmlTag: true
+});
+const htmlArticleTagRenderer = createComponentRenderer(
+  "article",
+  HtmlArticleMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("article", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlAsideMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `aside` tag.",
+  isHtmlTag: true
+});
+const htmlAsideTagRenderer = createComponentRenderer(
+  "aside",
+  HtmlAsideMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("aside", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlAudioMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `audio` tag.",
+  isHtmlTag: true,
+  props: {
+    autoPlay: d("Specifies that the audio will start playing as soon as it is ready"),
+    controls: d("Specifies that audio controls should be displayed"),
+    crossOrigin: d("Specifies how the element handles cross-origin requests"),
+    loop: d("Specifies that the audio will start over again every time it is finished"),
+    muted: d("Specifies that the audio output should be muted"),
+    preload: d(
+      "Specifies if and how the author thinks the audio should be loaded when the page loads"
+    ),
+    src: d("Specifies the URL of the audio file")
+  }
+});
+const htmlAudioTagRenderer = createComponentRenderer(
+  "audio",
+  HtmlAudioMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { autoPlay, controls, loop, muted } = p.asOptionalBoolean(
+      "autoPlay",
+      "controls",
+      "loop",
+      "muted"
+    );
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "audio",
+      {
+        className,
+        autoPlay: autoPlay ?? false,
+        controls: controls ?? false,
+        loop: loop ?? false,
+        muted: muted ?? false,
+        ...props,
+        children: renderChild(node.children)
+      }
+    );
+  }
+);
+const HtmlBMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `b` tag.",
+  isHtmlTag: true
+});
+const htmlBTagRenderer = createComponentRenderer(
+  "b",
+  HtmlBMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("b", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlBdiMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `bdi` tag.",
+  isHtmlTag: true
+});
+const htmlBdiTagRenderer = createComponentRenderer(
+  "bdi",
+  HtmlBdiMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("bdi", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlBdoMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `bdo` tag.",
+  isHtmlTag: true,
+  props: {
+    dir: d("Specifies the text direction override")
+  }
+});
+const htmlBdoTagRenderer = createComponentRenderer(
+  "bdo",
+  HtmlBdoMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("bdo", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlBlockquoteMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `blockquote` tag.",
+  isHtmlTag: true,
+  props: {
+    cite: d("Specifies the source of the quotation")
+  }
+});
+const htmlBlockquoteTagRenderer = createComponentRenderer(
+  "blockquote",
+  HtmlBlockquoteMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("blockquote", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlButtonMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `button` tag.",
+  isHtmlTag: true,
+  props: {
+    autoFocus: d("Specifies that the button should automatically get focus when the page loads"),
+    disabled: d("Specifies that the button should be disabled"),
+    form: d("Specifies the form the button belongs to"),
+    formAction: d(
+      "Specifies the URL of a file that processes the information submitted by the button"
+    ),
+    formEncType: d(
+      "Specifies how the form-data should be encoded when submitting it to the server"
+    ),
+    formMethod: d("Specifies the HTTP method to use when sending form-data"),
+    formNoValidate: d("Specifies that the form should not be validated when submitted"),
+    formTarget: d("Specifies where to display the response after submitting the form"),
+    name: d("Specifies a name for the button"),
+    type: d("Specifies the type of the button"),
+    value: d("Specifies the value associated with the button")
+  }
+});
+const htmlButtonTagRenderer = createComponentRenderer(
+  "button",
+  HtmlButtonMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { autoFocus, disabled, formNoValidate } = p.asOptionalBoolean(
+      "autoFocus",
+      "disabled",
+      "formNoValidate"
+    );
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        className,
+        autoFocus: autoFocus ?? false,
+        disabled: disabled ?? false,
+        formNoValidate: formNoValidate ?? false,
+        ...props,
+        children: renderChild(node.children)
+      }
+    );
+  }
+);
+const HtmlCanvasMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `canvas` tag.",
+  isHtmlTag: true,
+  props: {
+    width: d("Specifies the width of the canvas"),
+    height: d("Specifies the height of the canvas")
+  }
+});
+const htmlCanvasTagRenderer = createComponentRenderer(
+  "canvas",
+  HtmlCanvasMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const sizeProps = p.asOptionalNumber("width", "height");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("canvas", { className, ...sizeProps, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlCaptionMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `caption` tag.",
+  isHtmlTag: true
+});
+const htmlCaptionTagRenderer = createComponentRenderer(
+  "caption",
+  HtmlCaptionMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("caption", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlCiteMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `cite` tag.",
+  isHtmlTag: true
+});
+const htmlCiteTagRenderer = createComponentRenderer(
+  "cite",
+  HtmlCiteMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "cite", children: renderChild(node.children) });
+  }
+);
+const HtmlCodeMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `code` tag.",
+  isHtmlTag: true
+});
+const htmlCodeTagRenderer = createComponentRenderer(
+  "code",
+  HtmlCodeMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "code", children: renderChild(node.children) });
+  }
+);
+const HtmlColMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `col` tag.",
+  isHtmlTag: true,
+  props: {
+    span: d("Specifies the number of columns a `col` element should span")
+  }
+});
+const htmlColTagRenderer = createComponentRenderer(
+  "col",
+  HtmlColMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { span } = p.asOptionalNumber("span");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("col", { className, span, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlColgroupMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `colgroup` tag.",
+  isHtmlTag: true,
+  props: {
+    span: d("Specifies the number of columns in a `colgroup`")
+  }
+});
+const htmlColgroupTagRenderer = createComponentRenderer(
+  "colgroup",
+  HtmlColgroupMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { span } = p.asOptionalNumber("span");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("colgroup", { className, span, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDataMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `data` tag.",
+  isHtmlTag: true,
+  props: {
+    value: d("Specifies the machine-readable value of the element")
+  }
+});
+const htmlDataTagRenderer = createComponentRenderer(
+  "data",
+  HtmlDataMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("data", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDatalistMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `datalist` tag.",
+  isHtmlTag: true
+});
+const htmlDatalistTagRenderer = createComponentRenderer(
+  "datalist",
+  HtmlDatalistMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("datalist", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDdMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `dd` tag.",
+  isHtmlTag: true
+});
+const htmlDdTagRenderer = createComponentRenderer(
+  "dd",
+  HtmlDdMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDelMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `del` tag.",
+  isHtmlTag: true,
+  props: {
+    cite: d("Specifies the source of the quotation"),
+    dateTime: d("Specifies the date and time of the edit")
+  }
+});
+const htmlDelTagRenderer = createComponentRenderer(
+  "del",
+  HtmlDelMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "deleted", children: renderChild(node.children) });
+  }
+);
+const HtmlDetailsMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `details` tag.",
+  isHtmlTag: true,
+  props: {
+    open: d("Specifies that the details are visible (open)")
+  },
+  themeVars: parseScssVar(styles.themeVarsDetails),
+  defaultThemeVars: {
+    "marginTop-HtmlDetails": "1rem",
+    "marginBottom-HtmlDetails": "1rem"
+  }
+});
+const htmlDetailsTagRenderer = createComponentRenderer(
+  "details",
+  HtmlDetailsMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { open } = p.asOptionalBoolean("open");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("details", { className: classnames(styles.htmlDetails, className), open: open ?? false, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDfnMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `dfn` tag.",
+  isHtmlTag: true
+});
+const htmlDfnTagRenderer = createComponentRenderer(
+  "dfn",
+  HtmlDfnMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("dfn", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDialogMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `dialog` tag.",
+  isHtmlTag: true,
+  props: {
+    open: d("Specifies that the dialog is open")
+  }
+});
+const htmlDialogTagRenderer = createComponentRenderer(
+  "dialog",
+  HtmlDialogMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { open } = p.asOptionalBoolean("open");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("dialog", { className, open: open ?? false, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDivMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `div` tag.",
+  isHtmlTag: true
+});
+const htmlDivTagRenderer = createComponentRenderer(
+  "div",
+  HtmlDivMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDlMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `dl` tag.",
+  isHtmlTag: true
+});
+const htmlDlTagRenderer = createComponentRenderer(
+  "dl",
+  HtmlDlMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("dl", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlDtMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `dt` tag.",
+  isHtmlTag: true
+});
+const htmlDtTagRenderer = createComponentRenderer(
+  "dt",
+  HtmlDtMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlEMMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `em` tag.",
+  isHtmlTag: true
+});
+const htmlEMTagRenderer = createComponentRenderer(
+  "em",
+  HtmlEMMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "em", children: renderChild(node.children) });
+  }
+);
+const HtmlEmbedMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `embed` tag.",
+  isHtmlTag: true,
+  props: {
+    src: d("Specifies the URL of the resource"),
+    type: d("Specifies the type of the resource"),
+    width: d("Specifies the width of the embed"),
+    height: d("Specifies the height of the embed")
+  }
+});
+const htmlEmbedTagRenderer = createComponentRenderer(
+  "embed",
+  HtmlEmbedMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { src } = p.asUrlResource("src");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("embed", { className, src, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlFieldsetMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `fieldset` tag.",
+  isHtmlTag: true,
+  props: {
+    disabled: d("Specifies that the fieldset should be disabled"),
+    form: d("Specifies the form the fieldset belongs to"),
+    name: d("Specifies a name for the fieldset")
+  }
+});
+const htmlFieldsetTagRenderer = createComponentRenderer(
+  "fieldset",
+  HtmlFieldsetMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { disabled } = p.asOptionalBoolean("disabled");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("fieldset", { className, disabled: disabled ?? false, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlFigcaptionMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `figcaption` tag.",
+  isHtmlTag: true
+});
+const htmlFigcaptionTagRenderer = createComponentRenderer(
+  "figcaption",
+  HtmlFigcaptionMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlFigureMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `figure` tag.",
+  isHtmlTag: true
+});
+const htmlFigureTagRenderer = createComponentRenderer(
+  "figure",
+  HtmlFigureMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("figure", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlFooterMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `footer` tag.",
+  isHtmlTag: true
+});
+const htmlFooterTagRenderer = createComponentRenderer(
+  "footer",
+  HtmlFooterMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlFormMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `form` tag.",
+  isHtmlTag: true,
+  props: {
+    acceptCharset: d(
+      "Specifies the character encodings that are to be used for the form submission"
+    ),
+    action: d("Specifies where to send the form-data when a form is submitted"),
+    autoComplete: d("Specifies whether a form should have auto-completion"),
+    encType: d("Specifies how the form-data should be encoded when submitting it to the server"),
+    method: d("Specifies the HTTP method to use when sending form-data"),
+    name: d("Specifies the name of the form"),
+    noValidate: d("Specifies that the form should not be validated when submitted"),
+    target: d("Specifies where to display the response after submitting the form")
+  }
+});
+const htmlFormTagRenderer = createComponentRenderer(
+  "form",
+  HtmlFormMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { noValidate } = p.asOptionalBoolean("noValidate");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("form", { className, noValidate: noValidate ?? false, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlH1Md = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `h1` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsHeading),
+  defaultThemeVars: {
+    "marginTop-HtmlHeading": "1rem",
+    "marginBottom-HtmlHeading": ".5rem"
+  }
+});
+const htmlH1TagRenderer = createComponentRenderer(
+  "h1",
+  HtmlH1Md,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Heading, { className: classnames(className, styles.htmlHeading), ...props, level: "h1", children: renderChild(node.children) });
+  }
+);
+const HtmlH2Md = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `h2` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsHeading),
+  defaultThemeVars: {
+    "marginTop-HtmlHeading": "1rem",
+    "marginBottom-HtmlHeading": ".5rem"
+  }
+});
+const htmlH2TagRenderer = createComponentRenderer(
+  "h2",
+  HtmlH2Md,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Heading, { className: classnames(className, styles.htmlHeading), ...props, level: "h2", children: renderChild(node.children) });
+  }
+);
+const HtmlH3Md = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `h3` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsHeading),
+  defaultThemeVars: {
+    "marginTop-HtmlHeading": "1rem",
+    "marginBottom-HtmlHeading": ".5rem"
+  }
+});
+const htmlH3TagRenderer = createComponentRenderer(
+  "h3",
+  HtmlH3Md,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Heading, { className: classnames(className, styles.htmlHeading), ...props, level: "h3", children: renderChild(node.children) });
+  }
+);
+const HtmlH4Md = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `h4` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsHeading),
+  defaultThemeVars: {
+    "marginTop-HtmlHeading": "1rem",
+    "marginBottom-HtmlHeading": ".5rem"
+  }
+});
+const htmlH4TagRenderer = createComponentRenderer(
+  "h4",
+  HtmlH4Md,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Heading, { className: classnames(className, styles.htmlHeading), ...props, level: "h4", children: renderChild(node.children) });
+  }
+);
+const HtmlH5Md = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `h5` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsHeading),
+  defaultThemeVars: {
+    "marginTop-HtmlHeading": "1rem",
+    "marginBottom-HtmlHeading": ".5rem"
+  }
+});
+const htmlH5TagRenderer = createComponentRenderer(
+  "h5",
+  HtmlH5Md,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Heading, { className: classnames(className, styles.htmlHeading), ...props, level: "h5", children: renderChild(node.children) });
+  }
+);
+const HtmlH6Md = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `h6` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsHeading),
+  defaultThemeVars: {
+    "marginTop-HtmlHeading": "1rem",
+    "marginBottom-HtmlHeading": ".5rem"
+  }
+});
+const htmlH6TagRenderer = createComponentRenderer(
+  "h6",
+  HtmlH6Md,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Heading, { className: classnames(className, styles.htmlHeading), ...props, level: "h6", children: renderChild(node.children) });
+  }
+);
+const HtmlHeaderMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `header` tag.",
+  isHtmlTag: true
+});
+const htmlHeaderTagRenderer = createComponentRenderer(
+  "header",
+  HtmlHeaderMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlHrMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `hr` tag.",
+  isHtmlTag: true
+});
+const htmlHrTagRenderer = createComponentRenderer(
+  "hr",
+  HtmlHrMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("hr", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlIMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `i` tag.",
+  isHtmlTag: true
+});
+const htmlITagRenderer = createComponentRenderer(
+  "i",
+  HtmlIMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("i", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlIframeMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `iframe` tag.",
+  isHtmlTag: true,
+  props: {
+    src: d("Specifies the URL of the page to embed"),
+    srcDoc: d("Specifies the HTML content of the page to embed"),
+    name: d("Specifies the name of the iframe"),
+    sandbox: d("Specifies a set of extra restrictions for the content in the iframe"),
+    allow: d("Specifies a feature policy for the iframe"),
+    allowFullScreen: d("Specifies that the iframe can be displayed in full-screen mode"),
+    width: d("Specifies the width of the iframe"),
+    height: d("Specifies the height of the iframe"),
+    loading: d("Specifies the loading behavior of the iframe"),
+    referrerPolicy: d("Specifies the referrer policy for the iframe")
+  }
+});
+const htmlIframeTagRenderer = createComponentRenderer(
+  "iframe",
+  HtmlIframeMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { src } = p.asUrlResource("src");
+    const { allowFullScreen } = p.asOptionalBoolean("allowFullScreen");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("iframe", { className, src, allowFullScreen: allowFullScreen ?? false, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlImgMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `img` tag.",
+  isHtmlTag: true,
+  props: {
+    alt: d("Specifies an alternate text for an image"),
+    height: d("Specifies the height of an image"),
+    src: d("Specifies the path to the image"),
+    width: d("Specifies the width of an image"),
+    useMap: d("Specifies an image as a client-side image map"),
+    loading: d("Specifies the loading behavior of the image"),
+    referrerPolicy: d("Specifies the referrer policy for the image"),
+    sizes: d("Specifies image sizes for different page layouts")
+  }
+});
+const htmlImgTagRenderer = createComponentRenderer(
+  "img",
+  HtmlImgMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { src } = p.asUrlResource("src");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("img", { className, src, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlInputMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `input` tag.",
+  isHtmlTag: true,
+  props: {
+    type: d("Specifies the type of input"),
+    value: d("Specifies the value of the input"),
+    placeholder: d("Specifies a short hint that describes the expected value of the input"),
+    autoFocus: d("Specifies that the input should automatically get focus when the page loads"),
+    checked: d("Specifies that the input should be pre-selected"),
+    disabled: d("Specifies that the input should be disabled"),
+    form: d("Specifies the form the input belongs to"),
+    name: d("Specifies the name of the input"),
+    list: d(
+      "Specifies the id of a datalist element that contains pre-defined options for the input"
+    ),
+    max: d("Specifies the maximum value for an input"),
+    maxLength: d("Specifies the maximum number of characters allowed in an input"),
+    min: d("Specifies the minimum value for an input"),
+    minLength: d("Specifies the minimum number of characters allowed in an input"),
+    multiple: d("Specifies that a user can enter more than one value"),
+    pattern: d("Specifies a regular expression that an input's value is checked against"),
+    readOnly: d("Specifies that the input is read-only"),
+    required: d("Specifies that the input is required"),
+    size: d("Specifies the width, in characters, of an input"),
+    step: d("Specifies the legal number intervals for an input")
+  }
+});
+const htmlInputTagRenderer = createComponentRenderer(
+  "input",
+  HtmlInputMd,
+  ({ node, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { autoFocus, checked, disabled, readOnly, required, multiple } = p.asOptionalBoolean(
+      "autoFocus",
+      "checked",
+      "disabled",
+      "readOnly",
+      "required",
+      "multiple"
+    );
+    const numberProps = p.asOptionalNumber("maxLength", "minLength", "size");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "input",
+      {
+        className,
+        autoFocus: autoFocus ?? false,
+        checked: checked ?? false,
+        disabled: disabled ?? false,
+        multiple: multiple ?? false,
+        readOnly: readOnly ?? false,
+        required: required ?? false,
+        ...numberProps,
+        ...props
+      }
+    );
+  }
+);
+const HtmlInsMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `ins` tag.",
+  isHtmlTag: true,
+  props: {
+    cite: d("Specifies the source URL for the inserted text"),
+    dateTime: d("Specifies the date and time when the text was inserted")
+  }
+});
+const htmlInsTagRenderer = createComponentRenderer(
+  "ins",
+  HtmlInsMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "inserted", children: renderChild(node.children) });
+  }
+);
+const HtmlKbdMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `kbd` tag.",
+  isHtmlTag: true
+});
+const htmlKbdTagRenderer = createComponentRenderer(
+  "kbd",
+  HtmlKbdMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "keyboard", children: renderChild(node.children) });
+  }
+);
+const HtmlLabelMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `label` tag.",
+  isHtmlTag: true,
+  props: {
+    htmlFor: d("Specifies which form element a label is bound to")
+  }
+});
+const htmlLabelTagRenderer = createComponentRenderer(
+  "label",
+  HtmlLabelMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlLegendMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `legend` tag.",
+  isHtmlTag: true
+});
+const htmlLegendTagRenderer = createComponentRenderer(
+  "legend",
+  HtmlLegendMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("legend", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlLiMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `li` tag.",
+  isHtmlTag: true,
+  props: {
+    value: d("Specifies the value of the list item (if the parent is an ordered list)")
+  },
+  defaultThemeVars: {
+    "marginLeft-HtmlLi": "$space-6",
+    "paddingLeft-HtmlLi": "$space-1"
+  }
+});
+const htmlLiTagRenderer = createComponentRenderer(
+  "li",
+  HtmlLiMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { value } = p.asOptionalNumber("value");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("li", { className, value, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlMainMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `main` tag.",
+  isHtmlTag: true
+});
+const htmlMainTagRenderer = createComponentRenderer(
+  "main",
+  HtmlMainMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlMapMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `map` tag.",
+  isHtmlTag: true,
+  props: {
+    name: d("Specifies the name of the map")
+  }
+});
+const htmlMapTagRenderer = createComponentRenderer(
+  "map",
+  HtmlMapMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("map", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlMarkMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `mark` tag.",
+  isHtmlTag: true
+});
+const htmlMarkTagRenderer = createComponentRenderer(
+  "mark",
+  HtmlMarkMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "marked", children: renderChild(node.children) });
+  }
+);
+const HtmlMenuMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `menu` tag.",
+  isHtmlTag: true,
+  props: {
+    type: d("Specifies the type of the menu")
+  }
+});
+const htmlMenuTagRenderer = createComponentRenderer(
+  "menu",
+  HtmlMenuMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("menu", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlMeterMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `meter` tag.",
+  isHtmlTag: true,
+  props: {
+    min: d("Specifies the minimum value"),
+    max: d("Specifies the maximum value"),
+    low: d("Specifies the lower bound of the high value"),
+    high: d("Specifies the upper bound of the low value"),
+    optimum: d("Specifies the optimal value"),
+    value: d("Specifies the current value")
+  }
+});
+const htmlMeterTagRenderer = createComponentRenderer(
+  "meter",
+  HtmlMeterMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const numberProps = p.asOptionalNumber("value", "min", "max", "low", "high", "optimum");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("meter", { className, ...numberProps, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlNavMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `nav` tag.",
+  isHtmlTag: true
+});
+const htmlNavTagRenderer = createComponentRenderer(
+  "nav",
+  HtmlNavMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("nav", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlObjectMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `object` tag.",
+  isHtmlTag: true,
+  props: {
+    data: d("Specifies the URL of the resource"),
+    type: d("Specifies the MIME type of the resource"),
+    name: d("Specifies the name of the object"),
+    form: d("Specifies the form the object belongs to"),
+    width: d("Specifies the width of the object"),
+    height: d("Specifies the height of the object")
+  }
+});
+const htmlObjectTagRenderer = createComponentRenderer(
+  "object",
+  HtmlObjectMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("object", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlOlMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `ol` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsList),
+  // Use only themeVarsList
+  defaultThemeVars: {
+    "marginTop-HtmlOl": "$space-5",
+    "marginBottom-HtmlOl": "$space-5"
+  }
+});
+const htmlOlTagRenderer = createComponentRenderer(
+  "ol",
+  HtmlOlMd,
+  // Use HtmlOlMd instead of HtmlListMd
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: classnames(styles.htmlOl, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlOptgroupMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `optgroup` tag.",
+  isHtmlTag: true,
+  props: {
+    label: d("Specifies the label for the option group"),
+    disabled: d("Specifies that the option group is disabled")
+  }
+});
+const htmlOptgroupTagRenderer = createComponentRenderer(
+  "optgroup",
+  HtmlOptgroupMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { disabled } = p.asOptionalBoolean("disabled");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("optgroup", { className, disabled: disabled ?? false, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlOptionMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `option` tag.",
+  isHtmlTag: true,
+  props: {
+    disabled: d("Specifies that the option should be disabled"),
+    label: d("Specifies the label of the option"),
+    selected: d("Specifies that the option should be pre-selected"),
+    value: d("Specifies the value of the option")
+  }
+});
+const htmlOptionTagRenderer = createComponentRenderer(
+  "option",
+  HtmlOptionMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { disabled, selected } = p.asOptionalBoolean("disabled", "selected");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "option",
+      {
+        className,
+        disabled: disabled ?? false,
+        selected: selected ?? false,
+        ...props,
+        children: renderChild(node.children)
+      }
+    );
+  }
+);
+const HtmlOutputMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `output` tag.",
+  isHtmlTag: true,
+  props: {
+    form: d("Specifies the form element that the output is associated with"),
+    htmlFor: d("Specifies the IDs of the elements that this output is related to"),
+    name: d("Specifies the name of the output")
+  }
+});
+const htmlOutputTagRenderer = createComponentRenderer(
+  "output",
+  HtmlOutputMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("output", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlPMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `p` tag.",
+  isHtmlTag: true
+});
+const htmlPTagRenderer = createComponentRenderer(
+  "p",
+  HtmlPMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "paragraph", children: renderChild(node.children) });
+  }
+);
+const HtmlParamMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `param` tag.",
+  isHtmlTag: true,
+  props: {
+    name: d("Specifies the name of the parameter"),
+    value: d("Specifies the value of the parameter")
+  }
+});
+const htmlParamTagRenderer = createComponentRenderer(
+  "param",
+  HtmlParamMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("param", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlPictureMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `picture` tag.",
+  isHtmlTag: true
+});
+const htmlPictureTagRenderer = createComponentRenderer(
+  "picture",
+  HtmlPictureMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("picture", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlPreMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `pre` tag.",
+  isHtmlTag: true
+});
+const htmlPreTagRenderer = createComponentRenderer(
+  "pre",
+  HtmlPreMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "codefence", children: renderChild(node.children) });
+  }
+);
+const HtmlProgressMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `progress` tag.",
+  isHtmlTag: true,
+  props: {
+    max: d("Specifies the maximum value of the progress element"),
+    value: d("Specifies the current value of the progress element")
+  }
+});
+const htmlProgressTagRenderer = createComponentRenderer(
+  "progress",
+  HtmlProgressMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const numberProps = p.asOptionalNumber("max", "value");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("progress", { className, ...numberProps, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlQMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `q` tag.",
+  isHtmlTag: true,
+  props: {
+    cite: d("Specifies the source URL of the quotation")
+  }
+});
+const htmlQTagRenderer = createComponentRenderer(
+  "q",
+  HtmlQMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("q", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlRpMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `rp` tag.",
+  isHtmlTag: true
+});
+const htmlRpTagRenderer = createComponentRenderer(
+  "rp",
+  HtmlRpMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("rp", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlRtMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `rt` tag.",
+  isHtmlTag: true
+});
+const htmlRtTagRenderer = createComponentRenderer(
+  "rt",
+  HtmlRtMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("rt", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlRubyMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `ruby` tag.",
+  isHtmlTag: true
+});
+const htmlRubyTagRenderer = createComponentRenderer(
+  "ruby",
+  HtmlRubyMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("ruby", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlSMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `s` tag.",
+  isHtmlTag: true
+});
+const htmlSTagRenderer = createComponentRenderer(
+  "s",
+  HtmlSMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("s", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlSampMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `samp` tag.",
+  isHtmlTag: true
+});
+const htmlSampTagRenderer = createComponentRenderer(
+  "samp",
+  HtmlSampMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "sample", children: renderChild(node.children) });
+  }
+);
+const HtmlSectionMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `section` tag.",
+  isHtmlTag: true
+});
+const htmlSectionTagRenderer = createComponentRenderer(
+  "section",
+  HtmlSectionMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("section", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlSelectMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `select` tag.",
+  isHtmlTag: true,
+  props: {
+    autoFocus: d("Specifies that the select should automatically get focus when the page loads"),
+    disabled: d("Specifies that the select should be disabled"),
+    form: d("Specifies the form the select belongs to"),
+    multiple: d("Specifies that multiple options can be selected at once"),
+    name: d("Specifies the name of the select"),
+    required: d("Specifies that the select is required"),
+    size: d("Specifies the number of visible options in the select")
+  }
+});
+const htmlSelectTagRenderer = createComponentRenderer(
+  "select",
+  HtmlSelectMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { autoFocus, disabled, multiple, required } = p.asOptionalBoolean(
+      "autoFocus",
+      "disabled",
+      "multiple",
+      "required"
+    );
+    const { size } = p.asOptionalNumber("size");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "select",
+      {
+        className,
+        autoFocus: autoFocus ?? false,
+        disabled: disabled ?? false,
+        multiple: multiple ?? false,
+        required: required ?? false,
+        size,
+        ...props,
+        children: renderChild(node.children)
+      }
+    );
+  }
+);
+const HtmlSmallMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `small` tag.",
+  isHtmlTag: true
+});
+const htmlSmallTagRenderer = createComponentRenderer(
+  "small",
+  HtmlSmallMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "small", children: renderChild(node.children) });
+  }
+);
+const HtmlSourceMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `source` tag.",
+  isHtmlTag: true,
+  props: {
+    src: d("Specifies the URL of the media file"),
+    type: d("Specifies the type of the media file"),
+    media: d("Specifies a media query for the media file"),
+    srcSet: d("Specifies the source set for responsive images"),
+    sizes: d("Specifies the sizes attribute for responsive images")
+  }
+});
+const htmlSourceTagRenderer = createComponentRenderer(
+  "source",
+  HtmlSourceMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { src } = p.asUrlResource("src");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("source", { className, src, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlSpanMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `span` tag.",
+  isHtmlTag: true
+});
+const htmlSpanTagRenderer = createComponentRenderer(
+  "span",
+  HtmlSpanMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlStrongMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `strong` tag.",
+  isHtmlTag: true
+});
+const htmlStrongTagRenderer = createComponentRenderer(
+  "strong",
+  HtmlStrongMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "strong", children: renderChild(node.children) });
+  }
+);
+const HtmlSubMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `sub` tag.",
+  isHtmlTag: true
+});
+const htmlSubTagRenderer = createComponentRenderer(
+  "sub",
+  HtmlSubMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "sub", children: renderChild(node.children) });
+  }
+);
+const HtmlSummaryMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `summary` tag.",
+  isHtmlTag: true
+});
+const htmlSummaryTagRenderer = createComponentRenderer(
+  "summary",
+  HtmlSummaryMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("summary", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlSupMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `sup` tag.",
+  isHtmlTag: true
+});
+const htmlSupTagRenderer = createComponentRenderer(
+  "sup",
+  HtmlSupMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "sup", children: renderChild(node.children) });
+  }
+);
+const HtmlTableMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `table` tag.",
+  isHtmlTag: true,
+  props: {
+    border: d("Specifies the width of the border around the table"),
+    cellPadding: d("Specifies the space between the cell content and its borders"),
+    cellSpacing: d("Specifies the space between cells"),
+    summary: d("Provides a summary of the table's purpose and structure"),
+    width: d("Specifies the width of the table"),
+    align: d("Specifies the alignment of the table"),
+    frame: d("Specifies which parts of the table frame to render"),
+    rules: d("Specifies which rules to draw between cells")
+  },
+  themeVars: parseScssVar(styles.themeVarsTable),
+  defaultThemeVars: {
+    "backgroundColor-HtmlTable": "$backgroundColor",
+    "border-HtmlTable": "1px solid $borderColor",
+    "marginBottom-HtmlTable": "$space-4",
+    "marginTop-HtmlTable": "$space-4"
+  }
+});
+const htmlTableTagRenderer = createComponentRenderer(
+  "table",
+  HtmlTableMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("table", { className: classnames(styles.htmlTable, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTbodyMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `tbody` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsTbody)
+});
+const htmlTbodyTagRenderer = createComponentRenderer(
+  "tbody",
+  HtmlTbodyMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("tbody", { className: classnames(styles.htmlTbody, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTdMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `td` tag.",
+  isHtmlTag: true,
+  props: {
+    align: d("Specifies the horizontal alignment of the content in the cell"),
+    colSpan: d("Specifies the number of columns a cell should span"),
+    headers: d("Specifies a list of header cells the current cell is related to"),
+    rowSpan: d("Specifies the number of rows a cell should span"),
+    valign: d("Specifies the vertical alignment of the content in the cell"),
+    scope: d("Specifies whether a cell is a header for a column, row, or group of columns or rows"),
+    abbr: d("Specifies an abbreviated version of the content in the cell"),
+    height: d("Specifies the height of the cell"),
+    width: d("Specifies the width of the cell")
+  },
+  themeVars: parseScssVar(styles.themeVarsTd),
+  defaultThemeVars: {
+    "padding-HtmlTd": "$space-2",
+    "borderBottom-HtmlTd": "1px solid $borderColor"
+  }
+});
+const htmlTdTagRenderer = createComponentRenderer(
+  "td",
+  HtmlTdMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("td", { className: classnames(styles.htmlTd, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTemplateMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `template` tag.",
+  isHtmlTag: true
+});
+const htmlTemplateTagRenderer = createComponentRenderer(
+  "template",
+  HtmlTemplateMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("template", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTextareaMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `textarea` tag.",
+  isHtmlTag: true,
+  props: {
+    autoFocus: d("Specifies that the textarea should automatically get focus when the page loads"),
+    cols: d("Specifies the visible width of the text area in average character widths"),
+    dirName: d("Specifies the text directionality"),
+    disabled: d("Specifies that the textarea should be disabled"),
+    form: d("Specifies the form the textarea belongs to"),
+    maxLength: d("Specifies the maximum number of characters allowed in the textarea"),
+    minLength: d("Specifies the minimum number of characters allowed in the textarea"),
+    name: d("Specifies the name of the textarea"),
+    placeholder: d("Specifies a short hint that describes the expected value"),
+    readOnly: d("Specifies that the textarea is read-only"),
+    required: d("Specifies that the textarea is required"),
+    rows: d("Specifies the visible number of lines in the textarea"),
+    value: d("Specifies the current value of the textarea"),
+    wrap: d("Specifies how the text in a textarea is to be wrapped when submitted")
+  }
+});
+const htmlTextareaTagRenderer = createComponentRenderer(
+  "textarea",
+  HtmlTextareaMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { autoFocus, disabled, readOnly, required } = p.asOptionalBoolean(
+      "autoFocus",
+      "disabled",
+      "readOnly",
+      "required"
+    );
+    const numberProps = p.asOptionalNumber("cols", "rows", "maxLength", "minLength");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "textarea",
+      {
+        className,
+        autoFocus: autoFocus ?? false,
+        disabled: disabled ?? false,
+        readOnly: readOnly ?? false,
+        required: required ?? false,
+        ...numberProps,
+        ...props,
+        children: renderChild(node.children)
+      }
+    );
+  }
+);
+const HtmlTfootMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `tfoot` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsTfoot)
+});
+const htmlTfootTagRenderer = createComponentRenderer(
+  "tfoot",
+  HtmlTfootMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("tfoot", { className: classnames(styles.htmlTfoot, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlThMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `th` tag.",
+  isHtmlTag: true,
+  props: {
+    abbr: d("Specifies an abbreviated version of the content in the header cell"),
+    align: d("Specifies the horizontal alignment of the content in the header cell"),
+    colSpan: d("Specifies the number of columns a header cell should span"),
+    headers: d("Specifies a list of header cells the current header cell is related to"),
+    rowSpan: d("Specifies the number of rows a header cell should span"),
+    scope: d(
+      "Specifies whether a header cell is a header for a column, row, or group of columns or rows"
+    )
+  },
+  themeVars: parseScssVar(styles.themeVarsTh),
+  defaultThemeVars: {
+    "padding-HtmlTh": "$space-2",
+    "fontSize-HtmlTh": "$fontSize-tiny",
+    "fontWeight-HtmlTh": "$fontWeight-bold"
+    //"backgroundColor-HtmlTh--hover": "$color-surface-200",
+  }
+});
+const htmlThTagRenderer = createComponentRenderer(
+  "th",
+  HtmlThMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("th", { className: classnames(styles.htmlTh, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTheadMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `thead` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsThead),
+  defaultThemeVars: {
+    "textTransform-HtmlThead": "uppercase",
+    "backgroundColor-HtmlThead": "$color-surface-100",
+    "textColor-HtmlThead": "$color-surface-500"
+  }
+});
+const htmlTheadTagRenderer = createComponentRenderer(
+  "thead",
+  HtmlTheadMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("thead", { className: classnames(styles.htmlThead, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTimeMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `time` tag.",
+  isHtmlTag: true,
+  props: {
+    dateTime: d("Specifies the date and time in a machine-readable format")
+  }
+});
+const htmlTimeTagRenderer = createComponentRenderer(
+  "time",
+  HtmlTimeMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("time", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTrMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `tr` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsTr),
+  defaultThemeVars: {
+    "fontSize-HtmlTr": "$fontSize-sm",
+    "backgroundColor-row-HtmlTr": "inherit"
+    //"backgroundColor-HtmlTr--hover": "$color-primary-50",
+  }
+});
+const htmlTrTagRenderer = createComponentRenderer(
+  "tr",
+  HtmlTrMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("tr", { className: classnames(styles.htmlTr, className), ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlTrackMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `track` tag.",
+  isHtmlTag: true,
+  props: {
+    default: d("Specifies that the track is to be enabled if no other track is more suitable"),
+    kind: d("Specifies the kind of text track"),
+    label: d("Specifies the title of the text track"),
+    src: d("Specifies the URL of the track file"),
+    srcLang: d("Specifies the language of the track text data")
+  }
+});
+const htmlTrackTagRenderer = createComponentRenderer(
+  "track",
+  HtmlTrackMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { src } = p.asUrlResource("src");
+    const { default: defaultProp } = p.asOptionalBoolean("default");
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("track", { className, default: defaultProp ?? false, src, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlUMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `u` tag.",
+  isHtmlTag: true
+});
+const htmlUTagRenderer = createComponentRenderer(
+  "u",
+  HtmlUMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("u", { className, ...props, children: renderChild(node.children) });
+  }
+);
+const HtmlUlMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `ul` tag.",
+  isHtmlTag: true,
+  themeVars: parseScssVar(styles.themeVarsList),
+  // Use only themeVarsList
+  defaultThemeVars: {
+    "marginTop-HtmlUl": "$space-5",
+    "marginBottom-HtmlUl": "$space-5"
+  }
+});
+const htmlUlTagRenderer = createComponentRenderer(
+  "ul",
+  HtmlUlMd,
+  // Use HtmlOlMd instead of HtmlListMd
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: classnames(styles.htmlUl, className), ...props, children: renderChild(node.children) });
+  }
+);
+const htmlVarTagRenderer = createComponentRenderer(
+  "var",
+  HtmlCodeMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Text, { className, ...props, variant: "var", children: renderChild(node.children) });
+  }
+);
+const HtmlVideoMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `video` tag.",
+  isHtmlTag: true,
+  props: {
+    autoPlay: d("Specifies that the video will start playing as soon as it is ready"),
+    controls: d("Specifies that video controls should be displayed"),
+    height: d("Specifies the height of the video player"),
+    loop: d("Specifies that the video will start over again when finished"),
+    muted: d("Specifies that the video output should be muted"),
+    poster: d("Specifies an image to be shown while the video is downloading"),
+    preload: d(
+      "Specifies if and how the author thinks the video should be loaded when the page loads"
+    ),
+    src: d("Specifies the URL of the video file"),
+    width: d("Specifies the width of the video player")
+  },
+  themeVars: parseScssVar(styles.themeVarsVideo),
+  defaultThemeVars: {
+    "marginTop-HtmlVideo": "1rem",
+    "marginBottom-HtmlVideo": "1rem"
+  }
+});
+const htmlVideoTagRenderer = createComponentRenderer(
+  "video",
+  HtmlVideoMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const { src } = p.asUrlResource("src");
+    const { autoPlay, controls, loop, muted } = p.asOptionalBoolean(
+      "autoPlay",
+      "controls",
+      "loop",
+      "muted"
+    );
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "video",
+      {
+        className,
+        src,
+        autoPlay: autoPlay ?? false,
+        controls: controls ?? false,
+        loop: loop ?? false,
+        muted: muted ?? false,
+        ...props,
+        children: renderChild(node.children)
+      }
+    );
+  }
+);
+const HtmlWbrMd = createMetadata({
+  status: "deprecated",
+  description: "This component renders an HTML `wbr` tag.",
+  isHtmlTag: true
+});
+const htmlWbrTagRenderer = createComponentRenderer(
+  "wbr",
+  HtmlWbrMd,
+  ({ node, renderChild, extractValue, extractResourceUrl, className }) => {
+    const p = new PropsTrasform(extractValue, extractResourceUrl, node.props);
+    const props = p.asRest();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("wbr", { className, ...props, children: renderChild(node.children) });
+  }
+);
+window.Xmlui?.registerExtension({
+  namespace: "#xmlui-core-ns",
+  components: [htmlATagRenderer, htmlAbbrTagRenderer, htmlAddressTagRenderer, htmlAreaTagRenderer, htmlArticleTagRenderer, htmlAsideTagRenderer, htmlAudioTagRenderer, htmlBTagRenderer, htmlBdiTagRenderer, htmlBdoTagRenderer, htmlBlockquoteTagRenderer, htmlButtonTagRenderer, htmlCanvasTagRenderer, htmlCaptionTagRenderer, htmlCiteTagRenderer, htmlCodeTagRenderer, htmlColTagRenderer, htmlColgroupTagRenderer, htmlDataTagRenderer, htmlDatalistTagRenderer, htmlDdTagRenderer, htmlDelTagRenderer, htmlDetailsTagRenderer, htmlDfnTagRenderer, htmlDialogTagRenderer, htmlDivTagRenderer, htmlDlTagRenderer, htmlDtTagRenderer, htmlEMTagRenderer, htmlEmbedTagRenderer, htmlFieldsetTagRenderer, htmlFigcaptionTagRenderer, htmlFigureTagRenderer, htmlFooterTagRenderer, htmlFormTagRenderer, htmlH1TagRenderer, htmlH2TagRenderer, htmlH3TagRenderer, htmlH4TagRenderer, htmlH5TagRenderer, htmlH6TagRenderer, htmlHeaderTagRenderer, htmlHrTagRenderer, htmlITagRenderer, htmlIframeTagRenderer, htmlImgTagRenderer, htmlInputTagRenderer, htmlInsTagRenderer, htmlKbdTagRenderer, htmlLabelTagRenderer, htmlLegendTagRenderer, htmlLiTagRenderer, htmlMainTagRenderer, htmlMapTagRenderer, htmlMarkTagRenderer, htmlMenuTagRenderer, htmlMeterTagRenderer, htmlNavTagRenderer, htmlObjectTagRenderer, htmlOlTagRenderer, htmlOptgroupTagRenderer, htmlOptionTagRenderer, htmlOutputTagRenderer, htmlPTagRenderer, htmlParamTagRenderer, htmlPictureTagRenderer, htmlPreTagRenderer, htmlProgressTagRenderer, htmlQTagRenderer, htmlRpTagRenderer, htmlRtTagRenderer, htmlRubyTagRenderer, htmlSTagRenderer, htmlSampTagRenderer, htmlSectionTagRenderer, htmlSelectTagRenderer, htmlSmallTagRenderer, htmlSourceTagRenderer, htmlSpanTagRenderer, htmlStrongTagRenderer, htmlSubTagRenderer, htmlSummaryTagRenderer, htmlSupTagRenderer, htmlTableTagRenderer, htmlTbodyTagRenderer, htmlTdTagRenderer, htmlTemplateTagRenderer, htmlTextareaTagRenderer, htmlTfootTagRenderer, htmlThTagRenderer, htmlTheadTagRenderer, htmlTimeTagRenderer, htmlTrTagRenderer, htmlTrackTagRenderer, htmlUTagRenderer, htmlUlTagRenderer, htmlVarTagRenderer, htmlVideoTagRenderer, htmlWbrTagRenderer, htmlATagRenderer, htmlAbbrTagRenderer, htmlAddressTagRenderer, htmlAreaTagRenderer, htmlArticleTagRenderer, htmlAsideTagRenderer, htmlAudioTagRenderer, htmlBTagRenderer, htmlBdiTagRenderer, htmlBdoTagRenderer, htmlBlockquoteTagRenderer, htmlButtonTagRenderer, htmlCanvasTagRenderer, htmlCaptionTagRenderer, htmlCiteTagRenderer, htmlCodeTagRenderer, htmlColTagRenderer, htmlColgroupTagRenderer, htmlDataTagRenderer, htmlDatalistTagRenderer, htmlDdTagRenderer, htmlDelTagRenderer, htmlDetailsTagRenderer, htmlDfnTagRenderer, htmlDialogTagRenderer, htmlDivTagRenderer, htmlDlTagRenderer, htmlDtTagRenderer, htmlEMTagRenderer, htmlEmbedTagRenderer, htmlFieldsetTagRenderer, htmlFigcaptionTagRenderer, htmlFigureTagRenderer, htmlFooterTagRenderer, htmlFormTagRenderer, htmlH1TagRenderer, htmlH2TagRenderer, htmlH3TagRenderer, htmlH4TagRenderer, htmlH5TagRenderer, htmlH6TagRenderer, htmlHeaderTagRenderer, htmlHrTagRenderer, htmlITagRenderer, htmlIframeTagRenderer, htmlImgTagRenderer, htmlInputTagRenderer, htmlInsTagRenderer, htmlKbdTagRenderer, htmlLabelTagRenderer, htmlLegendTagRenderer, htmlLiTagRenderer, htmlMainTagRenderer, htmlMapTagRenderer, htmlMarkTagRenderer, htmlMenuTagRenderer, htmlMeterTagRenderer, htmlNavTagRenderer, htmlObjectTagRenderer, htmlOlTagRenderer, htmlOptgroupTagRenderer, htmlOptionTagRenderer, htmlOutputTagRenderer, htmlPTagRenderer, htmlParamTagRenderer, htmlPictureTagRenderer, htmlPreTagRenderer, htmlProgressTagRenderer, htmlQTagRenderer, htmlRpTagRenderer, htmlRtTagRenderer, htmlRubyTagRenderer, htmlSTagRenderer, htmlSampTagRenderer, htmlSectionTagRenderer, htmlSelectTagRenderer, htmlSmallTagRenderer, htmlSourceTagRenderer, htmlSpanTagRenderer, htmlStrongTagRenderer, htmlSubTagRenderer, htmlSummaryTagRenderer, htmlSupTagRenderer, htmlTableTagRenderer, htmlTbodyTagRenderer, htmlTdTagRenderer, htmlTemplateTagRenderer, htmlTextareaTagRenderer, htmlTfootTagRenderer, htmlThTagRenderer, htmlTheadTagRenderer, htmlTimeTagRenderer, htmlTrTagRenderer, htmlTrackTagRenderer, htmlUTagRenderer, htmlUlTagRenderer, htmlVarTagRenderer, htmlVideoTagRenderer, htmlWbrTagRenderer, brComponentRenderer, BrComponentRenderer, brComponentRenderer, BrComponentRenderer]
+});
+})();
+
+(function() {
+"use strict";
 const { j: jsxRuntimeExports } = _jsx_runtime_QMS4LbMm;
 const { c: createComponentRenderer, b: createMetadata, w: d } = _metadata_helpers_CsmBqXtx;
 const { I: Icon, b: styles } = _IconNative_YAHOmdiT;
@@ -246947,6 +248944,120 @@ const imageComponentRenderer = createComponentRenderer(
 window.Xmlui?.registerExtension({
   namespace: "#xmlui-core-ns",
   components: [imageComponentRenderer]
+});
+})();
+
+(function() {
+"use strict";
+const { j: jsxRuntimeExports } = _jsx_runtime_QMS4LbMm;
+const { L: LinkNative, d: defaultProps, s: styles } = _LinkNative_DEwryRum;
+const { c: createComponentRenderer, b: createMetadata, g: alignmentOptionValues, w: d, y: dLabel, L: LinkTargetMd, o: dEnabled } = _metadata_helpers_CsmBqXtx;
+const { p: parseScssVar } = _themeVars_Cxp4lXoj;
+const COMP = "Link";
+const LinkMd = createMetadata({
+  status: "stable",
+  description: "`Link` creates clickable navigation elements for internal app routes or external URLs. You can use the `label` and `icon` properties for simple text links, or embed custom components like buttons, cards, or complex layouts for rich interactive link presentations.",
+  parts: {
+    icon: {
+      description: "The icon within the Link component."
+    }
+  },
+  props: {
+    to: d(
+      "This property defines the URL of the link. If the value is not defined, the link cannot be activated."
+    ),
+    enabled: dEnabled(),
+    active: {
+      description: `Indicates whether this link is active or not. If so, it will have a distinct visual appearance.`,
+      type: "boolean",
+      defaultValue: defaultProps.active
+    },
+    target: {
+      description: `This property specifies where to open the link represented by the \`${COMP}\`. This property accepts the following values (in accordance with the HTML standard):`,
+      availableValues: LinkTargetMd,
+      type: "string"
+    },
+    label: dLabel(),
+    icon: d(
+      `This property allows you to add an optional icon (specify the icon's name) to the link.`
+    ),
+    horizontalAlignment: {
+      description: "Manages the horizontal content alignment for child elements in the Link.",
+      availableValues: alignmentOptionValues,
+      valueType: "string",
+      defaultValue: "start"
+    },
+    verticalAlignment: {
+      description: "Manages the vertical content alignment for child elements in the Link.",
+      availableValues: alignmentOptionValues,
+      valueType: "string",
+      defaultValue: "start"
+    }
+  },
+  events: {
+    click: {
+      description: "This event is triggered when the link is clicked.",
+      signature: "click(event: MouseEvent): void",
+      parameters: {
+        event: "The mouse event that triggered the click."
+      }
+    }
+  },
+  themeVars: parseScssVar(styles.themeVars),
+  themeVarDescriptions: {
+    [`gap-icon-${COMP}`]: "This property defines the size of the gap between the icon and the label."
+  },
+  defaultThemeVars: {
+    [`border-${COMP}`]: "0px solid $borderColor",
+    [`textColor-${COMP}`]: "$color-primary-500",
+    [`textDecorationColor-${COMP}`]: `textDecorationColor-${COMP}`,
+    [`textColor-${COMP}--hover`]: `$color-primary-400`,
+    [`textDecorationColor-${COMP}--hover`]: `textColor-${COMP}--hover`,
+    [`textColor-${COMP}--active`]: "$color-primary-400",
+    [`textDecorationColor-${COMP}--active`]: `textColor-${COMP}--active`,
+    [`textColor-${COMP}--hover--active`]: `$textColor-${COMP}--active`,
+    [`textUnderlineOffset-${COMP}`]: "$space-1",
+    [`textDecorationLine-${COMP}`]: "underline",
+    [`textDecorationStyle-${COMP}`]: "solid",
+    [`outlineColor-${COMP}--focus`]: "$outlineColor--focus",
+    [`outlineWidth-${COMP}--focus`]: "$outlineWidth--focus",
+    [`outlineStyle-${COMP}--focus`]: "$outlineStyle--focus",
+    [`outlineOffset-${COMP}--focus`]: "$outlineOffset--focus",
+    [`fontSize-${COMP}`]: "inherit",
+    [`fontWeight-${COMP}--active`]: "$fontWeight-bold",
+    [`gap-icon-${COMP}`]: "$gap-tight",
+    [`padding-icon-${COMP}`]: "$space-0_5",
+    dark: {
+      [`textColor-${COMP}`]: "$color-primary-600",
+      [`textColor-${COMP}--hover`]: `$color-primary-500`,
+      [`textColor-${COMP}--active`]: "$color-primary-500"
+    }
+  }
+});
+const localLinkComponentRenderer = createComponentRenderer(
+  COMP,
+  LinkMd,
+  ({ node, extractValue, renderChild, lookupEventHandler, className }) => {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      LinkNative,
+      {
+        to: extractValue(node.props.to),
+        icon: extractValue(node.props.icon),
+        active: extractValue.asOptionalBoolean(node.props.active, false),
+        target: extractValue(node.props?.target),
+        className,
+        disabled: !extractValue.asOptionalBoolean(node.props.enabled ?? true),
+        horizontalAlignment: extractValue.asOptionalString(node.props.horizontalAlignment),
+        verticalAlignment: extractValue.asOptionalString(node.props.verticalAlignment),
+        onClick: lookupEventHandler("click"),
+        children: node.props.label ? extractValue.asDisplayText(node.props.label) : renderChild(node.children)
+      }
+    );
+  }
+);
+window.Xmlui?.registerExtension({
+  namespace: "#xmlui-core-ns",
+  components: [localLinkComponentRenderer]
 });
 })();
 
