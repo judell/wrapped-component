@@ -607,25 +607,24 @@ This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor
 
 ### How it works
 
-There are two tools involved:
+CI builds the entire component catalog as IIFE chunks — one per component group, plus shared dependencies and the framework runtime. The app developer runs a single command:
 
-1. **`xmlui build --analyze`** (in the xmlui-cli repo, branch `judell/standalone-selective-bundler`) scans an app's `.xmlui` files, extracts component tags, and maps them to groups via a manifest. It reports which of the 86 groups the app actually uses and which can be excluded.
+```
+xmlui build ~/my-app
+```
 
-2. **`build-standalone-selective.mjs`** (in the xmlui repo, branch `judell/wrap-component`) takes the exclude list, sets the corresponding `VITE_USED_COMPONENTS_*` env vars to `"false"`, and runs `vite build --mode standalone`. Each component registration in `ComponentProvider.tsx` is gated by its env var — when set to `"false"`, the registration is dead code, and Rollup tree-shakes the entire import chain.
+The CLI (a Go binary — no Node, no Vite, no npm) scans `.xmlui` files, identifies which components the app uses, and concatenates only the needed chunks into a bundle. The developer doesn't choose what to include or exclude — the CLI figures it out from the markup.
 
 ### Results
 
-This app uses 32 of 86 groups and can exclude 54 — but the excluded groups are all lightweight XMLUI-native components (Badge, Avatar, Carousel, etc.) that share dependencies with the framework runtime. The heavy third-party libraries this app wraps (ECharts, Tiptap, Monaco, smart-webcomponents, Radix Slider) stay in the bundle. Result: 9,746 KB, saving only 161 KB (1.6%).
-
-The savings are dramatic for apps that don't use the heavy dependencies:
-
-| App | Groups used | Excludable | Bundle | Savings |
+| App | Groups used | Excluded | Files included | Bundle |
 |---|---|---|---|---|
-| Baseline (all components) | 86 | 0 | 9,907 KB | -- |
-| **wrapped** (this app) | 32 | 54 | 9,746 KB | 161 KB (1.6%) |
-| community-calendar | 27 | 59 | 4,649 KB | 5,258 KB (53%) |
-| core-ssh-server-ui | 36 | 50 | 4,667 KB | 5,240 KB (53%) |
-| myWorkDrive-Client | 30 | 56 | 4,681 KB | 5,226 KB (53%) |
+| **wrapped** (this app) | 32 | 54 | 145/204 | 13,117 KB |
+| core-ssh-server-ui | 36 | 50 | 145/204 | 5,819 KB |
+| myWorkDrive-Client | 30 | 56 | 135/204 | 5,805 KB |
+| community-calendar | 27 | 59 | 134/204 | 5,457 KB |
+
+This app is larger than the 9.4MB monolith because IIFE wrapping adds overhead that Rollup tree shaking would otherwise eliminate. But the other three apps — which don't use ECharts, TipTap, Monaco, Gauge, or Recharts — see 38-42% reductions. The win is coarse-grained exclusion: drop a component group, drop everything only it pulled in.
 
 myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm dependency, bundled by Vite). Converting it to standalone required adding `codeBehind` attributes to each `<Component>` tag, creating `config.json` and `themes/*.json` from their TypeScript equivalents, and fixing relative import paths. The conversion is documented in [SELECTIVE_BUILD.md](https://github.com/judell/wrapped-component/blob/main/SELECTIVE_BUILD.md).
 
@@ -633,7 +632,7 @@ myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm depe
 
 If you wrap a React component that pulls in a heavy dependency — a charting library, a rich text editor, a code editor — your standalone bundle will include that dependency for every app, even ones that don't use it. Selective bundling solves this: each wrapped component gets its own env var guard in `ComponentProvider.tsx` and its own entry in `chunk-manifest.json`. Apps that don't use your component automatically exclude it and its entire dependency chain.
 
-The full procedure — CLI analysis, Vite build script, deployment, dev escape hatch, MCP server integration, and GitHub Actions workflow — is documented in [SELECTIVE_BUILD.md](https://github.com/judell/wrapped-component/blob/main/SELECTIVE_BUILD.md).
+The full procedure — catalog build, CLI assembly, CSS handling, MCP server distribution, and CI integration — is documented in [SELECTIVE_BUILD.md](https://github.com/judell/wrapped-component/blob/main/SELECTIVE_BUILD.md).
 ]]>
         </Markdown>
 
