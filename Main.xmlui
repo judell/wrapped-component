@@ -627,13 +627,13 @@ The savings are dramatic for apps that don't use the heavy dependencies:
 | core-ssh-server-ui | 36 | 50 | 4,667 KB | 5,240 KB (53%) |
 | myWorkDrive-Client | 30 | 56 | 4,681 KB | 5,226 KB (53%) |
 
-myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm dependency, bundled by Vite). Converting it to standalone required adding `codeBehind` attributes to each `<Component>` tag, creating `config.json` and `themes/*.json` from their TypeScript equivalents, and fixing relative import paths. The conversion is documented in `SELECTIVE_BUILD.md`.
+myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm dependency, bundled by Vite). Converting it to standalone required adding `codeBehind` attributes to each `<Component>` tag, creating `config.json` and `themes/*.json` from their TypeScript equivalents, and fixing relative import paths. The conversion is documented in [SELECTIVE_BUILD.md](https://github.com/judell/wrapped-component/blob/main/SELECTIVE_BUILD.md).
 
 ### What this means for wrapping components
 
 If you wrap a React component that pulls in a heavy dependency — a charting library, a rich text editor, a code editor — your standalone bundle will include that dependency for every app, even ones that don't use it. Selective bundling solves this: each wrapped component gets its own env var guard in `ComponentProvider.tsx` and its own entry in `chunk-manifest.json`. Apps that don't use your component automatically exclude it and its entire dependency chain.
 
-The full procedure — CLI analysis, Vite build script, deployment, dev escape hatch, MCP server integration, and GitHub Actions workflow — is documented in [SELECTIVE_BUILD.md](SELECTIVE_BUILD.md).
+The full procedure — CLI analysis, Vite build script, deployment, dev escape hatch, MCP server integration, and GitHub Actions workflow — is documented in [SELECTIVE_BUILD.md](https://github.com/judell/wrapped-component/blob/main/SELECTIVE_BUILD.md).
 ]]>
         </Markdown>
 
