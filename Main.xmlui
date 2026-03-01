@@ -597,6 +597,40 @@ Consider what the trace reveals:
 - **The editor released focus when the user moved on.** A `native:blur` event confirms clean handoff to the next workflow step.
 
 This is the same pattern as the ECharts case, viewed from a different angle. There, native event capture made an opaque rendering surface visible to the trace system. Here, it makes an opaque interaction layer visible. The text is in the DOM, but the editing operations — format, structure, undo — live in ProseMirror's transaction layer, invisible to anything outside the editor. The trace bridges that gap, giving workflow tests and accessibility tools a structured account of what the user actually did, not just what data emerged.
+
+## Selective build
+
+This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider — and includes them all in the standalone bundle. The full `xmlui-standalone.umd.js` is 9.9MB. Most XMLUI apps don't need all 86 component groups. Selective bundling excludes the unused ones and lets Vite tree-shake their dependency chains out of the build.
+
+### How it works
+
+There are two tools involved:
+
+1. **`xmlui build --analyze`** (in the xmlui-cli repo, branch `judell/standalone-selective-bundler`) scans an app's `.xmlui` files, extracts component tags, and maps them to groups via a manifest. It reports which of the 86 groups the app actually uses and which can be excluded.
+
+2. **`build-standalone-selective.mjs`** (in the xmlui repo, branch `judell/wrap-component`) takes the exclude list, sets the corresponding `VITE_USED_COMPONENTS_*` env vars to `"false"`, and runs `vite build --mode standalone`. Each component registration in `ComponentProvider.tsx` is gated by its env var — when set to `"false"`, the registration is dead code, and Rollup tree-shakes the entire import chain.
+
+### Results
+
+This app uses 32 of 86 groups and can exclude 54 — but the excluded groups are all lightweight XMLUI-native components (Badge, Avatar, Carousel, etc.) that share dependencies with the framework runtime. The heavy third-party libraries this app wraps (ECharts, Tiptap, Monaco, smart-webcomponents, Radix Slider) stay in the bundle. Result: 9,746 KB, saving only 161 KB (1.6%).
+
+The savings are dramatic for apps that don't use the heavy dependencies:
+
+| App | Groups used | Excludable | Bundle | Savings |
+|---|---|---|---|---|
+| Baseline (all components) | 86 | 0 | 9,907 KB | -- |
+| **wrapped** (this app) | 32 | 54 | 9,746 KB | 161 KB (1.6%) |
+| community-calendar | 27 | 59 | 4,649 KB | 5,258 KB (53%) |
+| core-ssh-server-ui | 36 | 50 | 4,667 KB | 5,240 KB (53%) |
+| myWorkDrive-Client | 30 | 56 | 4,681 KB | 5,226 KB (53%) |
+
+myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm dependency, bundled by Vite). Converting it to standalone required flattening the component directory layout, adding `codeBehind` attributes to each `<Component>` tag, creating `config.json` and `themes/*.json` from their TypeScript equivalents, and fixing relative import paths. The conversion is documented in `SELECTIVE_BUILD.md`.
+
+### What this means for wrapping components
+
+If you wrap a React component that pulls in a heavy dependency — a charting library, a rich text editor, a code editor — your standalone bundle will include that dependency for every app, even ones that don't use it. Selective bundling solves this: each wrapped component gets its own env var guard in `ComponentProvider.tsx` and its own entry in `chunk-manifest.json`. Apps that don't use your component automatically exclude it and its entire dependency chain.
+
+The full procedure — CLI analysis, Vite build script, deployment, dev escape hatch, MCP server integration, and GitHub Actions workflow — is documented in [SELECTIVE_BUILD.md](SELECTIVE_BUILD.md).
 ]]>
         </Markdown>
 
