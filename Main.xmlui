@@ -53,6 +53,8 @@ It presents a five-phase evolution of the wrapper strategy, with working example
 
 5. **Phase 5 (Native event capture)** — Bridges library-native events into XMLUI traces (`native:*`) so opaque components become testable and observable. Can be enabled per-component or globally via `config.json`.
 
+6. **Phase 6 (Selective build)** — Produces smaller standalone bundles by excluding unused component groups and their dependency chains at build time.
+
 ---
 
 ## The problem
@@ -80,13 +82,14 @@ Solving these problems opens up three capabilities:
 - Gather rich trace/debug info at the semantic level
 - Leverage those traces for testing and accessibility
 
-## Five phases
+## Six phases
 
 1. [Phase 1: wrapComponent](#phase-1-wrapcomponent)
 2. [Phase 2: wrapCompound](#phase-2-wrapcompound)
 3. [Phase 3: theming](#phase-3-theming)
 4. [Phase 4: option-level theming](#phase-4-option-level-theming)
 5. [Phase 5: native events](#phase-5-native-events)
+6. [Phase 6: selective build](#phase-6-selective-build)
 
 ## Phase 1: wrapComponent
 
@@ -598,7 +601,7 @@ Consider what the trace reveals:
 
 This is the same pattern as the ECharts case, viewed from a different angle. There, native event capture made an opaque rendering surface visible to the trace system. Here, it makes an opaque interaction layer visible. The text is in the DOM, but the editing operations — format, structure, undo — live in ProseMirror's transaction layer, invisible to anything outside the editor. The trace bridges that gap, giving workflow tests and accessibility tools a structured account of what the user actually did, not just what data emerged.
 
-## Selective build
+## Phase 6: Selective build
 
 This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider — and includes them all in the standalone bundle. The full `xmlui-standalone.umd.js` is 9.9MB. Most XMLUI apps don't need all 86 component groups. Selective bundling excludes the unused ones and lets Vite tree-shake their dependency chains out of the build.
 
