@@ -55,7 +55,7 @@ This is for release pipelines, not for developers sitting at their laptops. An a
 
 | App | Groups used | Excluded | Files included | Bundle | vs Monolithic |
 |---|---|---|---|---|---|
-| wrapped | 32 | 54 | 145/204 | 13,117 KB | +39% |
+| wrapped | 32 | 54 | 147/204 | 13,269 KB | +41% |
 | core-ssh-server-ui | 36 | 50 | 145/204 | 5,819 KB | -38% |
 | myWorkDrive-Client | 30 | 56 | 135/204 | 5,805 KB | -38% |
 | community-calendar | 27 | 59 | 134/204 | 5,457 KB | -42% |
@@ -150,7 +150,7 @@ The CLI:
 1. Scans all `.xmlui` files for component tags (stripping `<Script>` blocks, CDATA, and comments)
 2. Maps tags to chunk IDs via `chunk-manifest.json`
 3. Computes the transitive closure of dependencies from `chunk-deps.json`
-4. Always includes structural primitives that are referenced by name at runtime but invisible to the import-based dependency graph: Fragment, Stack, SpaceFiller, Text, FlowLayout (these are used internally by the rendering engine via `{ type: "Fragment" }` etc.)
+4. Always includes primitives that are invisible to the tag scanner: Fragment, Stack, SpaceFiller, Text, FlowLayout (referenced by name at runtime via `{ type: "Fragment" }` etc.), HtmlTags (HTML elements inside Markdown content), and Link (Markdown renders `<a>` tags as Link components)
 5. Always includes the `css-layer-order.js` bootstrap
 6. Concatenates the needed chunks in dependency order from `chunk-order.json`
 7. Concatenates all CSS files (prepended with `@layer` order declaration)
