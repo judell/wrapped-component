@@ -603,7 +603,7 @@ This is the same pattern as the ECharts case, viewed from a different angle. The
 
 ## Phase 6: Selective build
 
-This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider — and includes them all in the standalone bundle. The full `xmlui-standalone.umd.js` is 9.9MB. Most XMLUI apps don't need all 86 component groups. Selective bundling excludes the unused ones and lets Vite tree-shake their dependency chains out of the build.
+This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider — and includes them all in the standalone bundle. The full `xmlui-standalone.umd.js` is 9.9MB. Most XMLUI apps don't need all 86 component groups. Selective bundling excludes the unused ones.
 
 ### How it works
 
