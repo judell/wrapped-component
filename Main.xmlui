@@ -627,7 +627,7 @@ The savings are dramatic for apps that don't use the heavy dependencies:
 | core-ssh-server-ui | 36 | 50 | 4,667 KB | 5,240 KB (53%) |
 | myWorkDrive-Client | 30 | 56 | 4,681 KB | 5,226 KB (53%) |
 
-myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm dependency, bundled by Vite). Converting it to standalone required flattening the component directory layout, adding `codeBehind` attributes to each `<Component>` tag, creating `config.json` and `themes/*.json` from their TypeScript equivalents, and fixing relative import paths. The conversion is documented in `SELECTIVE_BUILD.md`.
+myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm dependency, bundled by Vite). Converting it to standalone required adding `codeBehind` attributes to each `<Component>` tag, creating `config.json` and `themes/*.json` from their TypeScript equivalents, and fixing relative import paths. The conversion is documented in `SELECTIVE_BUILD.md`.
 
 ### What this means for wrapping components
 

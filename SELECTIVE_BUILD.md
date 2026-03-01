@@ -167,9 +167,7 @@ Lib-mode apps import xmlui as an npm dependency and use Vite's dev server. Stand
 
 2. **Create `themes/*.json`** from `themes/*.ts` — convert the TypeScript `ThemeDefinition` to JSON with `name`, `id`, `themeVars`, and `resources` fields.
 
-3. **Flatten component layout** — standalone expects `Main.xmlui` at the project root and all components flat in `components/`. If the lib-mode app has subdirectories like `components/filesView/FilesTableView.xmlui`, move the files up to `components/FilesTableView.xmlui`.
-
-4. **Add `codeBehind` attributes** — standalone does not auto-discover `.xs` companion files. Every `<Component>` with an `.xs` file needs an explicit attribute:
+3. **Add `codeBehind` attributes** — standalone does not auto-discover `.xs` companion files. Every `<Component>` with an `.xs` file needs an explicit attribute:
 
 ```xml
 <Component name="MyComponent" codeBehind="MyComponent.xmlui.xs">
@@ -177,23 +175,17 @@ Lib-mode apps import xmlui as an npm dependency and use Vite's dev server. Stand
 
 `Main.xmlui.xs` is the exception — standalone auto-discovers it by convention.
 
-5. **Fix relative import paths** — flattening changes the directory depth. Update `<script>` imports:
+4. **Fix relative import paths** — if you reorganize component directories, update `<script>` imports to match:
 
 ```xml
-<!-- Before (in subdirectory) -->
-<script>
-  import { myFunc } from "../../shared.xs";
-</script>
-
-<!-- After (flat in components/) -->
 <script>
   import { myFunc } from "../shared.xs";
 </script>
 ```
 
-6. **Link resources** — if resources were under `public/resources/` (served at root by Vite), symlink or copy to `resources/` at the project root.
+5. **Link resources** — if resources were under `public/resources/` (served at root by Vite), symlink or copy to `resources/` at the project root.
 
-7. **Swap the entry point** in `index.html`:
+6. **Swap the entry point** in `index.html`:
 
 ```html
 <!-- Before -->
@@ -203,7 +195,7 @@ Lib-mode apps import xmlui as an npm dependency and use Vite's dev server. Stand
 <script src="xmlui/xmlui-standalone.umd.js"></script>
 ```
 
-8. **Copy the standalone UMD bundle** into `xmlui/`.
+7. **Copy the standalone UMD bundle** into `xmlui/`.
 
 ### Gotchas
 
