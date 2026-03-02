@@ -53,7 +53,7 @@ It presents a five-phase evolution of the wrapper strategy, with working example
 
 5. **Phase 5 (Native event capture)** — Bridges library-native events into XMLUI traces (`native:*`) so opaque components become testable and observable. Can be enabled per-component or globally via `config.json`.
 
-6. **Phase 6 (Selective build)** — Produces smaller standalone bundles by excluding unused component groups and their dependency chains at build time.
+6. **Phase 6 (Extension packaging)** — Each wrapped component ships as an independent extension package that auto-registers via a script tag in `index.html`, so apps pay only for the components they include.
 
 ---
 
@@ -89,7 +89,7 @@ Solving these problems opens up three capabilities:
 3. [Phase 3: theming](#phase-3-theming)
 4. [Phase 4: option-level theming](#phase-4-option-level-theming)
 5. [Phase 5: native events](#phase-5-native-events)
-6. [Phase 6: selective build](#phase-6-selective-build)
+6. [Phase 6: extension packaging](#phase-6-extension-packaging)
 
 ## Phase 1: wrapComponent
 
@@ -601,38 +601,59 @@ Consider what the trace reveals:
 
 This is the same pattern as the ECharts case, viewed from a different angle. There, native event capture made an opaque rendering surface visible to the trace system. Here, it makes an opaque interaction layer visible. The text is in the DOM, but the editing operations — format, structure, undo — live in ProseMirror's transaction layer, invisible to anything outside the editor. The trace bridges that gap, giving workflow tests and accessibility tools a structured account of what the user actually did, not just what data emerged.
 
-## Phase 6: Selective build
+## Phase 6: Extension packaging
 
-This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider — and includes them all in the standalone bundle. The full `xmlui-standalone.umd.js` is 9.9MB. Most XMLUI apps don't need all 86 component groups. Selective bundling excludes the unused ones.
+This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider, Knob — and includes them all in the standalone bundle. The monolithic `xmlui-standalone.umd.js` with all wrapped components is ~13MB. Most XMLUI apps don't need all of them.
+
+XMLUI already has an extension package mechanism: `xmlui build-lib` produces a self-contained UMD `.js` file that auto-registers its components when loaded via a script tag. Each wrapped component becomes an extension package — a small npm project under `packages/xmlui-*` that imports wrapping utilities from `"xmlui"`, bundles only its own third-party dependencies, and externalizes React and the XMLUI runtime.
 
 ### How it works
 
-CI builds the entire component catalog as IIFE chunks — one per component group, plus shared dependencies and the framework runtime. The app developer runs a single command:
+Each extension package has the same structure:
 
 ```
-xmlui build ~/my-app
+packages/xmlui-echart/
+  package.json          # "build:extension": "xmlui build-lib"
+  src/
+    index.tsx           # { namespace, components: [renderer] }
+    EChartWrapped.tsx   # wrapComponent config, imports from "xmlui"
+    EChartRender.tsx    # pure React, no XMLUI imports
+    EChart.module.scss  # @use "xmlui/themes.scss" as t
 ```
 
-The CLI (a Go binary — no Node, no Vite, no npm) scans `.xmlui` files, identifies which components the app uses, and concatenates only the needed chunks into a bundle. The developer doesn't choose what to include or exclude — the CLI figures it out from the markup.
+The render component is pure React — it receives `value`, `onChange`, `registerApi` from the wrapper and assembles the third-party library. The wrapped component imports `wrapComponent` (or `wrapCompound`), `createMetadata`, and metadata helpers from `"xmlui"`. The SCSS module references XMLUI theme tokens via `@use "xmlui/themes.scss"`.
+
+`xmlui build-lib` externalizes `react`, `react-dom`, `react/jsx-runtime`, and `xmlui` (resolved at runtime from globals set by the standalone bundle) and bundles everything else — the third-party library and its transitive dependencies — into a single UMD file.
+
+The built `.js` file goes into the app's `xmlui/` directory. `index.html` is the manifest — one script tag for the standalone runtime, then one per extension package (e.g. `xmlui-echart.js`, `xmlui-knob.js`, `xmlui-code-editor.js`). Add a tag to include a component; remove it to exclude it. No build toolchain, no tag scanning, no assembly step.
+
+### The runtime contract
+
+The standalone bundle sets `window.xmlui` to serve two purposes:
+
+1. **Module exports** — Rollup resolves `import { createMetadata } from "xmlui"` to `window.xmlui.createMetadata` at runtime. Extension packages call these at load time to define their component metadata and wrappers.
+
+2. **Extension manager** — The auto-registration footer in each UMD calls `window.xmlui.standalone.registerExtension(...)` to register the component with the XMLUI runtime.
+
+This is why `index-standalone.ts` sets `window.xmlui = { ...xmluiExports, standalone: Xmlui }` — it merges the full module API with the extension manager so both resolution paths work.
 
 ### Results
 
-| App | Groups used | Excluded | Files included | Bundle |
-|---|---|---|---|---|
-| **wrapped** (this app) | 32 | 54 | 145/204 | 13,117 KB |
-| core-ssh-server-ui | 36 | 50 | 145/204 | 5,819 KB |
-| myWorkDrive-Client | 30 | 56 | 135/204 | 5,805 KB |
-| community-calendar | 27 | 59 | 134/204 | 5,457 KB |
+| Component | Bundle size | Third-party deps |
+|---|---|---|
+| Core standalone (no wrapped components) | ~5 MB | — |
+| xmlui-echart | 1.1 MB | echarts, echarts-for-react |
+| xmlui-gauge | 2.4 MB | smart-webcomponents-react |
+| xmlui-tiptap-editor | 545 KB | @tiptap/react + 9 extensions, tiptap-markdown |
+| xmlui-slider | 30 KB | @radix-ui/react-slider |
+| xmlui-knob | 29 KB | react-knob-headless |
+| xmlui-code-editor | 16 KB | @monaco-editor/react |
 
-This app is larger than the 9.4MB monolith because IIFE wrapping adds overhead that Rollup tree shaking would otherwise eliminate. But the other three apps — which don't use ECharts, TipTap, Monaco, Gauge, or Recharts — see 38-42% reductions. The win is coarse-grained exclusion: drop a component group, drop everything only it pulled in.
-
-myWorkDrive-Client was originally a lib-mode app (importing xmlui as an npm dependency, bundled by Vite). Converting it to standalone required adding `codeBehind` attributes to each `<Component>` tag, creating `config.json` and `themes/*.json` from their TypeScript equivalents, and fixing relative import paths. The conversion is documented in [SELECTIVE_BUILD.md](https://github.com/judell/wrapped-component/blob/main/SELECTIVE_BUILD.md).
+An app that uses only Knob and Slider loads ~5.1 MB instead of ~13 MB. An app that needs the full catalog loads all extensions and pays for what it uses. Each component's weight is visible and isolated.
 
 ### What this means for wrapping components
 
-If you wrap a React component that pulls in a heavy dependency — a charting library, a rich text editor, a code editor — your standalone bundle will include that dependency for every app, even ones that don't use it. Selective bundling solves this: each wrapped component gets its own env var guard in `ComponentProvider.tsx` and its own entry in `chunk-manifest.json`. Apps that don't use your component automatically exclude it and its entire dependency chain.
-
-The full procedure — catalog build, CLI assembly, CSS handling, MCP server distribution, and CI integration — is documented in [SELECTIVE_BUILD.md](https://github.com/judell/wrapped-component/blob/main/SELECTIVE_BUILD.md).
+If you wrap a React component that pulls in a heavy dependency, it becomes an extension package rather than inflating the core bundle. The procedure is documented in [EXTENSION_PACKAGING.md](https://github.com/judell/wrapped-component/blob/main/EXTENSION_PACKAGING.md).
 ]]>
         </Markdown>
 
