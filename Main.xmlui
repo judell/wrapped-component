@@ -603,7 +603,7 @@ This is the same pattern as the ECharts case, viewed from a different angle. The
 
 ## Phase 6: Extension packaging
 
-This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider, Knob — and includes them all in the standalone bundle. The monolithic `xmlui-standalone.umd.js` with all wrapped components is ~13MB. Most XMLUI apps don't need all of them.
+This app wraps heavy third-party libraries — ECharts, TiptapEditor, CodeEditor, Gauge, Slider, Knob. Including them all in the monolithic standalone bundle would push it to ~13MB. Most XMLUI apps don't need all of them.
 
 XMLUI already has an extension package mechanism: `xmlui build-lib` produces a self-contained UMD `.js` file that auto-registers its components when loaded via a script tag. Each wrapped component becomes an extension package — a small npm project under `packages/xmlui-*` that imports wrapping utilities from `"xmlui"`, bundles only its own third-party dependencies, and externalizes React and the XMLUI runtime.
 
