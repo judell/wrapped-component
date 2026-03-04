@@ -28,6 +28,8 @@ git clone https://github.com/judell/wrapped-component.git
 git clone https://github.com/xmlui-org/trace-tools.git
 ```
 
+The trace-tools repo (https://github.com/xmlui-org/trace-tools) is the upstream source for `xs-diff.html` and the trace pipeline tools (`compare-traces.js`, `generate-playwright.js`, etc.). Apps like `wrapped` clone trace-tools and consume its files read-only as a local copy — they don't modify or push to trace-tools. Only develop in the trace-tools repo itself when working on the tools themselves.
+
 ## Exercise 1: Compare Slider vs SliderW (internal component, same library)
 
 ### Understand the hand-written approach
