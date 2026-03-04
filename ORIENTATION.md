@@ -26,9 +26,10 @@ git clone https://github.com/judell/wrapped-component.git
 
 ```
 git clone https://github.com/xmlui-org/trace-tools.git
+
 ```
 
-The trace-tools repo (https://github.com/xmlui-org/trace-tools) is the upstream source for `xs-diff.html` and the trace pipeline tools (`compare-traces.js`, `generate-playwright.js`, etc.). Apps like `wrapped` clone trace-tools and consume its files read-only as a local copy — they don't modify or push to trace-tools. Only develop in the trace-tools repo itself when working on the tools themselves.
+Note The trace-tools repo (https://github.com/xmlui-org/trace-tools) is the upstream source for `xs-diff.html` (inspector ui) and the trace pipeline tools (`compare-traces.js`, `generate-playwright.js`, etc.). Apps like `wrapped` clone trace-tools and use its files read-only as a local copy — they don't modify or push to trace-tools. Only develop in the trace-tools repo itself when working on the tools themselves.
 
 ## Exercise 1: Compare Slider vs SliderW (internal component, same library)
 
@@ -187,6 +188,50 @@ Visit the Gauge or ECharts pages. Use the theme selector to switch between "defa
 
 ## Exercise 4: Capture a trace and turn it into a test
 
+### The pipeline at a glance
+
+The test pipeline has five key concepts:
+
+**Baselines** (`traces/baselines/*.json`) are recorded traces that represent the expected behavior of a user journey. You capture one by interacting with the app, exporting the trace from the inspector, and saving it with `./test.sh save <trace.json> <name>`. A baseline is the source of truth: it records every event the app emitted during that journey — interactions, API calls, value changes, navigation, modal dialogs, form submissions.
+
+**Runs** (`traces/runs/*.json`) are traces captured during test execution. When `./test.sh run <name>` replays a journey, the Playwright test collects `window._xsLogs` from the browser and writes the result to `traces/runs/<name>.json`. This is the "after" trace that gets compared against the baseline.
+
+**Specs** (`traces/specs/*.spec.ts`) are hand-written Playwright tests for cases where you want more control than a recorded journey provides. They run with `./test.sh spec <name>` and can assert on arbitrary DOM state, not just trace events. Specs can also capture traces — `./test.sh convert <name>` runs a spec, captures its trace, saves it as a baseline, and generates a baseline-derived spec from it.
+
+**The distiller** (`distill-trace.js`) transforms raw trace logs into a normalized sequence of user journey steps. Raw traces are arrays of hundreds of low-level events (interaction, handler:start, handler:complete, api:start, api:complete, state:changes, value:change, navigate, modal:show, modal:confirm, toast, etc.) grouped by `traceId`. The distiller:
+
+1. Groups events by `traceId` and sorts groups chronologically
+2. For each group, extracts one step: the user action (click, keydown, dblclick, contextmenu), the target (identified by ariaRole/ariaName, testId, component label, or form data), and the await conditions (API calls triggered, navigation that occurred, state changes)
+3. Deduplicates — collapses click+click+dblclick into dblclick, coalesces consecutive value changes on the same target (10 ArrowRight presses on a slider become one step with the final value)
+4. Resolves modifier keys across trace groups (Ctrl+Click on a table row where the keydown and click have different traceIds)
+5. Diffs DataSource array snapshots between steps to detect items added or removed by mutations
+
+The output is a compact `{ steps: [...] }` object where each step has `action`, `target`, `await`, and optionally `valueChanges`, `modals`, `toasts`, `dataSourceChanges`.
+
+**The generator** (`generate-playwright.js`) takes the distiller's output and produces a runnable Playwright test file. For each distilled step it emits:
+
+- A Playwright locator using `getByRole(ariaRole, { name: ariaName })` when ARIA info is available, falling back to `getByTestId` or CSS selectors
+- Click, keyboard, or fill actions matching the step's action type
+- `waitForResponse` calls for any API endpoints in the step's await conditions
+- Assertions on value changes (`expect(locator).toHaveAttribute('aria-valuenow', '55')`)
+- Modal handling (waiting for dialog, clicking confirm/cancel buttons)
+- A trace capture block at the end that writes `window._xsLogs` to `captured-trace.json`
+
+The generator also handles form fills (matching textbox interactions to formData fields), navigation (inserting `page.goto` for route changes), modifier-key clicks, and keyboard repeat counts.
+
+**The comparer** (`compare-traces.js --semantic`) takes two traces (baseline and run) and checks whether they represent the same behavior. Rather than comparing event-by-event (which is brittle — timing, ordering, and internal state details vary between runs), semantic comparison extracts high-level outcomes from each trace and compares those:
+
+- API calls made (method + endpoint, deduplicated)
+- API errors encountered
+- Mutation counts (how many POST/PUT/DELETE/PATCH calls per endpoint)
+- Form submissions (which forms were submitted)
+- Navigation endpoints visited
+- Context menu targets
+- Confirmation dialog outcomes (which dialogs appeared, whether confirmed or cancelled)
+- Value changes (final values of form controls)
+
+If all of these match, the traces are semantically equivalent — the app did the same things even if internal details differed. The comparer reports `SEMANTIC_MATCH` or `SEMANTIC_MISMATCH` with specific differences listed.
+
 ### Configure for tracing
 
 Already done in `config.json`:
@@ -218,10 +263,10 @@ Already done in `config.json`:
 ```
 
 This does four things:
-1. Resets fixtures
-2. Runs `generate-playwright.js` to convert the baseline into a Playwright test (using `aria-role`/`aria-name` selectors)
-3. Executes the generated test
-4. Runs `compare-traces.js --semantic` to compare the captured trace against the baseline
+1. Resets fixtures (server state back to known-good)
+2. Runs the distiller + generator to convert the baseline into a Playwright test
+3. Executes the generated test, which replays the journey and captures a new trace
+4. Runs the comparer (`compare-traces.js --semantic`) to check the captured trace against the baseline
 
 ### See it fail on a regression
 
@@ -231,7 +276,7 @@ Save a second baseline where the slider stops at 60 instead of 55. The semantic 
 ./test.sh run slider-fail
 ```
 
-The test fails with the correct value mismatch — `expected 55, got 60`.
+The comparer reports `SEMANTIC_MISMATCH` with a `value_changes` difference — the baseline has `SliderW=55` but the run captured `SliderW=60`.
 
 ### Write a hand-written spec instead
 
@@ -239,7 +284,7 @@ For more control, write a Playwright spec directly:
 
 ```bash
 # Look at existing examples
-ls wrapped-component/traces/specs/
+ls traces/specs/
 ```
 
 Read one of the existing specs to see the pattern, then:
@@ -247,4 +292,6 @@ Read one of the existing specs to see the pattern, then:
 ```bash
 ./test.sh spec your-spec-name
 ```
+
+You can also convert a spec into the baseline pipeline with `./test.sh convert <name>` — this runs the spec, captures the trace it produces, saves it as a baseline, and generates a baseline-derived spec from it.
 
