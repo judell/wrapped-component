@@ -38,9 +38,14 @@ Read `xmlui/src/components/Slider/SliderNative.tsx` — the 347-line native comp
 
 ### Understand the wrapped approach
 
+Each wrapped component has two files:
+
+- `*Wrapped.tsx` — the config file that tells `wrapCompound` how to bridge XMLUI to the React component. Declares prop types, events, renames.
+- `*Render.tsx` — the React component that actually renders the third-party library's UI. This is what we call the "render component" throughout this document.
+
 Read `xmlui/src/components/Slider/SliderWrapped.tsx` — the `wrapCompound` config (~30 lines). The config only declares exceptions: which props are booleans (need special extraction), which are events, which need renaming (`minValue` → `min`). Everything else passes through automatically.
 
-Read `xmlui/src/components/Slider/SliderRender.tsx` — pure React (~109 lines). No XMLUI imports. Receives `value`, `onChange`, `registerApi`. This separation matters: the render component is just a React component that any React developer can write, test, and understand without learning XMLUI internals. All the XMLUI plumbing (state lifecycle, event tracing, API registration) lives in the wrapper layer, not in the component code. A React developer contributing a new wrapped component only needs to write the React part.
+Read `xmlui/src/components/Slider/SliderRender.tsx` — the render component, pure React (~109 lines). No XMLUI imports. Receives `value`, `onChange`, `registerApi`. This separation matters: the render component is just a React component that any React developer can write, test, and understand without learning XMLUI internals. All the XMLUI plumbing (state lifecycle, event tracing, API registration) lives in the wrapper config, not in the render component. A React developer contributing a new wrapped component only needs to write the React part.
 
 ### How props flow through
 
