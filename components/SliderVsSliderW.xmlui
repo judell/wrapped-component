@@ -1,0 +1,145 @@
+<Component name="SliderVsSliderW">
+  <VStack padding="{responsive('0.75rem', '2rem')}" gap="0">
+
+    <H1>
+      Slider vs SliderW
+    </H1>
+
+    <Markdown>
+      <![CDATA[
+Both the built-in **Slider** (hand-written renderer) and **SliderW**
+(extension package built with `wrapCompound`) are running against the same engine.
+
+These tests show what **SliderW** can do that **Slider** can't.
+The render component accepts props that the hand-written renderer never forwards.
+`wrapCompound` forwards everything automatically, so these "just work."
+      ]]>
+    </Markdown>
+
+    <!-- === inverted: SliderW only === -->
+    <Card var.s6Val="" var.sw6Val="">
+      <H2>
+        inverted — only works with SliderW
+      </H2>
+      <Markdown>
+        The Radix slider accepts an `inverted` prop that reverses direction.
+The hand-written **Slider** renderer never forwards it — silently ignored.
+**SliderW** forwards all native props automatically.
+      </Markdown>
+      <HStack wrapContent="{true}">
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            Slider (inverted — ignored)
+          </Text>
+          <Slider
+            inverted="{true}"
+            minValue="0"
+            maxValue="100"
+            step="10"
+            initialValue="70"
+            onDidChange="{(v) => s6Val = v}" />
+          <Text>
+            Value: {s6Val}
+          </Text>
+        </VStack>
+        <SpaceFiller />
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            SliderW (inverted — works)
+          </Text>
+          <SliderW
+            inverted="{true}"
+            minValue="0"
+            maxValue="100"
+            step="10"
+            initialValue="70"
+            onDidChange="{(v) => sw6Val = v}" />
+          <Text>
+            Value: {sw6Val}
+          </Text>
+        </VStack>
+      </HStack>
+    </Card>
+
+    <!-- === title: native tooltip on hover === -->
+    <Card var.s7Val="" var.sw7Val="">
+      <H2>
+        title — native HTML tooltip (hover to see)
+      </H2>
+      <Markdown>
+        The render component spreads `...rest` onto its outer div, so standard HTML
+attributes like `title` pass through. The hand-written renderer
+never forwards it. Hover each slider to compare.
+      </Markdown>
+      <HStack wrapContent="{true}">
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            Slider (title — ignored)
+          </Text>
+          <Slider
+            title="Pick a temperature"
+            minValue="0"
+            maxValue="100"
+            initialValue="50"
+            onDidChange="{(v) => s7Val = v}" />
+          <Text>
+            Value: {s7Val}
+          </Text>
+        </VStack>
+        <SpaceFiller />
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            SliderW (title — hover me!)
+          </Text>
+          <SliderW
+            title="Pick a temperature"
+            minValue="0"
+            maxValue="100"
+            initialValue="50"
+            onDidChange="{(v) => sw7Val = v}" />
+          <Text>
+            Value: {sw7Val}
+          </Text>
+        </VStack>
+      </HStack>
+    </Card>
+
+    <!-- === aria-label: accessible name and test automation === -->
+    <Card>
+      <H2>
+        aria-label — accessible names for automation
+      </H2>
+      <Markdown>
+        <![CDATA[
+Both sliders below set `aria-label="Volume"`. Inspect the DOM to see
+which one actually has the attribute on the rendered element.
+Playwright can locate the wrapped version with `getByRole('slider', { name: 'Volume' })`.
+        ]]>
+      </Markdown>
+      <HStack wrapContent="{true}">
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            Slider (aria-label — ignored)
+          </Text>
+          <Slider
+            aria-label="Volume"
+            minValue="0"
+            maxValue="100"
+            initialValue="50" />
+        </VStack>
+        <SpaceFiller />
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            SliderW (aria-label — works)
+          </Text>
+          <SliderW
+            aria-label="Volume"
+            minValue="0"
+            maxValue="100"
+            initialValue="50" />
+        </VStack>
+      </HStack>
+    </Card>
+
+  </VStack>
+</Component>

@@ -1,0 +1,95 @@
+<Component name="FreeTracing">
+  <VStack padding="{responsive('0.75rem', '2rem')}" gap="1rem">
+
+    <H1>
+      Free tracing
+    </H1>
+
+    <Markdown>
+      <![CDATA[
+When you wrap a component with `wrapComponent` or `wrapCompound`, tracing comes for free. Every `didChange`, `gotFocus`, and `lostFocus` event emits a semantic trace. No extra code, no configuration. But what does that actually buy you?
+
+## What a screenreader hears
+
+The `aria-label` prop that SliderW forwards — and Slider silently drops — isn't cosmetic. It's the accessible name. When a blind user tabs to the SliderW below and adjusts it, their screenreader announces **"Volume, slider, 50"**. The hand-written Slider? It's an unlabeled control. The screenreader says **"slider, 50"** — no context, no way to distinguish it from any other slider on the page.
+
+Open the inspector (cog icon) and interact with both sliders. SliderW's traces include the `aria-label` in the component context. Slider's traces — if they existed — wouldn't. But they don't exist at all, because hand-written renderers are invisible to the trace system.
+      ]]>
+    </Markdown>
+
+    <Card var.sVal="" var.swVal="">
+      <H2>
+        Accessibility: labeled vs unlabeled
+      </H2>
+      <HStack wrapContent="{true}">
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            Slider — screenreader says "slider, 50"
+          </Text>
+          <Slider
+            aria-label="Volume"
+            minValue="0"
+            maxValue="100"
+            initialValue="50"
+            onDidChange="{(v) => sVal = v}" />
+          <Text>
+            Value: {sVal}
+          </Text>
+        </VStack>
+        <SpaceFiller />
+        <VStack width="{responsive('100%', '50%')}">
+          <Text fontWeight="bold">
+            SliderW — screenreader says "Volume, slider, 50"
+          </Text>
+          <SliderW
+            aria-label="Volume"
+            minValue="0"
+            maxValue="100"
+            initialValue="50"
+            onDidChange="{(v) => swVal = v}" />
+          <Text>
+            Value: {swVal}
+          </Text>
+        </VStack>
+      </HStack>
+    </Card>
+
+    <Markdown>
+      <![CDATA[
+## Before and after
+
+Here's what the inspector shows for each slider. The hand-written **Slider** emits only engine internals — `handler:start`, `state:changes`, `handler:complete`. Useful for debugging the engine, but invisible to the semantic layer.
+
+![Slider trace — engine internals only](slider-before.png)
+
+**SliderW** adds `value:change didChange SliderW [Volume] "53"` — the semantic trace that names the component, includes the accessible name a screenreader would announce, and records the value. This is what trace-tools reads, what AIs reason about, and what makes regression testing possible.
+
+![SliderW trace — semantic value:change event with accessible name](slider-after.png)
+
+## Traces are catnip for AIs
+
+Open the inspector and drag the SliderW thumb. You'll see `value:change` events with the component name, the old value, and the new value — a semantic log of everything the app is doing.
+
+Export that trace and hand it to an AI. It doesn't need to read your source code or understand your component tree. The trace *is* the conversation: "the user moved Volume from 50 to 73, then tabbed to Brightness and set it to 40." Humans and AIs can talk about app behavior at this level without ambiguity.
+
+Hand-written renderers emit nothing. The AI sees silence. With wrapped components, every interaction is narrated.
+
+This matters for debugging — paste a trace into a chat and ask "why did the value jump from 30 to 100?" — but it matters even more for what comes next.
+
+## Semantic regression testing
+
+[trace-tools | target=_blank](https://github.com/xmlui-org/trace-tools) reads these traces and generates Playwright test scripts. The workflow:
+
+1. A person who doesn't know Playwright performs a user journey in the app
+2. The trace system captures every interaction semantically
+3. trace-tools converts the trace into a Playwright script that replays the journey
+4. That script becomes a regression test
+
+The person performing the journey doesn't need to know anything about testing. They just use the app. The traces do the rest — because wrapped components emit enough semantic detail for trace-tools to generate `getByRole('slider', { name: 'Volume' })` instead of brittle CSS selectors.
+
+Hand-written renderers can't participate in this workflow. They don't trace, and they don't forward the `aria-label` that makes the generated selectors meaningful.
+      ]]>
+    </Markdown>
+
+  </VStack>
+</Component>
