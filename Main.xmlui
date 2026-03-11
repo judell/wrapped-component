@@ -67,7 +67,7 @@ Call [`wrapComponent`](/wrap-component) or [`wrapCompound`](/wrap-compound) with
 
 **[Automatic tracing](/free-tracing).** Wrapped components emit semantic trace events (`value:change`, `focus:change`) with no extra code. This unlocks accessibility for screenreaders, semantic traces that AIs can reason about, and regression tests generated from user journeys by [trace-tools | target=_blank](https://github.com/xmlui-org/trace-tools).
 
-**Instant gratification.** Minutes of work to wrap a new component. No metadata required upfront — add it incrementally as the component matures.
+**Progressive enhancement.** No metadata required upfront — add it incrementally as the component matures. Simple components wrap in minutes; complex libraries take longer for theming and event mapping, but the wrapper config stays small.
 
 ## Level 2: Trace enrichment
 
