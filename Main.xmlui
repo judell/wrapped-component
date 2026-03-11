@@ -4,6 +4,15 @@
       Wrapping React components for XMLUI
     </Text>
     <SpaceFiller />
+    <Select
+      width="120px"
+      initialValue="xmlui"
+      onDidChange="{ (newTheme) => setTheme(newTheme) }"
+    >
+      <Option value="xmlui" label="default"/>
+      <Option value="earthtone" label="earthtone"/>
+    </Select>
+    <ToneSwitch />
     <Icon
       name="cog"
       tooltip="Inspector"
@@ -22,63 +31,122 @@
       <NavLink label="Prop forwarding" to="/slider-vs-sliderw" />
       <NavLink label="Free tracing" to="/free-tracing" />
     </NavGroup>
+    <NavGroup label="Level 2: Enrichment" initiallyExpanded="{true}">
+      <NavLink label="File objects" to="/file-objects" />
+      <NavLink label="BigCalendar" to="/bigcalendar" />
+    </NavGroup>
+    <NavGroup label="Level 3: Theming" initiallyExpanded="{true}">
+      <NavLink label="Gauge (SCSS)" to="/gauge-theme" />
+      <NavLink label="Calendar (runtime)" to="/calendar-theme" />
+    </NavGroup>
+    <NavGroup label="Level 4: Ecosystem" initiallyExpanded="{true}">
+      <NavLink label="ECharts" to="/echarts" />
+      <NavLink label="Tiptap" to="/tiptap" />
+      <NavLink label="Extension packaging" to="/extension-packaging" />
+    </NavGroup>
   </NavPanel>
 
   <Pages>
 
-  <Page url="/">
-    <VStack padding="{responsive('0.75rem', '2rem')}" gap="1rem">
+    <Page url="/">
+      <VStack padding="{responsive('0.75rem', '2rem')}" gap="1rem">
 
-      <H1>
-        Two levels of component wrapping
-      </H1>
+        <H1>
+          Wrapping React components for XMLUI
+        </H1>
 
-      <Markdown>
-        <![CDATA[
-XMLUI's [`wrapComponent`](/wrap-component) and [`wrapCompound`](/wrap-compound) functions bridge XMLUI markup to React components. They replace the hand-written renderers that have historically been the only way to register a component with the engine.
+        <Markdown>
+          <![CDATA[
+XMLUI ships with a solid set of core components — inputs, layouts, navigation, data display — that cover most application needs. But the React ecosystem has thousands more: charting libraries, rich-text editors, gauges, calendars, mapping tools, visualization frameworks. The [`wrapComponent`](/wrap-component) and [`wrapCompound`](/wrap-compound) functions make all of them available to XMLUI users as extension components that work exactly like core components: declarative, composable, AI-friendly, debuggable, automatable.
 
-The hand-written approach requires every prop to be explicitly mapped. If the underlying React component accepts a prop that the renderer doesn't enumerate, that prop is silently dropped. Adding a new prop means editing the renderer. This is fine for a small set of well-known components, but it doesn't scale to third-party libraries or rapid prototyping.
+A wrapped component is indistinguishable from a built-in one. It appears in markup, accepts props, fires events, responds to themes, emits semantic traces, and can be tested and debugged with the same tools. The wrapping takes minutes. No changes to the XMLUI core are needed.
 
-The wrapping approach inverts this: everything forwards by default. Props the metadata doesn't know about still reach the React component via a generic `extractValue()` path. You can start with zero metadata and progressively add it as the component matures.
+This app demonstrates the approach in four levels, from basic wrapping through to production-ready ecosystem components.
 
 ## Level 1: Basic wrapping
 
-Call [`wrapComponent`](/wrap-component) or [`wrapCompound`](/wrap-compound) with a render component and minimal config. You get three things for free:
+Call [`wrapComponent`](/wrap-component) or [`wrapCompound`](/wrap-compound) with a React component and minimal config. You get three things for free:
 
-**Prop forwarding.** Props that the React component accepts but the XMLUI metadata doesn't declare still flow through. A Radix slider's `inverted` prop, a standard `title` attribute, an `aria-label` for accessibility — they all work without being listed in metadata. Hand-written renderers silently drop anything they don't enumerate. The [Prop forwarding](/slider-vs-sliderw) page demonstrates the difference.
+**[Prop forwarding](/slider-vs-sliderw).** All props flow through by default — you document them when you're ready, not because the component breaks without it. When the underlying library upgrades and adds new props, they're immediately available to XMLUI users.
 
-**Automatic tracing.** Both wrappers emit semantic trace events for standard patterns. When a component has a `didChange` event, the wrapper emits `value:change` traces. For `gotFocus`/`lostFocus`, it emits `focus:change`. Hand-written renderers are invisible to the trace system — wrapped components are traceable by default, with no extra code. The [Free tracing](/free-tracing) page shows what this unlocks: accessibility for screenreaders, semantic traces that AIs can reason about, and regression tests generated from user journeys by [trace-tools | target=_blank](https://github.com/xmlui-org/trace-tools).
+**[Automatic tracing](/free-tracing).** Wrapped components emit semantic trace events (`value:change`, `focus:change`) with no extra code. This unlocks accessibility for screenreaders, semantic traces that AIs can reason about, and regression tests generated from user journeys by [trace-tools | target=_blank](https://github.com/xmlui-org/trace-tools).
 
-**Instant gratification.** Minutes of work to wrap a new component. No metadata required upfront — add it incrementally as the component matures: first type annotations for IDE support, then `.md` documentation for the docs site.
+**Instant gratification.** Minutes of work to wrap a new component. No metadata required upfront — add it incrementally as the component matures.
 
-## Level 2: Domain-specific trace enrichment
+## Level 2: Trace enrichment
 
-Some components need custom trace logic that goes beyond what generic wrapping provides. FileInput is the example: a generic `value:change` trace for a file upload would log `[object File]` — useless for test generation. The real fix extracts `name`, `size`, and `type` from File objects so the trace says `"photo.jpg"` and trace-tools can generate `setInputFiles()` calls.
+Level 1's generic tracing works for any value that stringifies cleanly. But some values need special handling.
 
-Every component with a non-trivial value type potentially needs this level of work. DatePicker values need formatting. ColorPicker values might need hex normalization. Select with objects vs strings. Table row selections. Each one is a small intervention, but across the full component suite it adds up — and it requires understanding each component's semantics, not just mechanical wrapping.
+**[Built-in: File objects](/file-objects).** The generic layer recognizes common types like `File` and emits meaningful trace labels (`report.pdf` instead of `[object File]`) plus metadata that trace-tools can use to generate test code.
 
-The pages in this app illustrate both levels with working examples.
+**[Per-component: BigCalendar](/bigcalendar).** For domain-specific events, the render component calls `onNativeEvent` with structured fields — the wrapper traces it automatically. This is the pattern for any library with its own event model.
+
+## Level 3: Theme bridging
+
+A wrapped component needs to respect the design system. Three strategies, depending on the library:
+
+**[SCSS variable mapping: Gauge](/gauge-theme).** When the library uses CSS custom properties, assign XMLUI tokens to them in SCSS. Three lines. Zero runtime cost.
+
+**[Runtime style injection: Calendar](/calendar-theme).** When the library uses class-based CSS, resolve XMLUI tokens at runtime via `useTheme()` and inject scoped styles.
+
+**Option-level theming: [ECharts](/echarts).** When the library styles via JavaScript config objects (canvas rendering), merge XMLUI tokens directly into the option.
+
+## Level 4: The ecosystem unlocked
+
+**[ECharts](/echarts).** One of the most powerful charting libraries available — time series with zoom, treemaps, donuts, toolbox interactions. Canvas-rendered, with option-level theming and comprehensive native event capture.
+
+**[Tiptap](/tiptap).** A headless rich-text editor built on ProseMirror. Every keystroke and format toggle is semantically classified into trace-friendly native events.
+
+**[Extension packaging](/extension-packaging).** Both ship as independent UMD bundles that auto-register via a `<script>` tag. Apps include only the components they need — one command to build, one line to load.
         ]]>
-      </Markdown>
+        </Markdown>
 
-    </VStack>
-  </Page>
+      </VStack>
+    </Page>
 
-  <Page url="/wrap-component">
-    <WrapComponentPage />
-  </Page>
+    <Page url="/wrap-component">
+      <WrapComponentPage />
+    </Page>
 
-  <Page url="/wrap-compound">
-    <WrapCompoundPage />
-  </Page>
+    <Page url="/wrap-compound">
+      <WrapCompoundPage />
+    </Page>
 
-  <Page url="/slider-vs-sliderw">
-    <SliderVsSliderW />
-  </Page>
+    <Page url="/slider-vs-sliderw">
+      <SliderVsSliderW />
+    </Page>
 
-  <Page url="/free-tracing">
-    <FreeTracing />
-  </Page>
+    <Page url="/free-tracing">
+      <FreeTracing />
+    </Page>
+
+    <Page url="/file-objects">
+      <FileObjectTracing />
+    </Page>
+
+    <Page url="/bigcalendar">
+      <BigCalendarTracing />
+    </Page>
+
+    <Page url="/gauge-theme">
+      <GaugeThemeBridge />
+    </Page>
+
+    <Page url="/calendar-theme">
+      <CalendarThemeBridge />
+    </Page>
+
+    <Page url="/echarts">
+      <EChartsPage />
+    </Page>
+
+    <Page url="/tiptap">
+      <TiptapPage />
+    </Page>
+
+    <Page url="/extension-packaging">
+      <ExtensionPackaging />
+    </Page>
 
   </Pages>
 

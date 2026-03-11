@@ -74,6 +74,41 @@
 - **Type-safe extraction.** Props declared in metadata with `valueType: "boolean"` or `"number"` get the correct `extractValue` variant automatically, via `mergeWithMetadata`.
 - **Event auto-tracing.** Events declared in metadata get `pushTrace()`/`popTrace()` wrapping and semantic trace emission — `value:change` for `didChange`, `focus:change` for `gotFocus`/`lostFocus`.
 - **Resource URL resolution.** Props marked `isResourceUrl: true` in metadata are resolved via `extractResourceUrl` instead of `extractValue`.
+
+## Why `mergeWithMetadata` enables progressive enhancement
+
+Without `mergeWithMetadata`, the wrapper config would need to explicitly list every prop type and event mapping. Here's what SliderW's config would look like:
+
+```typescript
+wrapCompound(COMP, SliderRender, SliderWMd, {
+  booleans: ["enabled", "readOnly", "required", "autoFocus", "showValues"],
+  numbers: ["minValue", "maxValue", "step", "minStepsBetweenThumbs"],
+  events: {
+    didChange: "onDidChange",
+    gotFocus: "onGotFocus",
+    lostFocus: "onLostFocus",
+  },
+  callbacks: { valueFormat: "valueFormat" },
+  rename: { minValue: "min", maxValue: "max" },
+  parseInitialValue: ...,
+  formatExternalValue: ...,
+})
+```
+
+Instead, `mergeWithMetadata` reads the `valueType` annotations and event declarations from the metadata, so the actual config is just the exceptions:
+
+```typescript
+wrapCompound(COMP, SliderRender, SliderWMd, {
+  callbacks: { valueFormat: "valueFormat" },
+  rename: { minValue: "min", maxValue: "max" },
+  parseInitialValue: ...,
+  formatExternalValue: ...,
+})
+```
+
+No `booleans`, no `numbers`, no `events` — because the metadata already declares those types.
+
+This is what makes progressive enhancement incremental. On day one you wrap a component with empty metadata — every prop forwards as a raw string via `extractValue()`. When you add `valueType: "boolean"` to a prop's metadata, `mergeWithMetadata` picks it up automatically and the wrapper starts calling `extractValue.asOptionalBoolean()`. No config change needed. The wrapper config never grows — only the metadata does, at whatever pace makes sense.
       ]]>
     </Markdown>
 
