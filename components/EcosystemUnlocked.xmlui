@@ -1,0 +1,113 @@
+<Component name="EcosystemUnlocked">
+  <VStack padding="{responsive('0.75rem', '2rem')}" gap="1rem">
+
+    <H1>
+      The ecosystem unlocked
+    </H1>
+
+    <Markdown>
+      <![CDATA[
+The wrapping techniques, trace enrichment, and theme bridging from the previous pages are means to an end. The end is this: any React component in the npm ecosystem is now accessible to XMLUI users, with full theming and tracing, as an extension package that takes minutes to create.
+
+Here are two components that would have been impossible to offer XMLUI users without the wrapping approach. Both are complex, mature libraries with their own event models and configuration APIs. Neither needed changes to the XMLUI core.
+
+## Apache ECharts
+
+ECharts is one of the most powerful charting libraries available — heatmaps, treemaps, graph visualizations, geographic maps, 3D charts. It renders on canvas, which means CSS has no effect at all. Theming requires injecting XMLUI design tokens directly into the ECharts option object at runtime — the `useTheme()` pattern from the calendar page, taken further.
+
+The render component resolves the XMLUI color palette (`color-primary-500`, `color-success-500`, etc.) to actual color values, then merges them into the option as defaults. User-provided colors in the option override the defaults. Axis labels, tooltip backgrounds, legend text — everything inherits from XMLUI tokens unless explicitly overridden.
+
+Native event capture is comprehensive: clicks on data points, legend toggles, zoom/pan, brush selections, timeline changes. The render component maps each to a structured `onNativeEvent` call with a meaningful `displayLabel`.
+      ]]>
+    </Markdown>
+
+    <Card>
+      <H2>
+        EChart — bar chart with XMLUI theming
+      </H2>
+      <EChart
+        aria-label="Demo bar chart"
+        height="400px"
+        option='{
+          "xAxis": { "type": "category", "data": ["Mon", "Tue", "Wed", "Thu", "Fri"] },
+          "yAxis": { "type": "value" },
+          "series": [
+            { "name": "Commits", "type": "bar", "data": [120, 200, 150, 80, 170] },
+            { "name": "Reviews", "type": "bar", "data": [80, 120, 100, 60, 130] }
+          ],
+          "tooltip": { "trigger": "axis" },
+          "legend": {}
+        }' />
+    </Card>
+
+    <Card>
+      <H2>
+        EChart — pie chart
+      </H2>
+      <EChart
+        aria-label="Demo pie chart"
+        height="400px"
+        option='{
+          "series": [{
+            "type": "pie",
+            "radius": "60%",
+            "data": [
+              { "name": "TypeScript", "value": 45 },
+              { "name": "Python", "value": 25 },
+              { "name": "Go", "value": 15 },
+              { "name": "Rust", "value": 10 },
+              { "name": "Other", "value": 5 }
+            ]
+          }],
+          "tooltip": { "trigger": "item" },
+          "legend": { "orient": "vertical", "left": "left" }
+        }' />
+    </Card>
+
+    <Markdown>
+      <![CDATA[
+Click a bar, toggle a legend item, hover for tooltips — then open the inspector to see the native event traces. Each interaction produces a structured trace with a meaningful label: `"Commits → Wed = 150"`, `"TypeScript: hide"`.
+
+## Tiptap rich-text editor
+
+Tiptap is a headless rich-text editor built on ProseMirror. It's the kind of component that would typically require months of integration work to embed in a framework. With `wrapCompound` and `captureNativeEvents`, it took an afternoon.
+
+The render component classifies ProseMirror transactions into trace-friendly native events: `input` (text typed), `format` (bold toggled), `structure` (heading inserted), `insert` (table created), `delete` (content removed). This is domain-specific knowledge that the render component owns — the wrapper just traces whatever the render component reports.
+      ]]>
+    </Markdown>
+
+    <Card>
+      <H2>
+        TiptapEditor — rich text with native event tracing
+      </H2>
+      <TiptapEditor
+        aria-label="Demo editor"
+        height="300px"
+        placeholder="Type here — bold, italic, headings, lists, tables, code blocks..."
+        initialValue="## Try it out
+
+Type some text. **Bold** and *italic* work. Insert a table, add a heading, toggle a list.
+
+Then open the inspector and watch the native events: every keystroke, every format toggle, every structural change is classified and traced." />
+    </Card>
+
+    <Markdown>
+      <![CDATA[
+Type, format, insert a table — then open the inspector. You'll see events like `native:input "hello"`, `native:format "bold: on"`, `native:insert "table 3×3"`. Every interaction is semantically classified without any changes to the XMLUI core.
+
+## The pattern
+
+Both of these components follow the same recipe:
+
+1. **Wrap** with `wrapComponent` or `wrapCompound` — minutes of work
+2. **Theme** via `useTheme()` in the render component — map XMLUI tokens to the library's theming API
+3. **Trace** via `captureNativeEvents: true` — map library-specific events to structured `onNativeEvent` calls
+
+The wrapper handles the plumbing. The render component handles the library-specific semantics. New components don't require changes to the XMLUI core, and they ship as extension packages that users can include or not.
+
+The React ecosystem has thousands of components — charting, mapping, editing, visualization, media, collaboration. The wrapping approach makes them all accessible to XMLUI, with theming that follows the design system and tracing that enables semantic debugging and test generation.
+      ]]>
+    </Markdown>
+
+  </VStack>
+</Component>

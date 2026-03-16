@@ -39,11 +39,17 @@
       <NavLink label="Gauge (SCSS)" to="/gauge-theme" />
       <NavLink label="Calendar (runtime)" to="/calendar-theme" />
     </NavGroup>
-    <NavGroup label="Level 4: Ecosystem" initiallyExpanded="{true}">
+    <NavGroup label="Level 4: Layout" initiallyExpanded="{true}">
+      <NavLink label="Masonry" to="/masonry" />
+      <NavLink label="GridLayout" to="/grid-layout" />
+    </NavGroup>
+    <NavGroup label="Ecosystem" initiallyExpanded="{true}">
       <NavLink label="ECharts" to="/echarts" />
       <NavLink label="Tiptap" to="/tiptap" />
-      <NavLink label="Extension packaging" to="/extension-packaging" />
+      <NavLink label="Masonry" to="/masonry" />
+      <NavLink label="GridLayout" to="/grid-layout" />
     </NavGroup>
+    <NavLink label="Extension packaging" to="/extension-packaging" />
   </NavPanel>
 
   <Pages>
@@ -57,7 +63,7 @@
 
         <Markdown>
           <![CDATA[
-XMLUI ships with a solid set of core components that cover basic needs. But the React ecosystem offers thousands more: charting libraries, rich-text editors, gauges, calendars, mapping tools, visualization frameworks. The [`wrapComponent`](/wrap-component) and [`wrapCompound`](/wrap-compound) functions make all of them available to XMLUI users as extension components that work exactly like core components: declarative, composable, AI-friendly, debuggable, automatable.
+XMLUI ships with a solid set of core components that cover basic needs. But the React ecosystem offers thousands more: charting libraries, rich-text editors, layout engines, calendars, mapping tools, visualization frameworks. The [`wrapComponent`](/wrap-component) and [`wrapCompound`](/wrap-compound) functions make all of them available to XMLUI users as extension components that work exactly like core components: declarative, composable, AI-friendly, debuggable, automatable.
 
 ## Level 1: Basic wrapping
 
@@ -87,13 +93,23 @@ A wrapped component needs to respect the design system. Three strategies, depend
 
 **Option-level theming: [ECharts](/echarts).** When the library styles via JavaScript config objects (canvas rendering), merge XMLUI tokens directly into the option.
 
-## Level 4: The ecosystem unlocked
+## Level 4: Layout
+
+XMLUI's core layout components — HStack, VStack, FlowLayout — handle most needs. But some layouts require algorithms the core doesn't provide. [Masonry](/masonry) wraps CSS multi-column layout for content feeds and galleries where items of varying height flow into columns. [GridLayout](/grid-layout) wraps react-grid-layout for draggable, resizable dashboard grids where items have explicit positions. Same wrapping pattern, very different layout engines.
+
+## The ecosystem unlocked
+
+XMLUI provides a solid core that wraps a curated set of React components for most basic needs. And it makes it straightforward for a React developer to wrap components that support a range of advanced uses. In this demo we've seen: charting (ECharts), rich-text editing (Tiptap), responsive multi-column layout (Masonry), and interactive dashboard grids (GridLayout) — four very different libraries, all wrapped with the same pattern, all getting prop forwarding, semantic tracing, theming, and extension packaging for free. See [Extension packaging](/extension-packaging) for details on how to do the wrapping.
 
 **[ECharts](/echarts).** One of the most powerful charting libraries available — time series with zoom, treemaps, donuts, toolbox interactions. Canvas-rendered, with option-level theming and comprehensive native event capture.
 
 **[Tiptap](/tiptap).** A headless rich-text editor built on ProseMirror. Every keystroke and format toggle is semantically classified into trace-friendly native events.
 
-**[Extension packaging](/extension-packaging).** Both ship as independent UMD bundles that auto-register via a `<script>` tag. Apps include only the components they need — one command to build, one line to load.
+**[Masonry](/masonry).** CSS multi-column layout for content feeds and galleries. Items of varying height flow into responsive columns — no third-party dependency, just a lightweight wrapper around the browser's native column algorithm.
+
+**[GridLayout](/grid-layout).** Draggable, resizable dashboard grids via react-grid-layout. Items are positioned on an explicit column/row grid and can be rearranged by users at runtime. Drag and resize events are captured as native trace events.
+
+All of these ship as independent UMD bundles that auto-register via a `<script>` tag. Apps include only the components they need — one command to build, one line to load. See [Extension packaging](/extension-packaging) for details.
         ]]>
         </Markdown>
 
@@ -142,6 +158,14 @@ A wrapped component needs to respect the design system. Three strategies, depend
 
     <Page url="/extension-packaging">
       <ExtensionPackaging />
+    </Page>
+
+    <Page url="/masonry">
+      <MasonryPage />
+    </Page>
+
+    <Page url="/grid-layout">
+      <GridLayoutPage />
     </Page>
 
   </Pages>
