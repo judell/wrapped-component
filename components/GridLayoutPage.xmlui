@@ -1,5 +1,5 @@
 <Component name="GridLayoutPage">
-  <VStack padding="{responsive('0.75rem', '2rem')}" gap="1rem">
+  <VStack padding="{responsive('0.75rem', '2rem')}" gap="$gap-normal">
 
     <H1>GridLayout</H1>
 
@@ -11,7 +11,7 @@
 - `layout` — array of `{ i, x, y, w, h }` objects positioning each child on the grid
 - `columns` — number of grid columns (default: 12)
 - `rowHeight` — pixel height per grid row (default: 60)
-- `gap` — pixel gap between items (default: 16)
+- `gap` — gap between items; accepts CSS lengths or theme tokens like `$space-3` (default: "16px")
 - `draggable` / `resizable` — enable interaction (default: true)
 - `compactType` — "vertical", "horizontal", or null
 
@@ -24,7 +24,7 @@ Drag items to reposition. Drag the bottom-right handle to resize.
     <GridLayout
       columns="{12}"
       rowHeight="{80}"
-      gap="{12}"
+      gap="$space-3"
       layout="{[
         { i: '0', x: 0, y: 0, w: 6, h: 2 },
         { i: '1', x: 6, y: 0, w: 6, h: 2 },
