@@ -25,7 +25,7 @@ Native event capture is comprehensive: clicks on data points, legend toggles, zo
       <H2>
         Multi-series time series with zoom
       </H2>
-      <Text>Drag the slider handles below the chart to zoom into a date range.</Text>
+      <Text>Drag the slider handles below the chart to zoom into a date range (see EChart datazoom in the Inspector).</Text>
       <EChart
         aria-label="Demo time series chart"
         height="450px"
@@ -69,6 +69,7 @@ Native event capture is comprehensive: clicks on data points, legend toggles, zo
       <H2>
         Line chart with toolbox
       </H2>
+      <Text>Click legend to turn series on and off (see EChart legendselectchanged in the Inspector).</Text>
       <EChart
         aria-label="Demo line chart with toolbox"
         height="400px"
@@ -98,6 +99,7 @@ Native event capture is comprehensive: clicks on data points, legend toggles, zo
       <H2>
         Donut chart
       </H2>
+      <Text>Click legend to turn series on and off (see EChart legendselectchanged in the Inspector).</Text>
       <EChart
         aria-label="Demo donut chart"
         height="400px"
