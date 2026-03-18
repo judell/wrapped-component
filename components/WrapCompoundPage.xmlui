@@ -98,6 +98,39 @@
  └─────────────────────────────────────────────────────────────┘
 ```
 
+## Why `mergeWithMetadata` enables progressive enhancement
+
+Both `wrapComponent` and `wrapCompound` call `mergeWithMetadata` at setup time. It reads `valueType` annotations and event declarations from the metadata and auto-classifies them — so the wrapper config only needs to specify exceptions. Here's what SliderW's config would look like without it:
+
+```typescript
+wrapCompound(COMP, SliderRender, SliderWMd, {
+  booleans: ["enabled", "readOnly", "required", "autoFocus", "showValues"],
+  numbers: ["minValue", "maxValue", "step", "minStepsBetweenThumbs"],
+  events: {
+    didChange: "onDidChange",
+    gotFocus: "onGotFocus",
+    lostFocus: "onLostFocus",
+  },
+  callbacks: { valueFormat: "valueFormat" },
+  rename: { minValue: "min", maxValue: "max" },
+  parseInitialValue: ...,
+  formatExternalValue: ...,
+})
+```
+
+Instead, `mergeWithMetadata` infers booleans, numbers, and events from the metadata, so the actual config is just:
+
+```typescript
+wrapCompound(COMP, SliderRender, SliderWMd, {
+  callbacks: { valueFormat: "valueFormat" },
+  rename: { minValue: "min", maxValue: "max" },
+  parseInitialValue: ...,
+  formatExternalValue: ...,
+})
+```
+
+No `booleans`, no `numbers`, no `events` — because the metadata already declares those types. This makes progressive enhancement incremental: add `valueType: "boolean"` to a prop's metadata and `mergeWithMetadata` picks it up automatically. The wrapper config never grows — only the metadata does.
+
 **What you get beyond wrapComponent:**
 
 - **Value lifecycle.** The wrapper parses `initialValue`, maintains `localValue` state in React, syncs external value changes, and calls `updateState` automatically when the value changes.
