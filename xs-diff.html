@@ -78,7 +78,7 @@
         position: sticky;
         top: 0;
         z-index: 1;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
       }
 
       .spacer { flex: 1 1 auto; }
@@ -720,18 +720,14 @@
   </head>
   <body>
     <div class="toolbar">
-      <label>View:</label>
-      <label><input type="radio" name="viewMode" id="viewPretty" checked /> pretty</label>
-      <label><input type="radio" name="viewMode" id="viewRaw" /> raw</label>
-      <span class="spacer"></span>
+      <span style="display: flex; align-items: center; gap: var(--space-2);"><label>View:</label><label><input type="radio" name="viewMode" id="viewPretty" checked /> pretty</label><label><input type="radio" name="viewMode" id="viewRaw" /> raw</label></span>
       <input type="text" id="searchInput" placeholder="Search..." style="width: 200px;" />
       <button id="searchPrev" title="Previous match">▲</button>
       <button id="searchNext" title="Next match">▼</button>
-      <span id="searchCount" style="font-size: var(--font-sm); color: var(--color-text-muted); min-width: 60px;"></span>
-      <span class="spacer"></span>
+      <span id="searchCount" style="font-size: var(--font-sm); color: var(--color-text-muted);"></span>
+      <input type="text" id="filterInput" placeholder="Hide..." style="flex: 1; min-width: 100px;" />
       <button id="clear">Clear</button>
       <button id="test">Test</button>
-      <span class="spacer"></span>
       <select id="exportFormat">
         <option value="">Export...</option>
         <option value="html">Download HTML</option>
@@ -2221,7 +2217,11 @@
           componentText = parts.join(" ");
         } else {
           const interaction = traceEntries.find((e) => e.kind === "interaction");
-          const nativeEvent = traceEntries.find((e) => e.kind?.startsWith("native:"));
+          // Prefer native:click/dblclick for the summary label (most meaningful);
+          // fall back to the first native event if no click exists.
+          const nativeEvent =
+            traceEntries.find((e) => e.kind === "native:click" || e.kind === "native:dblclick") ||
+            traceEntries.find((e) => e.kind?.startsWith("native:"));
           if (interaction) {
             const label = interaction.componentLabel || interaction.uid || "Unknown";
             const action = interaction.interaction || interaction.eventName || "";
@@ -2271,7 +2271,6 @@
           if (behavioral) {
             const parts = [behavioral.kind];
             if (behavioral.component) parts.push(behavioral.component);
-            if (behavioral.ariaName) parts.push(`[${behavioral.ariaName}]`);
             if (behavioral.displayLabel) parts.push(`"${behavioral.displayLabel}"`);
             else if (behavioral.componentLabel) parts.push(`"${behavioral.componentLabel}"`);
             componentText = parts.join(" ");
@@ -2636,13 +2635,16 @@
           // Build a descriptive label: combine componentLabel/componentType with displayLabel
           let label = "";
           const compName = e.componentLabel || e.component || "";
-          const ariaTag = e.ariaName ? ` [${e.ariaName}]` : "";
           if (compName && e.displayLabel) {
-            label = `${compName}${ariaTag} "${e.displayLabel}"`;
+            label = `${compName} "${e.displayLabel}"`;
           } else if (e.displayLabel) {
             label = `"${e.displayLabel}"`;
           } else if (compName) {
-            label = compName + ariaTag;
+            label = compName;
+          }
+          // Append canvas coordinates for native events (used for positional replay)
+          if (typeof e.offsetX === "number") {
+            label += ` [${Math.round(e.offsetX)}, ${Math.round(e.offsetY)}]`;
           }
 
           events.push({
@@ -2654,16 +2656,20 @@
 
         // Add collapsed value:change/focus:change/native:* ranges
         for (const [, data] of valueChangeRanges) {
-          const { firstEntry, count, firstValue, lastValue, meta } = data;
+          const { firstEntry, lastEntry, count, firstValue, lastValue, meta } = data;
           const compType = firstEntry.component || "";
           const compId = firstEntry.componentLabel || "";
           const compName = compType && compId && compType !== compId ? `${compType} "${compId}"` : compId || compType;
-          const ariaTag = firstEntry.ariaName ? ` [${firstEntry.ariaName}]` : "";
           let label;
           if (count === 1 || firstValue === lastValue) {
-            label = compName && firstValue ? `${compName}${ariaTag} "${firstValue}"` : firstValue ? `"${firstValue}"` : compName + ariaTag;
+            label = compName && firstValue ? `${compName} "${firstValue}"` : firstValue ? `"${firstValue}"` : compName;
           } else {
-            label = compName ? `${compName}${ariaTag} "${firstValue}" → "${lastValue}"` : `"${firstValue}" → "${lastValue}"`;
+            label = compName ? `${compName} "${firstValue}" → "${lastValue}"` : `"${firstValue}" → "${lastValue}"`;
+          }
+          // Append canvas coordinates from the last entry in the range
+          const coordEntry = count === 1 ? firstEntry : lastEntry;
+          if (typeof coordEntry.offsetX === "number") {
+            label += ` [${Math.round(coordEntry.offsetX)}, ${Math.round(coordEntry.offsetY)}]`;
           }
           events.push({
             entry: { ...firstEntry, _dedupCount: count },
@@ -3294,8 +3300,12 @@
           otherOrphans: otherOrphans.map((e) => {
             // Build title - include URL for API events
             let title = e.kind;
-            if (e.eventName) title += ` ${e.eventName}`;
+            if (e.displayLabel) title += ` ${e.displayLabel}`;
+            else if (e.eventName) title += ` ${e.eventName}`;
             else if (e.url) title += ` ${normalizeMethod(e.method)} ${normalizeUrl(e.url)}`;
+            if (typeof e.offsetX === "number") {
+              title += ` [${Math.round(e.offsetX)}, ${Math.round(e.offsetY)}]`;
+            }
             return { entry: e, meta: buildEntryMeta(e), title };
           }),
           collisions: findDataSourceCollisions(entries),
@@ -3917,10 +3927,6 @@
                 bodyHtml += `<div class="text-warning">Could not render diff: ${diffErr.message}</div>`;
               }
             }
-          } else if (e.diffPretty && e.kind !== "component:vars:init" && e.kind !== "component:vars:change") {
-            // Fallback: show diffPretty text when diffJson is absent
-            const cleanDiff = e.diffPretty.replace(/^file:.*\n/m, "");
-            bodyHtml += wrapDiffInExpander(`<pre class="source-code">${cleanDiff.replace(/</g, "&lt;")}</pre>`, "Diff", false);
           }
 
           bodyHtml += `</div>`;
@@ -5100,11 +5106,33 @@
         navigateToMatch(searchState.currentIndex + 1);
       });
 
+      // Filter: hide trace groups whose header text matches the filter term
+      let filterTimeout = null;
+      document.getElementById("filterInput").addEventListener("input", (e) => {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(() => applyFilter(e.target.value), 200);
+      });
+
+      function applyFilter(term) {
+        const groups = document.querySelectorAll(".trace-group");
+        const terms = term.toLowerCase().trim().split(/\s+/).filter(Boolean);
+        groups.forEach((group) => {
+          if (!terms.length) {
+            group.style.display = "";
+            return;
+          }
+          const componentEl = group.querySelector(".trace-header .component");
+          const text = componentEl ? componentEl.textContent.toLowerCase() : "";
+          group.style.display = terms.some((t) => text.includes(t)) ? "none" : "";
+        });
+      }
+
       // Clear search when view changes or data refreshes
       const originalRender = render;
       render = function() {
         clearSearchHighlights();
         document.getElementById("searchInput").value = "";
+        document.getElementById("filterInput").value = "";
         originalRender.apply(this, arguments);
       };
 
