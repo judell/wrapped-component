@@ -1,0 +1,146 @@
+<Component name="AriaLabelCatalog">
+  <VStack padding="{responsive('0.75rem', '2rem')}" gap="1.5rem">
+
+    <H1>Aria Label Catalog</H1>
+
+    <Markdown>
+      <![CDATA[
+Each component below has props that carry semantic meaning. Before the aria-label cascade,
+traces show `ariaName: undefined` for all of them. After, each gets an `ariaName` derived
+from the prop that already describes what it is.
+
+Interact with each component (click, focus, change value) and check the trace output.
+      ]]>
+    </Markdown>
+
+    <H2>Static defaults (defaultAriaLabel in metadata)</H2>
+
+    <HStack gap="2rem" verticalAlignment="center">
+      <VStack gap="0.5rem" horizontalAlignment="center">
+        <Text variant="caption">Spinner</Text>
+        <Text variant="caption">defaultAriaLabel: "Loading"</Text>
+        <Spinner />
+      </VStack>
+
+      <VStack gap="0.5rem" horizontalAlignment="center">
+        <Text variant="caption">ToneChangerButton</Text>
+        <Text variant="caption">defaultAriaLabel: "Toggle color mode"</Text>
+        <ToneChangerButton />
+      </VStack>
+    </HStack>
+
+    <H2>Dynamic derivation (deriveAriaLabel from props)</H2>
+
+    <HStack gap="2rem" wrap="true">
+
+      <VStack gap="0.5rem" width="200px">
+        <Text variant="caption">Avatar (name="Jane Doe")</Text>
+        <Avatar name="Jane Doe" />
+      </VStack>
+
+      <VStack gap="0.5rem" width="200px">
+        <Text variant="caption">Icon (name="settings")</Text>
+        <Icon name="settings" size="2em" />
+      </VStack>
+
+      <VStack gap="0.5rem" width="200px">
+        <Text variant="caption">Image (alt="Sample image")</Text>
+        <Image alt="Sample image" src="https://picsum.photos/120/80" width="120px" />
+      </VStack>
+
+    </HStack>
+
+    <HStack gap="2rem" wrap="true">
+
+      <VStack gap="0.5rem" width="250px">
+        <Text variant="caption">Card (title="Dashboard")</Text>
+        <Card title="Dashboard">
+          <Text>Card content here</Text>
+        </Card>
+      </VStack>
+
+      <VStack gap="0.5rem" width="250px">
+        <Text variant="caption">Link (label="Settings")</Text>
+        <Link label="Settings" to="/aria-catalog" />
+      </VStack>
+
+    </HStack>
+
+    <HStack gap="2rem" wrap="true">
+
+      <VStack gap="0.5rem" width="250px">
+        <Text variant="caption">TextBox (placeholder="Search...")</Text>
+        <TextBox placeholder="Search..." />
+      </VStack>
+
+      <VStack gap="0.5rem" width="250px">
+        <Text variant="caption">NumberBox (placeholder="Enter amount")</Text>
+        <NumberBox placeholder="Enter amount" />
+      </VStack>
+
+    </HStack>
+
+    <H2>Extension components</H2>
+
+    <VStack gap="0.5rem">
+      <Text variant="caption">EChart (derives from option.title.text + series type)</Text>
+      <EChart
+        height="250px"
+        option="{{
+          title: { text: 'Revenue by Quarter' },
+          xAxis: { type: 'category', data: ['Q1', 'Q2', 'Q3', 'Q4'] },
+          yAxis: { type: 'value' },
+          series: [{ type: 'bar', data: [120, 200, 150, 80] }]
+        }}"
+      />
+    </VStack>
+
+    <VStack gap="0.5rem">
+      <Text variant="caption">Gauge (defaultAriaLabel: "Gauge")</Text>
+      <Gauge initialValue="{65}" />
+    </VStack>
+
+    <VStack gap="0.5rem">
+      <Text variant="caption">TiptapEditor (defaultAriaLabel: "Rich text editor")</Text>
+      <TiptapEditor placeholder="Type something..." height="150px" />
+    </VStack>
+
+    <H2>Override test</H2>
+    <Text variant="caption">Card with explicit aria-label="My custom label" (should override derived "Dashboard")</Text>
+    <Card title="Dashboard" aria-label="My custom label">
+      <Text>Explicit aria-label wins over derived</Text>
+    </Card>
+
+    <H2>Dynamic aria-label</H2>
+
+    <Markdown>
+      <![CDATA[
+The aria-label updates reactively as state changes. Each trace entry captures
+what the component *meant* at the moment of interaction, not just what was typed.
+      ]]>
+    </Markdown>
+
+    <VStack var.searchTerm="" var.items="{['Concert in the park', 'Comedy night', 'Farmers market', 'Jazz festival', 'Art walk']}" gap="1rem">
+
+      <VStack gap="0.5rem">
+        <Text variant="caption">TextBox with dynamic aria-label: "Search: N of 5 results"</Text>
+        <TextBox
+          placeholder="Search events..."
+          aria-label="{'Search: ' + items.filter(i => !searchTerm || i.toLowerCase().includes(searchTerm.toLowerCase())).length + ' of ' + items.length + ' results'}"
+          onDidChange="{(v) => searchTerm = v}"
+        />
+      </VStack>
+
+      <VStack gap="0.25rem">
+        <Text variant="caption">Filtered results:</Text>
+        <Fragment
+          data="{items.filter(i => !searchTerm || i.toLowerCase().includes(searchTerm.toLowerCase()))}"
+        >
+          <Text>• {$item}</Text>
+        </Fragment>
+      </VStack>
+
+    </VStack>
+
+  </VStack>
+</Component>
